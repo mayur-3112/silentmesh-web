@@ -24,7 +24,6 @@
 
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* Dynamic Grain Overlay - Cinematic Stealth Texture */
         .grain-layer {
             position: fixed;
             top: -50%; left: -50%; width: 200%; height: 200%;
@@ -44,7 +43,6 @@
             90% { transform: translate(-10%, 10%); }
         }
 
-        /* Mono Text Flicker - Simulated Sensor Feed */
         @keyframes flicker {
             0% { opacity: 0.98; }
             5% { opacity: 0.95; }
@@ -59,7 +57,6 @@
             animation: flicker 0.15s infinite;
         }
 
-        /* Subdued Mesh Background */
         .mesh-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -92,7 +89,6 @@
         }
         .animate-reveal { animation: revealUp 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* Redacted Text Effect */
         .redacted {
             background-color: #000;
             color: #000;
@@ -119,7 +115,6 @@
             }
         }
 
-        /* Technical Border Trim */
         .tech-border {
             border: 1px solid rgba(255, 255, 255, 0.05);
             position: relative;
@@ -130,7 +125,6 @@
     <div class="grain-layer"></div>
     <div class="mesh-bg"></div>
 
-    <!-- Navigation -->
     <nav class="w-full max-w-screen-2xl mx-auto px-6 md:px-10 py-12 md:py-16 flex items-center justify-between animate-reveal" style="animation-delay: 0.1s;">
         <div class="flex items-center">
             <span class="font-black tracking-tighter text-2xl uppercase italic leading-none">SilentMesh</span>
@@ -143,13 +137,11 @@
         </div>
     </nav>
 
-    <!-- Hero -->
     <main class="flex-grow flex flex-col items-center justify-center px-6 text-center py-20 lg:py-32">
         <div class="max-w-7xl w-full">
-            
             <div class="space-y-12 animate-reveal" style="animation-delay: 0.2s;">
                 <div class="flex justify-center">
-                    <span class="mono mono-flicker text-[9px] text-zinc-400 border border-zinc-900 px-5 py-1.5 rounded-sm uppercase tracking-[0.4em]">
+                    <span class="mono mono-flicker text-[9px] text-zinc-400 border border-zinc-800 px-5 py-1.5 rounded-sm uppercase tracking-[0.4em]">
                         Sovereign_Protocol_01 // ESTABLISHED
                     </span>
                 </div>
@@ -168,10 +160,10 @@
             <!-- Unified Handshake Portal -->
             <div class="mt-24 w-full max-w-2xl mx-auto animate-reveal px-4" style="animation-delay: 0.4s;">
                 <div id="portal-unit" class="portal-frame flex flex-col border border-white/10">
-                    
-                    <div id="input-area" class="flex flex-col sm:flex-row items-stretch portal-input-container">
+                    <form id="handshake-form" class="flex flex-col sm:flex-row items-stretch portal-input-container">
                         <input 
                             type="email" 
+                            name="email"
                             id="user-email"
                             required 
                             placeholder="Authorized Credentials" 
@@ -184,7 +176,7 @@
                         >
                             Connect
                         </button>
-                    </div>
+                    </form>
 
                     <!-- Handshake Success State -->
                     <div id="success-area" class="hidden opacity-0 py-20 flex flex-col items-center gap-6 border-t border-white/5 transition-authoritative bg-[#050505]">
@@ -197,7 +189,6 @@
         </div>
     </main>
 
-    <!-- Pillars -->
     <section id="vision" class="w-full py-32 md:py-52 px-6 md:px-10 border-t border-zinc-900">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-20 md:gap-24">
@@ -223,21 +214,19 @@
         </div>
     </section>
 
-    <!-- The Edge (High Contrast Retinal Flip) -->
     <section id="different" class="w-full py-40 md:py-60 px-6 md:px-10 bg-[#ffffff] text-black relative z-10 overflow-hidden">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-20 mb-32 md:mb-52">
                 <div class="md:sticky-side">
                     <h2 class="display-ultra tracking-tighter uppercase italic leading-[0.7] text-black">THE <br> <span class="text-[#2D63FF]">EDGE.</span></h2>
                 </div>
-                <div class="max-w-2xl text-left md:text-right">
+                <div class="max-w-2xl text-right">
                     <p class="text-4xl md:text-7xl font-black leading-[0.8] tracking-tighter uppercase italic mb-10">Probabilistic <br> is <span class="text-[#2D63FF] underline decoration-black decoration-[8px] md:decoration-[12px] underline-offset-[8px] md:underline-offset-[12px]">Dead.</span></p>
                     <p class="text-xl md:text-2xl font-bold leading-tight tracking-tight text-zinc-400">Guessing is technical debt. <br> We provide a physical record of the breach.</p>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-100 border border-zinc-100">
-                <!-- Competitor Profile -->
                 <div class="bg-white p-10 md:p-32 space-y-14 reveal-redacted group">
                     <div class="flex items-center gap-5">
                         <span class="w-10 h-[0.5px] bg-zinc-200"></span>
@@ -251,7 +240,6 @@
                     </div>
                 </div>
 
-                <!-- SilentMesh Standard -->
                 <div class="bg-[#fcfcfc] p-10 md:p-32 space-y-14 border-t md:border-t-0 md:border-l border-zinc-100">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-5">
@@ -274,7 +262,6 @@
         </div>
     </section>
 
-    <!-- Architecture Specifications -->
     <section id="infra" class="w-full py-40 md:py-60 px-6 md:px-10 relative overflow-hidden bg-black">
         <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100%_12px] pointer-events-none opacity-50"></div>
         
@@ -299,7 +286,6 @@
         </div>
     </section>
 
-    <!-- Massive High-Visibility Ending Branding -->
     <footer class="w-full py-32 md:py-60 px-6 bg-black flex flex-col items-center justify-center border-t border-zinc-900 overflow-hidden">
         <div class="max-w-7xl w-full flex flex-col items-center space-y-12">
             <div class="animate-reveal flex flex-col items-center text-center">
@@ -318,6 +304,9 @@
     </footer>
 
     <script>
+        // REPLACE THIS WITH YOUR ACTUAL FORMSPREE ID
+        const FORMSPREE_ID = "xwvnaokn"; // Get this from formspree.io
+
         const AudioEngine = {
             ctx: null,
             init() {
@@ -353,31 +342,52 @@
             }
         };
 
+        const form = document.getElementById('handshake-form');
         const connectBtn = document.getElementById('connect-btn');
-        const inputArea = document.getElementById('input-area');
         const successArea = document.getElementById('success-area');
         const emailInput = document.getElementById('user-email');
 
-        connectBtn.addEventListener('click', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = emailInput.value;
             
-            if(email && emailInput.checkValidity()) {
+            if(email && form.checkValidity()) {
+                // Visual & Audio Feedback
+                connectBtn.disabled = true;
+                connectBtn.innerText = "Syncing...";
                 AudioEngine.playClick();
-                AudioEngine.playHum();
 
-                inputArea.style.opacity = '0';
-                inputArea.style.transform = 'translateY(-10px)';
-                inputArea.style.transition = 'all 0.4s ease';
-                
-                setTimeout(() => {
-                    inputArea.style.display = 'none';
-                    successArea.classList.remove('hidden');
-                    setTimeout(() => {
-                        successArea.style.opacity = '1';
-                        successArea.style.transform = 'translateY(0)';
-                    }, 50);
-                }, 400);
+                try {
+                    const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email })
+                    });
+
+                    if (response.ok) {
+                        AudioEngine.playHum();
+                        
+                        // Transition to Success State
+                        form.style.opacity = '0';
+                        form.style.transform = 'translateY(-10px)';
+                        form.style.transition = 'all 0.4s ease';
+                        
+                        setTimeout(() => {
+                            form.style.display = 'none';
+                            successArea.classList.remove('hidden');
+                            setTimeout(() => {
+                                successArea.style.opacity = '1';
+                                successArea.style.transform = 'translateY(0)';
+                            }, 50);
+                        }, 400);
+                    } else {
+                        throw new Error('Sync failed');
+                    }
+                } catch (error) {
+                    connectBtn.disabled = false;
+                    connectBtn.innerText = "Retry";
+                    console.error("Transmission error:", error);
+                }
             }
         });
     </script>
