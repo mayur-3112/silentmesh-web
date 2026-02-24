@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilentMesh — Global Ground Truth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #020202; 
+            --accent: #2D63FF; 
+            --silver: #e2e8f0;
+        }
+        
+        body { 
+            background-color: var(--bg); 
+            font-family: 'Inter', sans-serif; 
+            color: #ffffff; 
+            -webkit-font-smoothing: antialiased; 
+            scroll-behavior: smooth; 
+            letter-spacing: -0.04em;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Dynamic Grain Overlay - Cinematic Stealth Texture */
+        .grain-layer {
+            position: fixed;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 50;
+            animation: grain 0.5s steps(1) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            30% { transform: translate(3%, -15%); }
+            50% { transform: translate(12%, 9%); }
+            70% { transform: translate(9%, 4%); }
+            90% { transform: translate(-10%, 10%); }
+        }
+
+        /* Mono Text Flicker - Simulated Sensor Feed */
+        @keyframes flicker {
+            0% { opacity: 0.98; }
+            5% { opacity: 0.95; }
+            10% { opacity: 0.99; }
+            15% { opacity: 0.85; }
+            20% { opacity: 0.99; }
+            50% { opacity: 1; }
+            80% { opacity: 0.96; }
+            100% { opacity: 0.99; }
+        }
+        .mono-flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+        /* Subdued Mesh Background */
+        .mesh-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(at 0% 0%, rgba(45, 99, 255, 0.05) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(45, 99, 255, 0.02) 0, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .display-ultra {
+            font-size: clamp(3rem, 15vw, 15rem);
+            line-height: 0.75;
+            font-weight: 900;
+            letter-spacing: -0.06em;
+        }
+
+        .transition-authoritative { transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        .portal-frame {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        @keyframes revealUp {
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        .animate-reveal { animation: revealUp 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Redacted Text Effect */
+        .redacted {
+            background-color: #000;
+            color: #000;
+            transition: all 0.5s ease;
+            cursor: help;
+        }
+        .reveal-redacted:hover .redacted {
+            color: inherit;
+            background-color: transparent;
+        }
+
+        .sticky-side {
+            position: sticky;
+            top: 100px;
+        }
+
+        @media (max-width: 640px) {
+            .portal-input-container {
+                flex-direction: column;
+            }
+            .portal-input-container button {
+                width: 100%;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Technical Border Trim */
+        .tech-border {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+    <div class="grain-layer"></div>
+    <div class="mesh-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="w-full max-w-screen-2xl mx-auto px-6 md:px-10 py-12 md:py-16 flex items-center justify-between animate-reveal" style="animation-delay: 0.1s;">
+        <div class="flex items-center">
+            <span class="font-black tracking-tighter text-2xl uppercase italic leading-none">SilentMesh</span>
+        </div>
+        
+        <div class="hidden md:flex gap-16 text-[10px] uppercase tracking-[0.5em] font-black text-zinc-500">
+            <a href="#vision" class="nav-link hover:text-white transition-authoritative">The Manifesto</a>
+            <a href="#different" class="nav-link hover:text-white transition-authoritative">The Edge</a>
+            <a href="#infra" class="nav-link hover:text-white transition-authoritative">Architecture</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <main class="flex-grow flex flex-col items-center justify-center px-6 text-center py-20 lg:py-32">
+        <div class="max-w-7xl w-full">
+            
+            <div class="space-y-12 animate-reveal" style="animation-delay: 0.2s;">
+                <div class="flex justify-center">
+                    <span class="mono mono-flicker text-[9px] text-zinc-400 border border-zinc-900 px-5 py-1.5 rounded-sm uppercase tracking-[0.4em]">
+                        Sovereign_Protocol_01 // ESTABLISHED
+                    </span>
+                </div>
+                <h1 class="display-ultra text-white uppercase italic">
+                    GROUND <br> TRUTH.
+                </h1>
+            </div>
+
+            <div class="mt-20 animate-reveal" style="animation-delay: 0.3s;">
+                <p class="text-zinc-300 text-xl md:text-3xl max-w-3xl mx-auto font-medium leading-tight tracking-tight px-4">
+                    Moving beyond probabilistic failure into <span class="text-white">deterministic certainty</span>. <br>
+                    The final standard for <span class="text-[#2D63FF] italic uppercase tracking-widest">Global Defense.</span>
+                </p>
+            </div>
+
+            <!-- Unified Handshake Portal -->
+            <div class="mt-24 w-full max-w-2xl mx-auto animate-reveal px-4" style="animation-delay: 0.4s;">
+                <div id="portal-unit" class="portal-frame flex flex-col border border-white/10">
+                    
+                    <div id="input-area" class="flex flex-col sm:flex-row items-stretch portal-input-container">
+                        <input 
+                            type="email" 
+                            id="user-email"
+                            required 
+                            placeholder="Authorized Credentials" 
+                            class="flex-grow bg-transparent text-white py-8 px-8 sm:px-12 text-xl outline-none transition-authoritative focus:bg-white/[0.03] placeholder:text-zinc-600 font-bold"
+                        >
+                        <button 
+                            id="connect-btn"
+                            type="submit" 
+                            class="bg-[#2D63FF] text-white font-black px-12 py-6 sm:py-0 hover:bg-white hover:text-black transition-authoritative active:scale-95 text-[11px] uppercase tracking-[0.2em]"
+                        >
+                            Connect
+                        </button>
+                    </div>
+
+                    <!-- Handshake Success State -->
+                    <div id="success-area" class="hidden opacity-0 py-20 flex flex-col items-center gap-6 border-t border-white/5 transition-authoritative bg-[#050505]">
+                        <div class="w-px h-16 bg-[#2D63FF] animate-pulse shadow-[0_0_15px_rgba(45,99,255,0.6)]"></div>
+                        <h4 class="text-2xl font-black uppercase italic tracking-widest text-white px-4">Identity Captured</h4>
+                        <p class="mono mono-flicker text-[9px] text-zinc-400 uppercase tracking-widest">Sync node m7i.large.v1...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pillars -->
+    <section id="vision" class="w-full py-32 md:py-52 px-6 md:px-10 border-t border-zinc-900">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-20 md:gap-24">
+                <div class="space-y-10 group">
+                    <div class="w-full h-[1px] bg-zinc-800 group-hover:bg-[#2D63FF]/40 transition-authoritative"></div>
+                    <div class="mono mono-flicker text-[9px] text-zinc-500 uppercase tracking-[0.5em]">The Core</div>
+                    <h3 class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none text-white">Vyuha <br> Engine.</h3>
+                    <p class="text-zinc-300 text-sm leading-relaxed font-medium">Surgical eBPF kernel observation. Capturing threat data at the source—recording the undeniable reality of the event.</p>
+                </div>
+                <div class="space-y-10 group">
+                    <div class="w-full h-[1px] bg-zinc-800 group-hover:bg-[#2D63FF]/40 transition-authoritative"></div>
+                    <div class="mono mono-flicker text-[9px] text-zinc-500 uppercase tracking-[0.5em]">The Logic</div>
+                    <h3 class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none text-white">Certain <br> Alert.</h3>
+                    <p class="text-zinc-700 text-sm leading-relaxed font-medium">Intelligence is a liability when it guesses. SilentMesh eliminates investigation. Every alert is hardware-validated truth.</p>
+                </div>
+                <div class="space-y-10 group">
+                    <div class="w-full h-[1px] bg-zinc-800 group-hover:bg-[#2D63FF]/40 transition-authoritative"></div>
+                    <div class="mono mono-flicker text-[9px] text-zinc-500 uppercase tracking-[0.5em]">The Scope</div>
+                    <h3 class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none text-white">Global <br> Scale.</h3>
+                    <p class="text-zinc-700 text-sm leading-relaxed font-medium">Built for the world’s sensitive theaters. Air-gapped capable, sovereign by design, and resistant to infrastructure debt.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Edge (High Contrast Retinal Flip) -->
+    <section id="different" class="w-full py-40 md:py-60 px-6 md:px-10 bg-[#ffffff] text-black relative z-10 overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-12 md:gap-20 mb-32 md:mb-52">
+                <div class="md:sticky-side">
+                    <h2 class="display-ultra tracking-tighter uppercase italic leading-[0.7] text-black">THE <br> <span class="text-[#2D63FF]">EDGE.</span></h2>
+                </div>
+                <div class="max-w-2xl text-left md:text-right">
+                    <p class="text-4xl md:text-7xl font-black leading-[0.8] tracking-tighter uppercase italic mb-10">Probabilistic <br> is <span class="text-[#2D63FF] underline decoration-black decoration-[8px] md:decoration-[12px] underline-offset-[8px] md:underline-offset-[12px]">Dead.</span></p>
+                    <p class="text-xl md:text-2xl font-bold leading-tight tracking-tight text-zinc-400">Guessing is technical debt. <br> We provide a physical record of the breach.</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-100 border border-zinc-100">
+                <!-- Competitor Profile -->
+                <div class="bg-white p-10 md:p-32 space-y-14 reveal-redacted group">
+                    <div class="flex items-center gap-5">
+                        <span class="w-10 h-[0.5px] bg-zinc-200"></span>
+                        <span class="mono text-[10px] text-zinc-300 uppercase tracking-[0.5em] font-black">Market Standard</span>
+                    </div>
+                    <h4 class="text-7xl font-black uppercase tracking-tighter italic leading-[0.8]">Cloud <br> Noise.</h4>
+                    <p class="text-zinc-400 text-xl md:text-2xl leading-tight font-medium italic">Systems that alert on patterns. Creating <span class="redacted">infinite noise</span>, leading to <span class="redacted">fatal delays</span> in the response cycle.</p>
+                    <div class="space-y-4 pt-10 border-t border-zinc-50">
+                        <div class="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-200 line-through">Pattern Matching</div>
+                        <div class="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-200 line-through">Anomaly Scoring</div>
+                    </div>
+                </div>
+
+                <!-- SilentMesh Standard -->
+                <div class="bg-[#fcfcfc] p-10 md:p-32 space-y-14 border-t md:border-t-0 md:border-l border-zinc-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-5">
+                            <span class="w-10 h-[0.5px] bg-[#2D63FF]/30"></span>
+                            <span class="mono text-[10px] text-[#2D63FF]/60 uppercase tracking-[0.5em] font-black italic">The Standard</span>
+                        </div>
+                    </div>
+                    <h4 class="text-7xl font-black uppercase tracking-tighter italic leading-[0.8] text-[#2D63FF]">Node <br> Truth.</h4>
+                    <p class="text-zinc-900 text-xl md:text-2xl leading-tight font-black italic">The Flight Recorder. Remediation starts the microsecond a node is touched. No triage. No investigation. Action only.</p>
+                    <div class="space-y-4 pt-10 border-t border-[#2D63FF]/10">
+                        <div class="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-black">
+                            <div class="w-1.5 h-1.5 bg-[#2D63FF]/60 rounded-full"></div> Deterministic Deception
+                        </div>
+                        <div class="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.3em] text-black">
+                            <div class="w-1.5 h-1.5 bg-[#2D63FF]/60 rounded-full"></div> Sub-1ms Telemetry
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Specifications -->
+    <section id="infra" class="w-full py-40 md:py-60 px-6 md:px-10 relative overflow-hidden bg-black">
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100%_12px] pointer-events-none opacity-50"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-24">
+                <div class="space-y-6 tech-border p-8 bg-white/[0.01]">
+                    <div class="mono mono-flicker text-[10px] text-zinc-400 uppercase tracking-[0.6em] font-black">Node Architecture</div>
+                    <div class="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white">AWS m7i.large <br> <span class="text-[#2D63FF]/60">Sapphire Rapids</span></div>
+                    <p class="text-zinc-400 text-[9px] uppercase font-black tracking-widest">Gen 4 Intel Xeon // Optimized Throughput</p>
+                </div>
+                <div class="space-y-6 tech-border p-8 bg-white/[0.01]">
+                    <div class="mono mono-flicker text-[10px] text-zinc-400 uppercase tracking-[0.6em] font-black">Telemetry Standard</div>
+                    <div class="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white">0.84ms <br> <span class="text-[#2D63FF]/60">Latency</span></div>
+                    <p class="text-zinc-400 text-[9px] uppercase font-black tracking-widest">Deterministic Logging // 0.0% Guess</p>
+                </div>
+                <div class="space-y-6 tech-border p-8 bg-white/[0.01]">
+                    <div class="mono mono-flicker text-[10px] text-zinc-400 uppercase tracking-[0.6em] font-black">Standardization</div>
+                    <div class="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-white">Sovereign <br> <span class="text-[#2D63FF]/60">Ready</span></div>
+                    <p class="text-zinc-300 text-[9px] uppercase font-black tracking-widest">DPDP / ISO-27001 / CERT-IN Protocol</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Massive High-Visibility Ending Branding -->
+    <footer class="w-full py-32 md:py-60 px-6 bg-black flex flex-col items-center justify-center border-t border-zinc-900 overflow-hidden">
+        <div class="max-w-7xl w-full flex flex-col items-center space-y-12">
+            <div class="animate-reveal flex flex-col items-center text-center">
+                <h2 class="text-6xl md:text-[14vw] font-black uppercase italic tracking-tighter leading-none text-white select-none">
+                    SILENTMESH
+                </h2>
+                <div class="mt-12 flex flex-col md:flex-row items-center gap-4 md:gap-16 mono mono-flicker text-[10px] uppercase tracking-[0.8em] text-zinc-500 font-bold">
+                    <span>Truth Distributed</span>
+                    <span class="hidden md:block opacity-10">/</span>
+                    <span>Sovereign Defense</span>
+                    <span class="hidden md:block opacity-10">/</span>
+                    <span>© 2026</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const AudioEngine = {
+            ctx: null,
+            init() {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            },
+            playClick() {
+                if(!this.ctx) this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.1);
+            },
+            playHum() {
+                if(!this.ctx) this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(60, this.ctx.currentTime); 
+                gain.gain.setValueAtTime(0, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.015, this.ctx.currentTime + 0.5);
+                gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 2.5);
+            }
+        };
+
+        const connectBtn = document.getElementById('connect-btn');
+        const inputArea = document.getElementById('input-area');
+        const successArea = document.getElementById('success-area');
+        const emailInput = document.getElementById('user-email');
+
+        connectBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = emailInput.value;
+            
+            if(email && emailInput.checkValidity()) {
+                AudioEngine.playClick();
+                AudioEngine.playHum();
+
+                inputArea.style.opacity = '0';
+                inputArea.style.transform = 'translateY(-10px)';
+                inputArea.style.transition = 'all 0.4s ease';
+                
+                setTimeout(() => {
+                    inputArea.style.display = 'none';
+                    successArea.classList.remove('hidden');
+                    setTimeout(() => {
+                        successArea.style.opacity = '1';
+                        successArea.style.transform = 'translateY(0)';
+                    }, 50);
+                }, 400);
+            }
+        });
+    </script>
+</body>
+</html>
