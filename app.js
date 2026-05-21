@@ -229,35 +229,48 @@ window.runCinematicSimulation = function(sectorKey) {
     if(titleDisplay) titleDisplay.innerText = "Analyzing Vector...";
 
     let lineIndex = 0;
+    let charIndex = 0;
+    let currentLineDiv = null;
     
-    function typeLine() {
+    function typeChar() {
         if (lineIndex < dataset.logs.length) {
             const lineText = dataset.logs[lineIndex];
-            let colorClass = "text-slate-400";
             
-            if (lineText.includes("[EXPLOIT") || lineText.includes("[CRITICAL]")) colorClass = "text-red-400 font-semibold";
-            if (lineText.includes("[KERNEL") || lineText.includes("[RESOLVED]") || lineText.includes("[ISOLATION]") || lineText.includes("[MUTATION]")) colorClass = "text-emerald-400 font-semibold";
+            // Create a new line div if we are starting a new line
+            if (charIndex === 0) {
+                let colorClass = "text-slate-400";
+                if (lineText.includes("[EXPLOIT") || lineText.includes("[CRITICAL]")) colorClass = "text-red-400 font-semibold";
+                if (lineText.includes("[KERNEL") || lineText.includes("[RESOLVED]") || lineText.includes("[ISOLATION]") || lineText.includes("[MUTATION]")) colorClass = "text-emerald-400 font-semibold";
+                
+                currentLineDiv = document.createElement('div');
+                currentLineDiv.className = `${colorClass} mb-2`;
+                logConsole.appendChild(currentLineDiv);
+            }
             
-            const lineDiv = document.createElement('div');
-            lineDiv.className = `${colorClass} mb-2 opacity-0 translate-y-2 transition-all duration-300`;
-            lineDiv.innerText = lineText;
-            logConsole.appendChild(lineDiv);
+            // Append the next character
+            currentLineDiv.innerHTML += lineText.charAt(charIndex);
+            logConsole.scrollTop = logConsole.scrollHeight;
+            charIndex++;
             
-            // Cinematic reveal
-            setTimeout(() => {
-                lineDiv.classList.remove('opacity-0', 'translate-y-2');
-                logConsole.scrollTop = logConsole.scrollHeight;
-            }, 10);
-
-            lineIndex++;
-            typingTimeout = setTimeout(typeLine, Math.random() * 200 + 150); // Variable typing speed for realism
+            if (charIndex < lineText.length) {
+                // Type next character fast
+                typingTimeout = setTimeout(typeChar, Math.random() * 15 + 10);
+            } else {
+                // Finished the line, wait before starting the next line
+                lineIndex++;
+                charIndex = 0;
+                let lineDelay = Math.random() * 600 + 400; // 400-1000ms pause between lines
+                if (lineText.includes("[CRITICAL]") || lineText.includes("[EXPLOIT")) lineDelay += 500; // Dramatic pause for threats
+                typingTimeout = setTimeout(typeChar, lineDelay);
+            }
         } else {
+            // Simulation complete
             if (metricDisplay) {
                 metricDisplay.innerText = dataset.metric;
-                metricDisplay.className = "text-emerald-400 font-mono tracking-widest font-bold text-sm uppercase";
+                metricDisplay.className = "text-emerald-400 font-mono tracking-widest font-bold text-sm uppercase animate-pulse";
             }
             if (titleDisplay) titleDisplay.innerText = dataset.title;
         }
     }
-    typeLine();
+    typeChar();
 };
