@@ -1,7 +1,6 @@
 /**
- * SilentMesh Web Infrastructure Core - Architecture & Animation Controller
- * Pivot Framework: Universal Enterprise, Cloud-Native K8s, & High-Frequency Fintech
- * Dependencies: GSAP, ScrollTrigger, Lenis (Loaded via CDN)
+ * SilentMesh Web Infrastructure Core - Cinematic Controller
+ * Dependencies: Lenis (Loaded via CDN)
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     const isMobile = () => window.innerWidth < 768 || ('ontouchstart' in window);
     const lerp = (start, end, factor) => start + (end - start) * factor;
-    const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
 
     function initCustomCursor() {
         if (isMobile()) return;
@@ -42,259 +40,181 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         requestAnimationFrame(animateRing);
 
-        const interactiveSelectors = 'a, button, input, select, textarea, .btn, .sim-selector-btn';
+        const interactiveSelectors = 'a, button, input, select, textarea, .sim-btn';
         document.querySelectorAll(interactiveSelectors).forEach(el => {
             el.addEventListener('mouseenter', () => {
-                ring.style.width = '54px';
-                ring.style.height = '54px';
+                ring.style.width = '60px';
+                ring.style.height = '60px';
                 dot.style.width = '4px';
                 dot.style.height = '4px';
+                ring.style.borderColor = 'rgba(255,255,255,0.8)';
             });
             el.addEventListener('mouseleave', () => {
-                ring.style.width = '36px';
-                ring.style.height = '36px';
-                dot.style.width = '8px';
-                dot.style.height = '8px';
+                ring.style.width = '40px';
+                ring.style.height = '40px';
+                dot.style.width = '6px';
+                dot.style.height = '6px';
+                ring.style.borderColor = 'rgba(255,255,255,0.4)';
             });
         });
     }
     initCustomCursor();
 
     // ==========================================
-    // 0.5. MESH CANVAS
+    // 1. CINEMATIC PRELOADER
     // ==========================================
-    function initMeshCanvas() {
-        const canvas = document.getElementById('mesh-canvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        
-        let width, height, particles, mousePos = { x: -9999, y: -9999 };
-        
-        function createParticle() {
-            return {
-                x: Math.random() * width,
-                y: Math.random() * height,
-                vx: (Math.random() - 0.5) * 0.6 + (Math.random() > 0.5 ? 0.2 : -0.2),
-                vy: (Math.random() - 0.5) * 0.6 + (Math.random() > 0.5 ? 0.2 : -0.2),
-                radius: 1 + Math.random() * 1.5,
-            };
+    function initPreloader() {
+        const loader = document.getElementById('loader');
+        const countDisplay = document.getElementById('loader-count-value');
+        const utcDisplay = document.getElementById('loader-utc');
+        if (!loader || !countDisplay) return;
+
+        // UTC Time updater
+        function updateUTC() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-GB', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC' });
+            if(utcDisplay) utcDisplay.innerText = `UTC ${timeStr}`;
         }
-        
-        function setup() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            const count = Math.min(100, Math.floor((width * height) / 12000));
-            particles = Array.from({ length: count }, createParticle);
+        updateUTC();
+        setInterval(updateUTC, 1000);
+
+        // Counter Logic
+        let count = 0;
+        const duration = 2200; // 2.2 seconds loading
+        const startTime = performance.now();
+
+        function easeOutQuart(x) {
+            return 1 - Math.pow(1 - x, 4);
         }
-        setup();
-        window.addEventListener('resize', setup);
-        
-        window.addEventListener('mousemove', (e) => {
-            mousePos.x = e.clientX;
-            mousePos.y = e.clientY;
-        });
-        window.addEventListener('mouseleave', () => {
-            mousePos.x = -9999;
-            mousePos.y = -9999;
-        });
-        
-        const CONNECT_DIST = 140;
-        const MOUSE_DIST = 180;
-        const REPULSION_STRENGTH = 0.02;
-        
-        function render() {
-            ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < particles.length; i++) {
-                const p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < 0 || p.x > width) p.vx *= -1;
-                if (p.y < 0 || p.y > height) p.vy *= -1;
-                p.x = clamp(p.x, 0, width);
-                p.y = clamp(p.y, 0, height);
-                
-                const dxm = p.x - mousePos.x;
-                const dym = p.y - mousePos.y;
-                const distMouse = Math.sqrt(dxm * dxm + dym * dym);
-                if (distMouse < MOUSE_DIST && distMouse > 0) {
-                    const force = (1 - distMouse / MOUSE_DIST) * REPULSION_STRENGTH;
-                    p.vx += (dxm / distMouse) * force;
-                    p.vy += (dym / distMouse) * force;
-                }
-                
-                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-                if (speed > 0.8) { p.vx *= 0.98; p.vy *= 0.98; }
-                
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0, 102, 255, 0.3)';
-                ctx.fill();
-                
-                for (let j = i + 1; j < particles.length; j++) {
-                    const q = particles[j];
-                    const dx = p.x - q.x;
-                    const dy = p.y - q.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < CONNECT_DIST) {
-                        const alpha = (1 - dist / CONNECT_DIST) * 0.12;
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(q.x, q.y);
-                        ctx.strokeStyle = `rgba(0, 255, 102, ${alpha})`;
-                        ctx.lineWidth = 0.6;
-                        ctx.stroke();
-                    }
-                }
-                
-                if (distMouse < MOUSE_DIST) {
-                    const alpha = (1 - distMouse / MOUSE_DIST) * 0.24;
-                    ctx.beginPath();
-                    ctx.moveTo(p.x, p.y);
-                    ctx.lineTo(mousePos.x, mousePos.y);
-                    ctx.strokeStyle = `rgba(0, 102, 255, ${alpha})`;
-                    ctx.lineWidth = 0.8;
-                    ctx.stroke();
-                }
+
+        function updateCount(currentTime) {
+            const elapsed = currentTime - startTime;
+            let progress = elapsed / duration;
+            if (progress > 1) progress = 1;
+
+            const currentCount = Math.floor(easeOutQuart(progress) * 100);
+            countDisplay.innerText = currentCount.toString().padStart(2, '0');
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCount);
+            } else {
+                // Done loading
+                setTimeout(() => {
+                    loader.classList.add('fade-out');
+                    // Trigger the first animations
+                    setTimeout(() => {
+                        document.body.classList.remove('overflow-hidden');
+                        initScrollReveal();
+                    }, 500);
+                }, 300);
             }
-            requestAnimationFrame(render);
         }
-        requestAnimationFrame(render);
+        requestAnimationFrame(updateCount);
     }
-    initMeshCanvas();
+    document.body.classList.add('overflow-hidden'); // Lock scroll during load
+    initPreloader();
 
     // ==========================================
-    // 1. LENIS SMOOTH SCROLLING INITIALIZATION
+    // 2. LENIS SMOOTH SCROLLING
     // ==========================================
     const lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom kinetic cubic easing
+        duration: 1.4,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
         direction: 'vertical',
-        gestureDirection: 'vertical',
         smooth: true,
-        mouseMultiplier: 1,
-        smoothTouch: false,
-        touchMultiplier: 2,
-        infinite: false,
     });
-
     function raf(time) {
         lenis.raf(time);
         requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
 
-    if (typeof ScrollTrigger !== 'undefined') {
-        lenis.on('scroll', ScrollTrigger.update);
-        gsap.registerPlugin(ScrollTrigger);
-
-        // ==========================================
-        // 2. GSAP AWWWARDS-TIER SCROLL ANIMATIONS
-        // ==========================================
-        const bentoCards = document.querySelectorAll('.bento-card');
-        bentoCards.forEach((card) => {
-            gsap.fromTo(card, 
-                { opacity: 0, y: 40, scale: 0.98 },
-                { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out",
-                  scrollTrigger: {
-                      trigger: card,
-                      start: "top 85%",
-                      toggleActions: "play none none none"
-                  }
+    // ==========================================
+    // 3. BLUR-REVEAL OBSERVER
+    // ==========================================
+    function initScrollReveal() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
                 }
-            );
-        });
+            });
+        }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
 
-        gsap.to(".architecture-bg-glow", {
-            yPercent: -20,
-            ease: "none",
-            scrollTrigger: {
-                trigger: "#architecture-section",
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true
-            }
-        });
-        
-        // Hero typography kinetic reveal
-        gsap.fromTo(".hero-title span", 
-            { y: 50, opacity: 0 },
-            { y: 0, opacity: 1, duration: 1, stagger: 0.15, ease: "power4.out", delay: 0.2 }
-        );
+        document.querySelectorAll('.blur-text, .blur-stagger').forEach(el => observer.observe(el));
     }
 
     // ==========================================
-    // 3. INTERACTIVE SIMULATOR CORE LOGIC
+    // 4. INTERACTIVE SIMULATOR CORE LOGIC
     // ==========================================
     const simulatorData = {
-        kubernetes: {
+        cloud: {
             logs: [
-                "[K8S CLUSTER] Inbound API request targeting gateway pod cluster /v2/deployments...",
+                "[K8S CLUSTER] Inbound API request targeting gateway pod cluster...",
                 "[TRACE] Parsing host microservice communication layer via ingress controller...",
-                "[EXPLOIT VECTOR] Remote Code Execution (RCE) payload injected into API headers via unauthorized deserialization.",
+                "[EXPLOIT VECTOR] Remote Code Execution (RCE) payload injected via deserialization.",
                 "[SYS_CALL] Attempting shell breakout execution string: sys_execve('/bin/sh')...",
-                "[KERNEL ENFORCEMENT] Modern eBPF cgroup socket hook intercepted threat token at Ring-0 path.",
-                "[MUTATION] Destination memory pointer modified in 0.27ms. Connection rerouted away from real deployment pods.",
-                "[ISOLATION] Attacker seamlessly isolated into high-fidelity ephemeral decoy runtime environment. Primary container health: nominal."
+                "[KERNEL ENFORCEMENT] Modern eBPF cgroup socket hook intercepted threat token.",
+                "[MUTATION] Destination memory pointer modified in 0.27ms. Connection rerouted.",
+                "[ISOLATION] Attacker seamlessly isolated into high-fidelity ephemeral decoy runtime."
             ],
-            metrics: { tap: "FAIL (Alert Only)", edr: "FAIL (Pod Terminated / SLA Dropped)", sm: "0.27ms MUTATED" }
+            metric: "0.27ms MUTATED",
+            title: "Cloud-Native Protection"
         },
         fintech: {
             logs: [
-                "[GATEWAY] Processing high-frequency clearing API payload: 2,400 concurrent transactions/sec...",
-                "[METADATA] Validating microsecond settlement asset payload arrays...",
-                "[EXPLOIT VECTOR] High-throughput race condition variant targeting API transaction settlement ledger.",
-                "[CRITICAL] Malicious thread attempting double-spend ledger modification system calls.",
-                "[KERNEL ENFORCEMENT] SilentMesh data plane maps anomalous execution pattern at socket abstraction layer.",
-                "[OVERHEAD CHECK] Dynamic enforcement overhead validation: <0.8% host CPU cycle consumption.",
-                "[RESOLVED] Connection isolated to dummy shadow ledger instance. Real transaction pipeline processing uninterrupted."
+                "[GATEWAY] Processing high-frequency clearing API payload: 2,400 TX/sec...",
+                "[EXPLOIT VECTOR] High-throughput race condition targeting settlement ledger.",
+                "[CRITICAL] Malicious thread attempting double-spend ledger modification.",
+                "[KERNEL ENFORCEMENT] SilentMesh maps anomalous execution pattern at socket layer.",
+                "[OVERHEAD CHECK] Dynamic enforcement validation: <0.8% host CPU cycle consumption.",
+                "[RESOLVED] Connection isolated to dummy shadow ledger. Real TX pipeline uninterrupted."
             ],
-            metrics: { tap: "FAIL (Post-Event Log)", edr: "FAIL (Processing Jitter >15ms)", sm: "0.27ms PROTECTED" }
+            metric: "0.27ms PROTECTED",
+            title: "Strict SLA Preservation"
         },
         enterprise: {
             logs: [
-                "[HOST NETWORK] Monitoring root core database deployment infrastructure...",
-                "[TRACE] External connection sequence initiated toward persistent transaction database layer on port 5432...",
-                "[EXPLOIT VECTOR] Automated scanning array launching credential stuffing and memory manipulation vectors.",
-                "[CRITICAL] Unauthorized lateral movement query signature identified across internal network boundary.",
-                "[KERNEL ENFORCEMENT] Shared BPF Ring Buffer pushing structural metadata to user-space Flight Recorder.",
-                "[RESOLVED] Traffic transparently encapsulated and routed to isolated cloud honeypot space. No application downtime."
+                "[HOST NETWORK] External connection sequence initiated toward persistent DB...",
+                "[EXPLOIT VECTOR] Automated scanning array launching credential stuffing.",
+                "[CRITICAL] Unauthorized lateral movement query signature identified.",
+                "[KERNEL ENFORCEMENT] Shared BPF Ring Buffer pushing metadata to Flight Recorder.",
+                "[RESOLVED] Traffic transparently encapsulated and routed to isolated cloud honeypot."
             ],
-            metrics: { tap: "FAIL (Undetected)", edr: "FAIL (Host Kernel Crash)", sm: "0.27ms CONTAINED" }
+            metric: "0.27ms CONTAINED",
+            title: "Zero Business Interruption"
         }
     };
 
     let typingTimeout = null;
 
-    window.runInfrastructureSimulation = function(sectorKey) {
-        document.querySelectorAll('.sim-selector-btn').forEach(btn => {
-            btn.classList.remove('border-blue-500', 'text-white', 'bg-blue-950/30');
-            btn.classList.add('border-slate-800', 'text-slate-400', 'bg-transparent');
+    window.runCinematicSimulation = function(sectorKey) {
+        // Toggle Active Button Styles
+        document.querySelectorAll('.sim-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.classList.add('text-slate-400', 'border-white/10');
+            btn.classList.remove('text-black', 'border-white');
         });
         
         const activeBtn = document.getElementById(`btn-${sectorKey}`);
         if(activeBtn) {
-            activeBtn.classList.remove('border-slate-800', 'text-slate-400', 'bg-transparent');
-            activeBtn.classList.add('border-blue-500', 'text-white', 'bg-blue-950/30');
+            activeBtn.classList.add('active', 'text-black', 'border-white');
+            activeBtn.classList.remove('text-slate-400', 'border-white/10');
         }
 
         const logConsole = document.getElementById('terminal-stream-output');
+        const metricDisplay = document.getElementById('terminal-metric');
+        const titleDisplay = document.getElementById('terminal-title');
+        
         const dataset = simulatorData[sectorKey];
         if (!logConsole || !dataset) return;
 
-        // Clear existing timeout if rapidly toggled
         if (typingTimeout) clearTimeout(typingTimeout);
         logConsole.innerHTML = "";
-        
-        const tapBox = document.getElementById('status-tap');
-        const edrBox = document.getElementById('status-edr');
-        const smBox = document.getElementById('status-sm');
-
-        [tapBox, edrBox, smBox].forEach(box => {
-            if (box) {
-                box.innerText = "WAITING...";
-                box.className = "font-mono text-sm text-slate-500";
-            }
-        });
+        if(metricDisplay) metricDisplay.innerText = "STREAMING...";
+        if(metricDisplay) metricDisplay.className = "text-slate-500 font-mono tracking-widest text-sm uppercase";
+        if(titleDisplay) titleDisplay.innerText = "Analyzing Vector...";
 
         let lineIndex = 0;
         
@@ -304,31 +224,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 let colorClass = "text-slate-400";
                 
                 if (lineText.includes("[EXPLOIT") || lineText.includes("[CRITICAL]")) colorClass = "text-red-400 font-semibold";
-                if (lineText.includes("[KERNEL") || lineText.includes("[RESOLVED]")) colorClass = "text-emerald-400 font-semibold";
+                if (lineText.includes("[KERNEL") || lineText.includes("[RESOLVED]") || lineText.includes("[ISOLATION]") || lineText.includes("[MUTATION]")) colorClass = "text-emerald-400 font-semibold";
                 
                 const lineDiv = document.createElement('div');
-                lineDiv.className = `${colorClass} mb-1.5 opacity-0 translate-y-2 transition-all duration-300`;
+                lineDiv.className = `${colorClass} mb-2 opacity-0 translate-y-2 transition-all duration-300`;
                 lineDiv.innerText = lineText;
                 logConsole.appendChild(lineDiv);
                 
-                // Trigger CSS reveal
+                // Cinematic reveal
                 setTimeout(() => {
                     lineDiv.classList.remove('opacity-0', 'translate-y-2');
                     logConsole.scrollTop = logConsole.scrollHeight;
                 }, 10);
 
                 lineIndex++;
-                typingTimeout = setTimeout(typeLine, 300);
+                typingTimeout = setTimeout(typeLine, Math.random() * 200 + 150); // Variable typing speed for realism
             } else {
-                if (tapBox) { tapBox.innerText = dataset.metrics.tap; tapBox.className = "font-mono text-sm text-red-500 font-bold"; }
-                if (edrBox) { edrBox.innerText = dataset.metrics.edr; edrBox.className = "font-mono text-sm text-amber-500 font-bold"; }
-                if (smBox) { smBox.innerText = dataset.metrics.sm; smBox.className = "font-mono text-sm text-emerald-400 font-bold tracking-wider"; }
+                if (metricDisplay) {
+                    metricDisplay.innerText = dataset.metric;
+                    metricDisplay.className = "text-emerald-400 font-mono tracking-widest font-bold text-sm uppercase";
+                }
+                if (titleDisplay) titleDisplay.innerText = dataset.title;
             }
         }
         typeLine();
     };
 
-    if (document.getElementById('btn-kubernetes')) {
-        runInfrastructureSimulation('kubernetes');
-    }
+    // Wait for loader to finish before starting first sim
+    setTimeout(() => {
+        if (document.getElementById('btn-cloud')) runCinematicSimulation('cloud');
+    }, 2800);
 });

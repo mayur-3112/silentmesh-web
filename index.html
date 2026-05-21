@@ -2,246 +2,213 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SilentMesh — Sub-Millisecond Deterministic Enforcement</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>SilentMesh | Sub-Millisecond Enforcement</title>
   
-  <meta name="description" content="SilentMesh delivers kernel-native threat enforcement with <1% overhead for Cloud-Native K8s, High-Frequency Fintech, and Sovereign Enterprise infrastructure.">
+  <meta name="description" content="Kernel-native threat enforcement with <1% overhead for Cloud-Native and Fintech infrastructure.">
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            void: '#090a0f',
-            electric: '#0066ff',
-            neon: '#00ff66',
-            threat: '#ff2a2a'
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="styles.css">
   
-  <!-- Lenis CSS Fix -->
-  <style>
-    html.lenis, html.lenis body { height: auto; }
-    .lenis.lenis-smooth { scroll-behavior: auto !important; }
-    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-    .lenis.lenis-stopped { overflow: hidden; }
-    .lenis.lenis-scrolling iframe { pointer-events: none; }
-  </style>
+  <!-- Custom Cinematic Styles -->
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-void text-slate-200 antialiased selection:bg-electric selection:text-white">
+<body class="bg-black text-white antialiased">
 
-  <!-- Canvas Background -->
-  <canvas id="mesh-canvas"></canvas>
+  <!-- ========================================== -->
+  <!-- 1. CINEMATIC PRELOADER                       -->
+  <!-- ========================================== -->
+  <div id="loader" class="loader">
+    <!-- Cinematic loader background video -->
+    <video preload playsinline autoplay loop muted class="loader-bg">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-background-27202-large.mp4" type="video/mp4">
+    </video>
+    
+    <div class="loader-header flex justify-between items-start font-mono text-xs uppercase tracking-widest text-white/50">
+      <div>SilentMesh Engine</div>
+      <div id="loader-utc">UTC 00:00:00</div>
+    </div>
+    
+    <div class="loader-center">
+      <div class="spinning-circle"></div>
+      <div class="loader-count">
+        <span id="loader-count-value">00</span>
+        <span class="loader-percent">%</span>
+      </div>
+    </div>
+    
+    <div class="loader-footer">
+      <div>Loading Sub-Millisecond Data Plane...</div>
+      <div class="animate-pulse text-electric">Connecting...</div>
+    </div>
+  </div>
 
-  <!-- Navigation -->
-  <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-void/50 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <svg class="w-8 h-8" viewBox="0 0 56 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M28 2L4 12V34C4 47.5 14.5 59.5 28 62C41.5 59.5 52 47.5 52 34V12L28 2Z" fill="#090a0f" stroke="#0066ff" stroke-width="1.8" stroke-opacity="0.7"/>
-          <circle cx="28" cy="30" r="4" fill="#0066ff"/>
-        </svg>
-        <span class="font-display font-bold text-xl tracking-tight">SILENT<span class="text-electric">MESH</span></span>
-      </div>
-      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-        <a href="#platform" class="hover:text-electric transition-colors">Platform</a>
-        <a href="#simulator" class="hover:text-electric transition-colors">Engine Demo</a>
-        <a href="#contact" class="px-5 py-2 bg-white/5 hover:bg-electric border border-white/10 hover:border-electric rounded-md transition-all">Deploy Pilot</a>
-      </div>
+  <!-- ========================================== -->
+  <!-- 2. NAVIGATION OVERLAY                        -->
+  <!-- ========================================== -->
+  <nav class="fixed top-0 w-full z-50 mix-blend-difference px-8 py-6 flex justify-between items-center pointer-events-none">
+    <div class="flex items-center gap-3">
+      <div class="w-2 h-2 rounded-full bg-neon animate-pulse"></div>
+      <span class="font-display font-bold text-xl tracking-tight text-white pointer-events-auto cursor-none">SILENTMESH</span>
+    </div>
+    <div class="font-mono text-sm tracking-widest uppercase pointer-events-auto cursor-none hover:text-white/70 transition-colors">
+      <a href="#simulator">Menu</a>
     </div>
   </nav>
 
-  <!-- HERO SECTION -->
-  <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-    <!-- Ambient Glows -->
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-electric/20 rounded-full blur-[120px] pointer-events-none"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon/10 rounded-full blur-[120px] pointer-events-none"></div>
-    
-    <div class="max-w-7xl mx-auto px-6 text-center z-10">
-      <div class="inline-block mb-6 px-4 py-1.5 rounded-full border border-neon/30 bg-neon/5 text-neon font-mono text-xs uppercase tracking-widest">
-        <span class="inline-block w-2 h-2 rounded-full bg-neon mr-2 animate-pulse"></span>
-        Kernel-Native Traffic Redirection Active
+  <!-- ========================================== -->
+  <!-- 3. HERO SECTION                              -->
+  <!-- ========================================== -->
+  <section class="relative h-screen w-full flex flex-col justify-center px-8 md:px-16 lg:px-24">
+    <video preload playsinline autoplay loop muted class="bg-video">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-white-lines-on-a-black-background-31682-large.mp4" type="video/mp4">
+    </video>
+    <div class="section-overlay"></div>
+
+    <div class="z-10 max-w-5xl mt-20">
+      <div class="inline-block mb-8 px-4 py-1.5 rounded-full border border-white/20 bg-white/5 text-white/70 font-mono text-xs uppercase tracking-widest blur-text">
+        Kernel-Native Threat Redirection
       </div>
-      
-      <h1 class="hero-title text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[1.1] tracking-tight mb-8">
-        <span class="block">SUB-MILLISECOND</span>
-        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-electric">DETERMINISTIC</span>
-        <span class="block">ENFORCEMENT</span>
+      <h1 class="text-6xl md:text-8xl lg:text-9xl font-display font-bold leading-[0.95] tracking-tighter mb-8 blur-stagger uppercase">
+        <span>Most Advanced</span><br>
+        <span class="text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.7);">Enforcement</span><br>
+        <span>Simulations</span>
       </h1>
-      
-      <p class="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-10">
-        Heavy user-space agents degrade application throughput and spike cloud compute costs. SilentMesh delivers wire-speed eBPF runtime security with <strong class="text-white">&lt;1% fixed host CPU overhead</strong>.
+      <p class="max-w-xl text-lg text-white/60 font-light blur-text leading-relaxed">
+        Modern threats require more than standard compliance checks. We deliver wire-speed eBPF runtime security with <strong class="text-white">&lt;1% fixed CPU overhead</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 4. EDITORIAL SECTIONS (HACKFIRST STYLE)      -->
+  <!-- ========================================== -->
+  
+  <!-- SECTION 01: Cloud-Native -->
+  <section class="relative min-h-screen w-full flex flex-col justify-center px-8 md:px-16 lg:px-24 overflow-hidden py-32">
+    <video preload playsinline autoplay loop muted class="bg-video opacity-20">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-server-rack-in-a-data-center-31350-large.mp4" type="video/mp4">
+    </video>
+    
+    <div class="editorial-number">01</div>
+    
+    <div class="z-10 w-full max-w-4xl ml-auto">
+      <div class="font-mono text-electric text-sm tracking-widest uppercase mb-6 blur-text">The Sidecar Tax</div>
+      <h2 class="text-5xl md:text-7xl font-display font-bold leading-[1.1] tracking-tight mb-8 blur-text">
+        Monolithic security tools inject massive <span class="italic text-white/50">latency jitter</span>.
+      </h2>
+      <p class="text-xl text-white/60 font-light blur-text leading-relaxed max-w-2xl mb-12">
+        We handle routing directly inside the Linux kernel cgroup path. No sidecar proxy latency. No user-space context switching. Just pure ring-0 speed.
       </p>
       
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="#simulator" class="px-8 py-4 bg-electric text-white font-medium rounded-md hover:bg-blue-600 transition-colors w-full sm:w-auto">Run Interactive Demo</a>
-        <a href="#contact" class="px-8 py-4 bg-white/5 border border-white/10 hover:border-white/20 text-white font-medium rounded-md transition-colors w-full sm:w-auto">Request Architecture Review</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- BENTO GRID 01: THE VERTICAL EXPANSION -->
-  <section id="platform" class="py-24 relative z-10">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="mb-16">
-        <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Universal Infrastructure Primitives</h2>
-        <p class="text-slate-400 max-w-2xl">The eBPF core handles low-level Linux systems data primitives at wire-speed across all high-throughput sectors.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <!-- Card A: Cloud-Native K8s -->
-        <div class="bento-card p-8 rounded-2xl flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-lg bg-electric/10 border border-electric/30 flex items-center justify-center mb-6">
-              <svg class="w-6 h-6 text-electric" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            </div>
-            <h3 class="text-2xl font-display font-bold mb-3">Cloud-Native K8s</h3>
-            <p class="text-sm text-slate-400 mb-6">Monolithic security tools inject massive latency jitter. We handle routing directly inside the Linux kernel cgroup path.</p>
-          </div>
-          <div class="pt-6 border-t border-white/5">
-            <span class="text-xs font-mono text-neon uppercase tracking-wider">Zero Sidecar Tax</span>
-          </div>
+      <div class="flex gap-12 border-t border-white/10 pt-8 blur-stagger">
+        <div>
+          <div class="text-4xl font-display font-bold mb-1">&lt;1%</div>
+          <div class="font-mono text-xs text-white/50 uppercase tracking-widest">CPU Overhead</div>
         </div>
-
-        <!-- Card B: Fintech -->
-        <div class="bento-card p-8 rounded-2xl flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-6">
-              <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            </div>
-            <h3 class="text-2xl font-display font-bold mb-3">High-Frequency Fintech</h3>
-            <p class="text-sm text-slate-400 mb-6">Inline blocking drops transactions. Legitimate transactions bypass our kernel hook at wire-speed; threats are instantly mutated.</p>
-          </div>
-          <div class="pt-6 border-t border-white/5">
-            <span class="text-xs font-mono text-emerald-400 uppercase tracking-wider">Strict SLA Preservation</span>
-          </div>
+        <div>
+          <div class="text-4xl font-display font-bold mb-1">0</div>
+          <div class="font-mono text-xs text-white/50 uppercase tracking-widest">Sidecar Proxies</div>
         </div>
-
-        <!-- Card C: Enterprise -->
-        <div class="bento-card p-8 rounded-2xl flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center mb-6">
-              <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-            </div>
-            <h3 class="text-2xl font-display font-bold mb-3">Sovereign Enterprise</h3>
-            <p class="text-sm text-slate-400 mb-6">Heavy agents crash databases. We decouple enforcement from payload handling, failing open gracefully for zero business interruption.</p>
-          </div>
-          <div class="pt-6 border-t border-white/5">
-            <span class="text-xs font-mono text-purple-400 uppercase tracking-wider">Host Stability Intact</span>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
 
-  <!-- BENTO GRID 02: CORE TECHNICAL MOAT & EXPLOIT SIMULATOR -->
-  <section id="simulator" class="py-24 relative z-10 architecture-bg-glow">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="mb-12">
-        <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Data Plane vs Control Plane</h2>
-        <p class="text-slate-400 max-w-2xl">Watch modern eBPF data mutation paired with a split user-space control plane.</p>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Component 1: Interactive Terminal -->
-        <div class="bento-card rounded-2xl lg:col-span-2 overflow-hidden flex flex-col">
-          <div class="bg-void/80 border-b border-white/5 px-6 py-4 flex flex-wrap gap-3">
-            <button id="btn-kubernetes" onclick="runInfrastructureSimulation('kubernetes')" class="sim-selector-btn px-4 py-2 rounded border border-slate-800 text-sm font-mono transition-colors">K8S MICROSERVICES</button>
-            <button id="btn-fintech" onclick="runInfrastructureSimulation('fintech')" class="sim-selector-btn px-4 py-2 rounded border border-slate-800 text-sm font-mono transition-colors">FINTECH API</button>
-            <button id="btn-enterprise" onclick="runInfrastructureSimulation('enterprise')" class="sim-selector-btn px-4 py-2 rounded border border-slate-800 text-sm font-mono transition-colors">ENTERPRISE DB</button>
-          </div>
-          
-          <div class="p-6 bg-[#030507] h-[400px] overflow-y-auto font-mono text-sm leading-relaxed" id="terminal-stream-output">
-            <!-- GSAP Typewriter Output Injected Here -->
-          </div>
-        </div>
-
-        <!-- Component 2: Multi-Sector Metric Panels -->
-        <div class="flex flex-col gap-6">
-          
-          <div class="bento-card p-6 rounded-2xl flex-1">
-            <h4 class="text-xs text-slate-500 font-mono mb-2 uppercase">Traditional Span/Tap</h4>
-            <div id="status-tap" class="font-mono text-sm text-slate-500">WAITING...</div>
-            <div class="mt-4 pt-4 border-t border-white/5">
-              <span class="text-xs text-slate-400">Visibility only. No runtime mutation capability.</span>
-            </div>
-          </div>
-
-          <div class="bento-card p-6 rounded-2xl flex-1">
-            <h4 class="text-xs text-slate-500 font-mono mb-2 uppercase">Legacy Inline EDR</h4>
-            <div id="status-edr" class="font-mono text-sm text-slate-500">WAITING...</div>
-            <div class="mt-4 pt-4 border-t border-white/5">
-              <span class="text-xs text-slate-400">Injects 50-200ms latency jitter. Breaks high-throughput SLAs.</span>
-            </div>
-          </div>
-
-          <div class="bento-card p-6 rounded-2xl flex-1 border-electric/30 bg-electric/5 shadow-[0_0_30px_rgba(0,102,255,0.1)]">
-            <h4 class="text-xs text-blue-400 font-mono mb-2 uppercase">SilentMesh Engine</h4>
-            <div id="status-sm" class="font-mono text-sm text-slate-500">WAITING...</div>
-            <div class="mt-4 pt-4 border-t border-electric/20">
-              <span class="text-xs text-slate-300">0.27ms wire-speed data plane mutation. Ring-0 enforcement.</span>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA SECTION -->
-  <section id="contact" class="py-32 relative z-10 border-t border-white/5">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-4xl md:text-6xl font-display font-bold mb-6">Stop Auditing Your Own Disasters.</h2>
-      <p class="text-xl text-slate-400 mb-10">Deploy sub-millisecond deterministic enforcement in hours. Apply for a staging pilot to prove latency metrics in your environment.</p>
+  <!-- SECTION 02: Fintech -->
+  <section class="relative min-h-screen w-full flex flex-col justify-center px-8 md:px-16 lg:px-24 overflow-hidden py-32 bg-[#050508]">
+    <div class="editorial-number" style="left: auto; right: -5%;">02</div>
+    
+    <div class="z-10 w-full max-w-4xl">
+      <div class="font-mono text-neon text-sm tracking-widest uppercase mb-6 blur-text">SLA Preservation</div>
+      <h2 class="text-5xl md:text-7xl font-display font-bold leading-[1.1] tracking-tight mb-8 blur-text">
+        Inline blocking drops <span class="italic text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.7);">transactions</span>.
+      </h2>
+      <p class="text-xl text-white/60 font-light blur-text leading-relaxed max-w-2xl mb-12">
+        Legitimate high-frequency trading API calls bypass our kernel hook at wire-speed. Threats are instantly mutated and diverted into high-fidelity ephemeral decoys.
+      </p>
       
-      <form action="https://formspree.io/f/xvonzgkb" method="POST" class="max-w-md mx-auto bento-card p-8 rounded-2xl text-left">
-        <div class="mb-4">
-          <label class="block text-xs font-mono text-slate-400 mb-2">Corporate Email</label>
-          <input type="email" name="email" required class="w-full bg-void border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-electric transition-colors" placeholder="engineering@enterprise.com">
+      <div class="flex gap-12 border-t border-white/10 pt-8 blur-stagger">
+        <div>
+          <div class="text-4xl font-display font-bold mb-1">0.27ms</div>
+          <div class="font-mono text-xs text-white/50 uppercase tracking-widest">Mutation Latency</div>
         </div>
-        <div class="mb-6">
-          <label class="block text-xs font-mono text-slate-400 mb-2">Infrastructure Type</label>
-          <select name="infra" class="w-full bg-void border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-electric transition-colors">
-            <option value="k8s">Kubernetes / Cloud-Native</option>
-            <option value="fintech">High-Frequency API Gateway</option>
-            <option value="enterprise">Sovereign Enterprise DB</option>
-          </select>
+        <div>
+          <div class="text-4xl font-display font-bold mb-1">100%</div>
+          <div class="font-mono text-xs text-white/50 uppercase tracking-widest">Uptime</div>
         </div>
-        <button type="submit" class="w-full bg-electric hover:bg-blue-600 text-white font-medium py-3 rounded-md transition-colors">Request Staging Pilot</button>
-      </form>
+      </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="py-10 border-t border-white/5 relative z-10 bg-void/80 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 font-mono">
-      <div>&copy; 2026 SilentMesh Systems Private Limited.</div>
-      <div class="flex gap-6">
-        <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neon"></span> eBPF Ready</span>
-        <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-electric"></span> Ring-0 Enforcement</span>
+  <!-- ========================================== -->
+  <!-- 5. CINEMATIC EXPLOIT SIMULATOR               -->
+  <!-- ========================================== -->
+  <section id="simulator" class="relative min-h-screen w-full py-32 px-8 md:px-16 flex flex-col justify-center items-center">
+    <!-- Abstract cinematic background for simulator -->
+    <video preload playsinline autoplay loop muted class="bg-video opacity-[0.15]">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-background-27202-large.mp4" type="video/mp4">
+    </video>
+    <div class="section-overlay"></div>
+
+    <div class="text-center mb-16 blur-text z-10">
+      <div class="font-mono text-xs tracking-widest text-white/50 uppercase mb-4">Interactive Engine</div>
+      <h2 class="text-5xl md:text-6xl font-display font-bold">Watch The Data Plane</h2>
+    </div>
+
+    <div class="w-full max-w-5xl terminal-glass rounded-2xl overflow-hidden flex flex-col lg:flex-row blur-text z-10">
+      
+      <!-- Controls / Specs Sidebar -->
+      <div class="w-full lg:w-1/3 bg-white/[0.02] border-r border-white/5 p-8 flex flex-col justify-between gap-8">
+        <div>
+          <h3 class="font-mono text-sm uppercase tracking-widest text-white/60 mb-6">Select Exploit Vector</h3>
+          <div class="flex flex-col gap-3">
+            <button id="btn-cloud" onclick="runCinematicSimulation('cloud')" class="sim-btn w-full text-left px-5 py-4 border border-white/10 rounded uppercase font-mono text-sm tracking-widest transition-all">Cloud-Native K8S</button>
+            <button id="btn-fintech" onclick="runCinematicSimulation('fintech')" class="sim-btn w-full text-left px-5 py-4 border border-white/10 rounded uppercase font-mono text-sm tracking-widest transition-all">Fintech API</button>
+            <button id="btn-enterprise" onclick="runCinematicSimulation('enterprise')" class="sim-btn w-full text-left px-5 py-4 border border-white/10 rounded uppercase font-mono text-sm tracking-widest transition-all">Enterprise DB</button>
+          </div>
+        </div>
+        
+        <div>
+          <div class="font-mono text-xs text-white/40 uppercase mb-2">Resolution Status</div>
+          <div id="terminal-metric" class="text-emerald-400 font-mono tracking-widest font-bold text-sm uppercase">WAITING...</div>
+          <div id="terminal-title" class="text-xl font-display font-bold mt-2">Select a vector above</div>
+        </div>
       </div>
+
+      <!-- Terminal Output -->
+      <div class="w-full lg:w-2/3 p-8 h-[500px] overflow-y-auto bg-black/40 font-mono text-[13px] leading-loose">
+        <div class="text-white/30 mb-6 border-b border-white/10 pb-4">
+          [root@silentmesh-gateway ~]# ./ebpf_flight_recorder --stream-active
+        </div>
+        <div id="terminal-stream-output">
+          <!-- JS Typewriter injects here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 6. CINEMATIC FOOTER CTA                      -->
+  <!-- ========================================== -->
+  <footer class="relative py-32 px-8 flex flex-col items-center justify-center text-center overflow-hidden border-t border-white/5">
+    <div class="blur-text max-w-3xl z-10">
+      <h2 class="text-5xl md:text-7xl font-display font-bold leading-[1.1] mb-8">
+        Outsmarting Attackers. <br><span class="italic text-white/50">Securing Tomorrow.</span>
+      </h2>
+      <p class="text-lg text-white/50 mb-12 font-light">With SilentMesh, you're not just checking the box on security. You are forged in fire.</p>
+      <a href="mailto:pilot@silentmesh.me" class="inline-block px-10 py-5 bg-white text-black hover:bg-white/80 font-mono uppercase tracking-widest text-sm transition-colors rounded-none">
+        Request Staging Pilot
+      </a>
+    </div>
+    
+    <div class="absolute bottom-6 w-full text-center font-mono text-[10px] text-white/30 uppercase tracking-widest z-10">
+      &copy; 2026 SilentMesh Systems. Data Plane Enforcement.
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <!-- GSAP & ScrollTrigger -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <!-- Lenis Smooth Scroll -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.27/bundled/lenis.min.js"></script>
-  
+  <!-- Application Logic -->
   <script src="app.js"></script>
 </body>
 </html>

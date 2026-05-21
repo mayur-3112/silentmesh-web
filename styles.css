@@ -1,141 +1,199 @@
 /* ═══════════════════════════════════════════════════════════════════════════
- * SILENTMESH — Universal Infrastructure Design System
+ * SILENTMESH — Cinematic Architecture (HackFirst Aesthetic)
  * ═══════════════════════════════════════════════════════════════════════════
- * Built alongside Tailwind CSS. Contains custom cursor, font imports, 
- * mesh canvas setup, and specific glow effects.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 :root {
-  --color-void: #090a0f;
-  --color-blue: #0066ff;
-  --color-green: #00ff66;
-  --color-red: #ff2a2a;
+  --color-void: #030507;
+  --color-electric: #0066ff;
+  --color-neon: #00ff66;
+  --ease-cinematic: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 body {
   background-color: var(--color-void);
-  color: #e2e8f0; /* slate-200 */
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  /* Subtle film grain via data URI for texture */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-blend-mode: overlay;
-  background-size: 150px;
-  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Headings */
+/* ── Typography Override ── */
 h1, h2, h3, h4, h5, h6, .font-display {
   font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
-
-/* Technical Readouts */
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* ── Mesh Canvas Background ── */
-#mesh-canvas {
+/* ── Custom Cursor ── */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+  a, button, input { cursor: none; }
+  .cursor-dot {
+    position: fixed; top: 0; left: 0; width: 6px; height: 6px;
+    background: #fff; border-radius: 50%; pointer-events: none;
+    z-index: 10001; transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, background 0.3s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 50%; pointer-events: none;
+    z-index: 10000; transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease, border-color 0.4s ease;
+    mix-blend-mode: difference;
+  }
+}
+
+/* ── Preloader ── */
+.loader {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  background: var(--color-void);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+  transition: opacity 1.5s var(--ease-cinematic), transform 1.5s var(--ease-cinematic);
+}
+.loader.fade-out {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
+.loader-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.15;
+  z-index: -1;
+}
+.loader-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.loader-count {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15vw;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  display: flex;
+  align-items: baseline;
+}
+.loader-percent {
+  font-size: 4vw;
+  font-weight: 300;
+  margin-left: 10px;
+  color: var(--color-electric);
+}
+.loader-footer {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+.spinning-circle {
+  position: absolute;
+  width: 30vw; height: 30vw;
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 50%;
+  animation: spin 20s linear infinite;
+  pointer-events: none;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* ── Video Backgrounds ── */
+.bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4; /* Base darkness */
+  transition: opacity 1s ease;
+}
+.section-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(3,5,7,1) 0%, rgba(3,5,7,0.3) 20%, rgba(3,5,7,0.3) 80%, rgba(3,5,7,1) 100%);
   z-index: -1;
   pointer-events: none;
 }
 
-/* ── Custom Cursor ── */
-@media (hover: hover) and (pointer: fine) {
-  body {
-    cursor: none;
-  }
-  a, button, input, select, textarea {
-    cursor: none;
-  }
-
-  .cursor-dot {
-    position: fixed;
-    top: 0; left: 0;
-    width: 8px; height: 8px;
-    background: var(--color-blue);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10001;
-    transform: translate(-50%, -50%);
-    transition: width 0.25s cubic-bezier(.23,1,.32,1), height 0.25s cubic-bezier(.23,1,.32,1), background 0.25s ease;
-    mix-blend-mode: difference;
-  }
-
-  .cursor-ring {
-    position: fixed;
-    top: 0; left: 0;
-    width: 36px; height: 36px;
-    border: 1.5px solid rgba(0, 102, 255, 0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10000;
-    transform: translate(-50%, -50%);
-    transition: width 0.35s cubic-bezier(.23,1,.32,1), height 0.35s cubic-bezier(.23,1,.32,1), border-color 0.3s ease;
-  }
+/* ── Blur-Reveal Typography Animations ── */
+.blur-text {
+  filter: blur(25px);
+  opacity: 0;
+  transform: translateY(60px) scale(0.95);
+  transition: filter 1.8s var(--ease-cinematic), 
+              opacity 1.8s var(--ease-cinematic), 
+              transform 1.8s var(--ease-cinematic);
+  will-change: filter, opacity, transform;
+}
+.blur-text.visible {
+  filter: blur(0);
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
-/* ── Glow Utilities ── */
-.text-glow-blue {
-  text-shadow: 0 0 20px rgba(0, 102, 255, 0.6);
+.blur-stagger > * {
+  filter: blur(20px);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: filter 1.4s var(--ease-cinematic), 
+              opacity 1.4s var(--ease-cinematic), 
+              transform 1.4s var(--ease-cinematic);
 }
-.text-glow-green {
-  text-shadow: 0 0 20px rgba(0, 255, 102, 0.6);
+.blur-stagger.visible > *:nth-child(1) { transition-delay: 0.1s; filter: blur(0); opacity: 1; transform: translateY(0); }
+.blur-stagger.visible > *:nth-child(2) { transition-delay: 0.25s; filter: blur(0); opacity: 1; transform: translateY(0); }
+.blur-stagger.visible > *:nth-child(3) { transition-delay: 0.4s; filter: blur(0); opacity: 1; transform: translateY(0); }
+.blur-stagger.visible > *:nth-child(4) { transition-delay: 0.55s; filter: blur(0); opacity: 1; transform: translateY(0); }
+
+/* ── Editorial Layout specific ── */
+.editorial-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 25vw;
+  font-weight: 700;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.05);
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  z-index: -1;
+  user-select: none;
 }
 
-.architecture-bg-glow {
-  background: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.15) 0%, rgba(9, 10, 15, 0) 60%);
+/* ── Terminal Simulator Overhaul ── */
+.terminal-glass {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 30px 60px rgba(0,0,0,0.8);
 }
-
-/* ── Bento Card Overrides ── */
-.bento-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: border-color 0.3s ease, background 0.3s ease;
-}
-.bento-card:hover {
-  border-color: rgba(0, 102, 255, 0.3);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* ── Custom Scrollbar ── */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-void);
-}
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-blue);
+.sim-btn.active {
+  background: white;
+  color: black;
 }
 
 /* Fix for Lenis */
-html.lenis, html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }
