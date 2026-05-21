@@ -19,10 +19,8 @@
   <!-- 1. CINEMATIC PRELOADER                       -->
   <!-- ========================================== -->
   <div id="loader" class="loader">
-    <!-- Cinematic loader background video -->
-    <video preload playsinline autoplay loop muted class="loader-bg">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-background-27202-large.mp4" type="video/mp4">
-    </video>
+    <!-- Cinematic loader background image -->
+    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" class="bg-image loader-bg" alt="tech bg" />
     
     <div class="loader-header flex justify-between items-start font-mono text-xs uppercase tracking-widest text-white/50">
       <div>SilentMesh Engine</div>
@@ -59,10 +57,8 @@
   <!-- ========================================== -->
   <!-- 3. HERO SECTION                              -->
   <!-- ========================================== -->
-  <section class="relative h-screen w-full flex flex-col justify-center px-8 md:px-16 lg:px-24">
-    <video preload playsinline autoplay loop muted class="bg-video">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-white-lines-on-a-black-background-31682-large.mp4" type="video/mp4">
-    </video>
+  <section class="relative h-screen w-full flex flex-col justify-center px-8 md:px-16 lg:px-24 overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" class="bg-image" alt="cyber background" />
     <div class="section-overlay"></div>
 
     <div class="z-10 max-w-5xl mt-20">
@@ -86,9 +82,7 @@
   
   <!-- SECTION 01: Cloud-Native -->
   <section class="relative min-h-screen w-full flex flex-col justify-center px-8 md:px-16 lg:px-24 overflow-hidden py-32">
-    <video preload playsinline autoplay loop muted class="bg-video opacity-20">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-server-rack-in-a-data-center-31350-large.mp4" type="video/mp4">
-    </video>
+    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2034&auto=format&fit=crop" class="bg-image opacity-20" alt="server background" />
     
     <div class="editorial-number">01</div>
     
@@ -143,11 +137,9 @@
   <!-- ========================================== -->
   <!-- 5. CINEMATIC EXPLOIT SIMULATOR               -->
   <!-- ========================================== -->
-  <section id="simulator" class="relative min-h-screen w-full py-32 px-8 md:px-16 flex flex-col justify-center items-center">
+  <section id="simulator" class="relative min-h-screen w-full py-32 px-8 md:px-16 flex flex-col justify-center items-center overflow-hidden">
     <!-- Abstract cinematic background for simulator -->
-    <video preload playsinline autoplay loop muted class="bg-video opacity-[0.15]">
-      <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-background-27202-large.mp4" type="video/mp4">
-    </video>
+    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop" class="bg-image opacity-[0.25]" alt="matrix background" />
     <div class="section-overlay"></div>
 
     <div class="text-center mb-16 blur-text z-10">
@@ -207,7 +199,7 @@
   </footer>
 
   <!-- Lenis Smooth Scroll -->
-  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.27/bundled/lenis.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
   <!-- Application Logic -->
   <script src="app.js"></script>
 </body>

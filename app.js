@@ -4,7 +4,13 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-    
+    // Wait for loader to finish before starting first sim
+    setTimeout(() => {
+        if (window.runCinematicSimulation && document.getElementById('btn-cloud')) {
+            window.runCinematicSimulation('cloud');
+        }
+    }, 2800);
+
     // ==========================================
     // 0. UTILITIES & CUSTOM CURSOR
     // ==========================================
@@ -117,17 +123,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     // 2. LENIS SMOOTH SCROLLING
     // ==========================================
-    const lenis = new Lenis({
-        duration: 1.4,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-        direction: 'vertical',
-        smooth: true,
-    });
-    function raf(time) {
-        lenis.raf(time);
+    try {
+        const lenis = new Lenis({
+            duration: 1.4,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+            direction: 'vertical',
+            smooth: true,
+        });
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
         requestAnimationFrame(raf);
+    } catch (e) {
+        console.error("Lenis failed to load", e);
     }
-    requestAnimationFrame(raf);
 
     // ==========================================
     // 3. BLUR-REVEAL OBSERVER
@@ -145,113 +155,109 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('.blur-text, .blur-stagger').forEach(el => observer.observe(el));
     }
 
-    // ==========================================
-    // 4. INTERACTIVE SIMULATOR CORE LOGIC
-    // ==========================================
-    const simulatorData = {
-        cloud: {
-            logs: [
-                "[K8S CLUSTER] Inbound API request targeting gateway pod cluster...",
-                "[TRACE] Parsing host microservice communication layer via ingress controller...",
-                "[EXPLOIT VECTOR] Remote Code Execution (RCE) payload injected via deserialization.",
-                "[SYS_CALL] Attempting shell breakout execution string: sys_execve('/bin/sh')...",
-                "[KERNEL ENFORCEMENT] Modern eBPF cgroup socket hook intercepted threat token.",
-                "[MUTATION] Destination memory pointer modified in 0.27ms. Connection rerouted.",
-                "[ISOLATION] Attacker seamlessly isolated into high-fidelity ephemeral decoy runtime."
-            ],
-            metric: "0.27ms MUTATED",
-            title: "Cloud-Native Protection"
-        },
-        fintech: {
-            logs: [
-                "[GATEWAY] Processing high-frequency clearing API payload: 2,400 TX/sec...",
-                "[EXPLOIT VECTOR] High-throughput race condition targeting settlement ledger.",
-                "[CRITICAL] Malicious thread attempting double-spend ledger modification.",
-                "[KERNEL ENFORCEMENT] SilentMesh maps anomalous execution pattern at socket layer.",
-                "[OVERHEAD CHECK] Dynamic enforcement validation: <0.8% host CPU cycle consumption.",
-                "[RESOLVED] Connection isolated to dummy shadow ledger. Real TX pipeline uninterrupted."
-            ],
-            metric: "0.27ms PROTECTED",
-            title: "Strict SLA Preservation"
-        },
-        enterprise: {
-            logs: [
-                "[HOST NETWORK] External connection sequence initiated toward persistent DB...",
-                "[EXPLOIT VECTOR] Automated scanning array launching credential stuffing.",
-                "[CRITICAL] Unauthorized lateral movement query signature identified.",
-                "[KERNEL ENFORCEMENT] Shared BPF Ring Buffer pushing metadata to Flight Recorder.",
-                "[RESOLVED] Traffic transparently encapsulated and routed to isolated cloud honeypot."
-            ],
-            metric: "0.27ms CONTAINED",
-            title: "Zero Business Interruption"
-        }
-    };
-
-    let typingTimeout = null;
-
-    window.runCinematicSimulation = function(sectorKey) {
-        // Toggle Active Button Styles
-        document.querySelectorAll('.sim-btn').forEach(btn => {
-            btn.classList.remove('active');
-            btn.classList.add('text-slate-400', 'border-white/10');
-            btn.classList.remove('text-black', 'border-white');
-        });
-        
-        const activeBtn = document.getElementById(`btn-${sectorKey}`);
-        if(activeBtn) {
-            activeBtn.classList.add('active', 'text-black', 'border-white');
-            activeBtn.classList.remove('text-slate-400', 'border-white/10');
-        }
-
-        const logConsole = document.getElementById('terminal-stream-output');
-        const metricDisplay = document.getElementById('terminal-metric');
-        const titleDisplay = document.getElementById('terminal-title');
-        
-        const dataset = simulatorData[sectorKey];
-        if (!logConsole || !dataset) return;
-
-        if (typingTimeout) clearTimeout(typingTimeout);
-        logConsole.innerHTML = "";
-        if(metricDisplay) metricDisplay.innerText = "STREAMING...";
-        if(metricDisplay) metricDisplay.className = "text-slate-500 font-mono tracking-widest text-sm uppercase";
-        if(titleDisplay) titleDisplay.innerText = "Analyzing Vector...";
-
-        let lineIndex = 0;
-        
-        function typeLine() {
-            if (lineIndex < dataset.logs.length) {
-                const lineText = dataset.logs[lineIndex];
-                let colorClass = "text-slate-400";
-                
-                if (lineText.includes("[EXPLOIT") || lineText.includes("[CRITICAL]")) colorClass = "text-red-400 font-semibold";
-                if (lineText.includes("[KERNEL") || lineText.includes("[RESOLVED]") || lineText.includes("[ISOLATION]") || lineText.includes("[MUTATION]")) colorClass = "text-emerald-400 font-semibold";
-                
-                const lineDiv = document.createElement('div');
-                lineDiv.className = `${colorClass} mb-2 opacity-0 translate-y-2 transition-all duration-300`;
-                lineDiv.innerText = lineText;
-                logConsole.appendChild(lineDiv);
-                
-                // Cinematic reveal
-                setTimeout(() => {
-                    lineDiv.classList.remove('opacity-0', 'translate-y-2');
-                    logConsole.scrollTop = logConsole.scrollHeight;
-                }, 10);
-
-                lineIndex++;
-                typingTimeout = setTimeout(typeLine, Math.random() * 200 + 150); // Variable typing speed for realism
-            } else {
-                if (metricDisplay) {
-                    metricDisplay.innerText = dataset.metric;
-                    metricDisplay.className = "text-emerald-400 font-mono tracking-widest font-bold text-sm uppercase";
-                }
-                if (titleDisplay) titleDisplay.innerText = dataset.title;
-            }
-        }
-        typeLine();
-    };
-
-    // Wait for loader to finish before starting first sim
-    setTimeout(() => {
-        if (document.getElementById('btn-cloud')) runCinematicSimulation('cloud');
-    }, 2800);
 });
+
+// ==========================================
+// 4. INTERACTIVE SIMULATOR CORE LOGIC
+// ==========================================
+const simulatorData = {
+    cloud: {
+        logs: [
+            "[K8S CLUSTER] Inbound API request targeting gateway pod cluster...",
+            "[TRACE] Parsing host microservice communication layer via ingress controller...",
+            "[EXPLOIT VECTOR] Remote Code Execution (RCE) payload injected via deserialization.",
+            "[SYS_CALL] Attempting shell breakout execution string: sys_execve('/bin/sh')...",
+            "[KERNEL ENFORCEMENT] Modern eBPF cgroup socket hook intercepted threat token.",
+            "[MUTATION] Destination memory pointer modified in 0.27ms. Connection rerouted.",
+            "[ISOLATION] Attacker seamlessly isolated into high-fidelity ephemeral decoy runtime."
+        ],
+        metric: "0.27ms MUTATED",
+        title: "Cloud-Native Protection"
+    },
+    fintech: {
+        logs: [
+            "[GATEWAY] Processing high-frequency clearing API payload: 2,400 TX/sec...",
+            "[EXPLOIT VECTOR] High-throughput race condition targeting settlement ledger.",
+            "[CRITICAL] Malicious thread attempting double-spend ledger modification.",
+            "[KERNEL ENFORCEMENT] SilentMesh maps anomalous execution pattern at socket layer.",
+            "[OVERHEAD CHECK] Dynamic enforcement validation: <0.8% host CPU cycle consumption.",
+            "[RESOLVED] Connection isolated to dummy shadow ledger. Real TX pipeline uninterrupted."
+        ],
+        metric: "0.27ms PROTECTED",
+        title: "Strict SLA Preservation"
+    },
+    enterprise: {
+        logs: [
+            "[HOST NETWORK] External connection sequence initiated toward persistent DB...",
+            "[EXPLOIT VECTOR] Automated scanning array launching credential stuffing.",
+            "[CRITICAL] Unauthorized lateral movement query signature identified.",
+            "[KERNEL ENFORCEMENT] Shared BPF Ring Buffer pushing metadata to Flight Recorder.",
+            "[RESOLVED] Traffic transparently encapsulated and routed to isolated cloud honeypot."
+        ],
+        metric: "0.27ms CONTAINED",
+        title: "Zero Business Interruption"
+    }
+};
+
+let typingTimeout = null;
+
+window.runCinematicSimulation = function(sectorKey) {
+    // Toggle Active Button Styles
+    document.querySelectorAll('.sim-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.add('text-slate-400', 'border-white/10');
+        btn.classList.remove('text-black', 'border-white');
+    });
+    
+    const activeBtn = document.getElementById(`btn-${sectorKey}`);
+    if(activeBtn) {
+        activeBtn.classList.add('active', 'text-black', 'border-white');
+        activeBtn.classList.remove('text-slate-400', 'border-white/10');
+    }
+
+    const logConsole = document.getElementById('terminal-stream-output');
+    const metricDisplay = document.getElementById('terminal-metric');
+    const titleDisplay = document.getElementById('terminal-title');
+    
+    const dataset = simulatorData[sectorKey];
+    if (!logConsole || !dataset) return;
+
+    if (typingTimeout) clearTimeout(typingTimeout);
+    logConsole.innerHTML = "";
+    if(metricDisplay) metricDisplay.innerText = "STREAMING...";
+    if(metricDisplay) metricDisplay.className = "text-slate-500 font-mono tracking-widest text-sm uppercase";
+    if(titleDisplay) titleDisplay.innerText = "Analyzing Vector...";
+
+    let lineIndex = 0;
+    
+    function typeLine() {
+        if (lineIndex < dataset.logs.length) {
+            const lineText = dataset.logs[lineIndex];
+            let colorClass = "text-slate-400";
+            
+            if (lineText.includes("[EXPLOIT") || lineText.includes("[CRITICAL]")) colorClass = "text-red-400 font-semibold";
+            if (lineText.includes("[KERNEL") || lineText.includes("[RESOLVED]") || lineText.includes("[ISOLATION]") || lineText.includes("[MUTATION]")) colorClass = "text-emerald-400 font-semibold";
+            
+            const lineDiv = document.createElement('div');
+            lineDiv.className = `${colorClass} mb-2 opacity-0 translate-y-2 transition-all duration-300`;
+            lineDiv.innerText = lineText;
+            logConsole.appendChild(lineDiv);
+            
+            // Cinematic reveal
+            setTimeout(() => {
+                lineDiv.classList.remove('opacity-0', 'translate-y-2');
+                logConsole.scrollTop = logConsole.scrollHeight;
+            }, 10);
+
+            lineIndex++;
+            typingTimeout = setTimeout(typeLine, Math.random() * 200 + 150); // Variable typing speed for realism
+        } else {
+            if (metricDisplay) {
+                metricDisplay.innerText = dataset.metric;
+                metricDisplay.className = "text-emerald-400 font-mono tracking-widest font-bold text-sm uppercase";
+            }
+            if (titleDisplay) titleDisplay.innerText = dataset.title;
+        }
+    }
+    typeLine();
+};

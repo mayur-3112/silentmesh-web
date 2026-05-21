@@ -126,6 +126,22 @@ h1, h2, h3, h4, h5, h6, .font-display {
   opacity: 0.4; /* Base darkness */
   transition: opacity 1s ease;
 }
+/* ── Image Backgrounds (Ken Burns Effect) ── */
+.bg-image {
+  position: absolute;
+  inset: -5%; /* Slightly larger for scaling */
+  width: 110%; height: 110%;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.4;
+  animation: ken-burns 30s ease-in-out infinite alternate;
+}
+@keyframes ken-burns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
 .section-overlay {
   position: absolute;
   inset: 0;
