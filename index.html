@@ -3,640 +3,245 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SilentMesh — 0.27ms Deterministic OT Threat Mitigation</title>
+  <title>SilentMesh — Sub-Millisecond Deterministic Enforcement</title>
+  
+  <meta name="description" content="SilentMesh delivers kernel-native threat enforcement with <1% overhead for Cloud-Native K8s, High-Frequency Fintech, and Sovereign Enterprise infrastructure.">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            void: '#090a0f',
+            electric: '#0066ff',
+            neon: '#00ff66',
+            threat: '#ff2a2a'
+          }
+        }
+      }
+    }
+  </script>
 
-  <!-- SEO -->
-  <meta name="description" content="SilentMesh delivers kernel-level, sub-millisecond threat enforcement for SCADA gateways using eBPF. Zero PLC overhead. Quantum-safe ML-KEM telemetry. Deploy in hours.">
-  <meta name="keywords" content="OT security, SCADA gateway, eBPF enforcement, post-quantum cryptography, Kyber-768, ML-KEM, industrial cybersecurity, Modbus, Purdue model, kernel security">
-  <meta name="author" content="SilentMesh Systems Private Limited">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.silentmesh.me/">
-  <meta property="og:title" content="SilentMesh — 0.27ms Kernel-Level OT Threat Mitigation">
-  <meta property="og:description" content="Stop SCADA attacks in the kernel. 0.27ms deterministic enforcement. Zero PLC impact. Quantum-safe telemetry transport.">
-  <meta property="og:image" content="https://www.silentmesh.me/assets/og-image.png">
-  <meta property="twitter:card" content="summary_large_image">
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+Kannada:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- Stylesheet -->
+  <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
+  
+  <!-- Lenis CSS Fix -->
+  <style>
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis.lenis-scrolling iframe { pointer-events: none; }
+  </style>
 </head>
-<body>
+<body class="bg-void text-slate-200 antialiased selection:bg-electric selection:text-white">
 
-  <!-- Custom Cursor (JS will create .cursor-dot and .cursor-ring) -->
-
-  <!-- Mesh Canvas Background -->
+  <!-- Canvas Background -->
   <canvas id="mesh-canvas"></canvas>
 
-  <!-- ========== HEADER ========== -->
-  <header class="main-header">
-    <div class="header-inner">
-      <a href="#" class="logo-link">
-        <div class="logo-mark">
-          <svg class="logo-shield" viewBox="0 0 56 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M28 2L4 12V34C4 47.5 14.5 59.5 28 62C41.5 59.5 52 47.5 52 34V12L28 2Z" fill="#090a0f" stroke="#2D63FF" stroke-width="1.8" stroke-opacity="0.7"/>
-            <path d="M28 8L9 16.5V34C9 44.8 17.3 54.5 28 57C38.7 54.5 47 44.8 47 34V16.5L28 8Z" fill="#0c0e14" stroke="#2D63FF" stroke-width="0.5" stroke-opacity="0.3"/>
-            <circle cx="28" cy="30" r="7" fill="none" stroke="#2D63FF" stroke-width="1.4" stroke-opacity="0.85"/>
-            <circle cx="28" cy="30" r="2.5" fill="#2D63FF" fill-opacity="1"/>
-            <line x1="18" y1="30" x2="22" y2="30" stroke="#2D63FF" stroke-width="1" stroke-opacity="0.6"/>
-            <line x1="34" y1="30" x2="38" y2="30" stroke="#2D63FF" stroke-width="1" stroke-opacity="0.6"/>
-            <line x1="28" y1="20" x2="28" y2="24" stroke="#2D63FF" stroke-width="1" stroke-opacity="0.6"/>
-            <line x1="28" y1="36" x2="28" y2="40" stroke="#2D63FF" stroke-width="1" stroke-opacity="0.6"/>
-          </svg>
-          <span class="logo-text"><span class="logo-w-silent">SILENT</span><span class="logo-w-mesh">MESH</span></span>
-        </div>
-      </a>
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-void/50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <svg class="w-8 h-8" viewBox="0 0 56 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M28 2L4 12V34C4 47.5 14.5 59.5 28 62C41.5 59.5 52 47.5 52 34V12L28 2Z" fill="#090a0f" stroke="#0066ff" stroke-width="1.8" stroke-opacity="0.7"/>
+          <circle cx="28" cy="30" r="4" fill="#0066ff"/>
+        </svg>
+        <span class="font-display font-bold text-xl tracking-tight">SILENT<span class="text-electric">MESH</span></span>
+      </div>
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a href="#platform" class="hover:text-electric transition-colors">Platform</a>
+        <a href="#simulator" class="hover:text-electric transition-colors">Engine Demo</a>
+        <a href="#contact" class="px-5 py-2 bg-white/5 hover:bg-electric border border-white/10 hover:border-electric rounded-md transition-all">Deploy Pilot</a>
+      </div>
+    </div>
+  </nav>
 
-      <nav class="navbar" id="navbar">
-        <ul class="nav-menu">
-          <li><a href="#the-pain" class="nav-link">The Pain</a></li>
-          <li><a href="#purdue-moat" class="nav-link">Architecture</a></li>
-          <li><a href="#simulator" class="nav-link">Exploit Simulator</a></li>
-          <li><a href="#comparison" class="nav-link">Competitors</a></li>
-          <li><a href="#poc-form-section" class="nav-link">Pilot</a></li>
-        </ul>
-      </nav>
-
-      <a href="#poc-form-section" class="btn btn-magnetic btn-header-cta">Request Staging PoC</a>
-
-      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </button>
+  <!-- HERO SECTION -->
+  <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+    <!-- Ambient Glows -->
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-electric/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon/10 rounded-full blur-[120px] pointer-events-none"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 text-center z-10">
+      <div class="inline-block mb-6 px-4 py-1.5 rounded-full border border-neon/30 bg-neon/5 text-neon font-mono text-xs uppercase tracking-widest">
+        <span class="inline-block w-2 h-2 rounded-full bg-neon mr-2 animate-pulse"></span>
+        Kernel-Native Traffic Redirection Active
+      </div>
+      
+      <h1 class="hero-title text-5xl md:text-7xl lg:text-8xl font-display font-bold leading-[1.1] tracking-tight mb-8">
+        <span class="block">SUB-MILLISECOND</span>
+        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-electric">DETERMINISTIC</span>
+        <span class="block">ENFORCEMENT</span>
+      </h1>
+      
+      <p class="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-10">
+        Heavy user-space agents degrade application throughput and spike cloud compute costs. SilentMesh delivers wire-speed eBPF runtime security with <strong class="text-white">&lt;1% fixed host CPU overhead</strong>.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#simulator" class="px-8 py-4 bg-electric text-white font-medium rounded-md hover:bg-blue-600 transition-colors w-full sm:w-auto">Run Interactive Demo</a>
+        <a href="#contact" class="px-8 py-4 bg-white/5 border border-white/10 hover:border-white/20 text-white font-medium rounded-md transition-colors w-full sm:w-auto">Request Architecture Review</a>
+      </div>
     </div>
   </header>
 
-  <!-- ========== HERO ========== -->
-  <section class="hero-section">
-    <div class="hero-ambient-glow glow-red"></div>
-    <div class="hero-ambient-glow glow-blue"></div>
-
-    <div class="container hero-content">
-      <!-- Badge -->
-      <div class="reveal reveal-up">
-        <span class="hero-badge">
-          <span class="badge-pulse"></span>
-          <span class="badge-text">0.27ms Deterministic Enforcement — Production Verified</span>
-        </span>
+  <!-- BENTO GRID 01: THE VERTICAL EXPANSION -->
+  <section id="platform" class="py-24 relative z-10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16">
+        <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Universal Infrastructure Primitives</h2>
+        <p class="text-slate-400 max-w-2xl">The eBPF core handles low-level Linux systems data primitives at wire-speed across all high-throughput sectors.</p>
       </div>
 
-      <!-- Headline -->
-      <h1 class="hero-title reveal reveal-up">
-        <span class="title-line">YOU DO NOT HAVE</span>
-        <span class="title-line title-accent">50 MILLISECONDS</span>
-        <span class="title-line">TO REACT.</span>
-      </h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Card A: Cloud-Native K8s -->
+        <div class="bento-card p-8 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-lg bg-electric/10 border border-electric/30 flex items-center justify-center mb-6">
+              <svg class="w-6 h-6 text-electric" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <h3 class="text-2xl font-display font-bold mb-3">Cloud-Native K8s</h3>
+            <p class="text-sm text-slate-400 mb-6">Monolithic security tools inject massive latency jitter. We handle routing directly inside the Linux kernel cgroup path.</p>
+          </div>
+          <div class="pt-6 border-t border-white/5">
+            <span class="text-xs font-mono text-neon uppercase tracking-wider">Zero Sidecar Tax</span>
+          </div>
+        </div>
 
-      <!-- Subtitle -->
-      <p class="hero-subtitle reveal reveal-up">
-        In critical OT systems, 50ms is the boundary between safe operations and physical equipment destruction. You secure SCADA Gateways with EDR agents that trip your PLCs, or passive network monitors that send alarms <strong>after</strong> the breach. We block exploits at the kernel level in <span class="text-accent-teal">0.27ms</span> — with zero impact on PLC determinism.
-      </p>
+        <!-- Card B: Fintech -->
+        <div class="bento-card p-8 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-6">
+              <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-display font-bold mb-3">High-Frequency Fintech</h3>
+            <p class="text-sm text-slate-400 mb-6">Inline blocking drops transactions. Legitimate transactions bypass our kernel hook at wire-speed; threats are instantly mutated.</p>
+          </div>
+          <div class="pt-6 border-t border-white/5">
+            <span class="text-xs font-mono text-emerald-400 uppercase tracking-wider">Strict SLA Preservation</span>
+          </div>
+        </div>
 
-      <!-- CTAs -->
-      <div class="hero-actions reveal reveal-up">
-        <a href="#simulator" class="btn btn-primary btn-magnetic">Run Live Exploit Demo</a>
-        <a href="#poc-form-section" class="btn btn-ghost btn-magnetic">Request 14-Day Pilot →</a>
-      </div>
+        <!-- Card C: Enterprise -->
+        <div class="bento-card p-8 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center mb-6">
+              <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-display font-bold mb-3">Sovereign Enterprise</h3>
+            <p class="text-sm text-slate-400 mb-6">Heavy agents crash databases. We decouple enforcement from payload handling, failing open gracefully for zero business interruption.</p>
+          </div>
+          <div class="pt-6 border-t border-white/5">
+            <span class="text-xs font-mono text-purple-400 uppercase tracking-wider">Host Stability Intact</span>
+          </div>
+        </div>
 
-      <!-- Stats Dashboard -->
-      <div class="hero-stats stagger-children">
-        <div class="stat-card glass-card reveal reveal-up">
-          <div class="stat-value text-glow-blue">512ns</div>
-          <div class="stat-label">eBPF Hook Latency</div>
-        </div>
-        <div class="stat-card glass-card reveal reveal-up">
-          <div class="stat-value text-glow-green">0.27ms</div>
-          <div class="stat-label">Exploit Blocking Speed</div>
-        </div>
-        <div class="stat-card glass-card reveal reveal-up">
-          <div class="stat-value text-glow-amber">&lt; 1%</div>
-          <div class="stat-label">Gateway CPU Overhead</div>
-        </div>
-        <div class="stat-card glass-card reveal reveal-up">
-          <div class="stat-value text-glow-teal">ML-KEM</div>
-          <div class="stat-label">Quantum-Safe Transport</div>
-        </div>
       </div>
     </div>
   </section>
 
-  <!-- ========== THE PAIN ========== -->
-  <section id="the-pain" class="pain-section">
-    <div class="container">
-      <div class="section-header reveal reveal-up">
-        <span class="section-tag">THE PROBLEM</span>
-        <h2 class="section-title">THE THREE LIES<br>OF OT SECURITY</h2>
-        <p class="section-subtitle">Why traditional security frameworks leave critical infrastructure vulnerable to catastrophic sub-second failure.</p>
+  <!-- BENTO GRID 02: CORE TECHNICAL MOAT & EXPLOIT SIMULATOR -->
+  <section id="simulator" class="py-24 relative z-10 architecture-bg-glow">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-12">
+        <h2 class="text-3xl md:text-5xl font-display font-bold mb-4">Data Plane vs Control Plane</h2>
+        <p class="text-slate-400 max-w-2xl">Watch modern eBPF data mutation paired with a split user-space control plane.</p>
       </div>
 
-      <div class="pain-grid stagger-children">
-        <!-- Lie 1 -->
-        <div class="pain-card glass-card reveal reveal-up">
-          <div class="pain-badge">LIE 01</div>
-          <h3 class="pain-title">"Our passive network monitor keeps us safe."</h3>
-          <div class="pain-rule"></div>
-          <p class="pain-body">Network monitoring is historical audit. When a compromised gateway injects rogue Modbus commands or swaps a firmware signature, the network sensor inspects the packet <em>after</em> it crosses the wire. By the time the alert reaches your dashboard 4 seconds later, the physical turbine has already tripped.</p>
-          <div class="pain-verdict">Result: You are auditing your own disaster.</div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Component 1: Interactive Terminal -->
+        <div class="bento-card rounded-2xl lg:col-span-2 overflow-hidden flex flex-col">
+          <div class="bg-void/80 border-b border-white/5 px-6 py-4 flex flex-wrap gap-3">
+            <button id="btn-kubernetes" onclick="runInfrastructureSimulation('kubernetes')" class="sim-selector-btn px-4 py-2 rounded border border-slate-800 text-sm font-mono transition-colors">K8S MICROSERVICES</button>
+            <button id="btn-fintech" onclick="runInfrastructureSimulation('fintech')" class="sim-selector-btn px-4 py-2 rounded border border-slate-800 text-sm font-mono transition-colors">FINTECH API</button>
+            <button id="btn-enterprise" onclick="runInfrastructureSimulation('enterprise')" class="sim-selector-btn px-4 py-2 rounded border border-slate-800 text-sm font-mono transition-colors">ENTERPRISE DB</button>
+          </div>
+          
+          <div class="p-6 bg-[#030507] h-[400px] overflow-y-auto font-mono text-sm leading-relaxed" id="terminal-stream-output">
+            <!-- GSAP Typewriter Output Injected Here -->
+          </div>
         </div>
 
-        <!-- Lie 2 -->
-        <div class="pain-card glass-card reveal reveal-up">
-          <div class="pain-badge">LIE 02</div>
-          <h3 class="pain-title">"Standard EDR agents protect our endpoints."</h3>
-          <div class="pain-rule"></div>
-          <p class="pain-body">Traditional EDR imposes a 50–500ms validation latency — the "Security Tax." If active blocking is enabled, it violates safety-critical PLC polling loops, triggering emergency shutdowns. To prevent this, CISOs run them in alert-only mode. You are paying for a very expensive alarm system.</p>
-          <div class="pain-verdict">Result: A notification system for completed attacks.</div>
+        <!-- Component 2: Multi-Sector Metric Panels -->
+        <div class="flex flex-col gap-6">
+          
+          <div class="bento-card p-6 rounded-2xl flex-1">
+            <h4 class="text-xs text-slate-500 font-mono mb-2 uppercase">Traditional Span/Tap</h4>
+            <div id="status-tap" class="font-mono text-sm text-slate-500">WAITING...</div>
+            <div class="mt-4 pt-4 border-t border-white/5">
+              <span class="text-xs text-slate-400">Visibility only. No runtime mutation capability.</span>
+            </div>
+          </div>
+
+          <div class="bento-card p-6 rounded-2xl flex-1">
+            <h4 class="text-xs text-slate-500 font-mono mb-2 uppercase">Legacy Inline EDR</h4>
+            <div id="status-edr" class="font-mono text-sm text-slate-500">WAITING...</div>
+            <div class="mt-4 pt-4 border-t border-white/5">
+              <span class="text-xs text-slate-400">Injects 50-200ms latency jitter. Breaks high-throughput SLAs.</span>
+            </div>
+          </div>
+
+          <div class="bento-card p-6 rounded-2xl flex-1 border-electric/30 bg-electric/5 shadow-[0_0_30px_rgba(0,102,255,0.1)]">
+            <h4 class="text-xs text-blue-400 font-mono mb-2 uppercase">SilentMesh Engine</h4>
+            <div id="status-sm" class="font-mono text-sm text-slate-500">WAITING...</div>
+            <div class="mt-4 pt-4 border-t border-electric/20">
+              <span class="text-xs text-slate-300">0.27ms wire-speed data plane mutation. Ring-0 enforcement.</span>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Lie 3 -->
-        <div class="pain-card glass-card reveal reveal-up">
-          <div class="pain-badge">LIE 03</div>
-          <h3 class="pain-title">"We secure the PLCs directly."</h3>
-          <div class="pain-rule"></div>
-          <p class="pain-body">PLCs run closed RTOS (VxWorks, QNX) with zero kernel interfaces. Modifying them invalidates IEC 61508 safety certifications and voids vendor warranties. The attack path runs through the <strong>SCADA Gateway</strong> (Level 2-3) — which runs Linux, holds authentication tokens, and is entirely unmonitored.</p>
-          <div class="pain-verdict">Result: Your security boundary stops where the attack starts.</div>
-        </div>
       </div>
     </div>
   </section>
 
-  <!-- ========== PURDUE MODEL / ARCHITECTURE ========== -->
-  <section id="purdue-moat" class="moat-section">
-    <div class="container">
-      <div class="moat-grid">
-        <div class="moat-text reveal reveal-left">
-          <span class="section-tag">ARCHITECTURAL RATIONALE</span>
-          <h2 class="section-title text-left">Level 2 & 3:<br>The Ultimate Choke Point</h2>
-          <p class="section-body">PLC devices cannot run agents. Monitoring them on the network is too slow. SilentMesh positions its kernel-level eBPF enforcement exclusively at the <strong>SCADA Gateways and Historians</strong> (Level 2-3).</p>
-          <p class="section-body">All PLC authentication tokens, command translations, and setpoints flow through the gateway. Secure the gateway at the kernel, and the downstream PLCs are automatically protected — without modifying firmware or violating safety parameters.</p>
-
-          <div class="purdue-tabs">
-            <button class="purdue-tab active" data-target="l4-5">
-              <span class="tab-level">L4 – L5</span>
-              <span class="tab-name">Corporate IT & ERP</span>
-            </button>
-            <button class="purdue-tab" data-target="l2-3">
-              <span class="tab-level">L2 – L3</span>
-              <span class="tab-name">SCADA Gateways — SilentMesh Zone</span>
-            </button>
-            <button class="purdue-tab" data-target="l0-1">
-              <span class="tab-level">L0 – L1</span>
-              <span class="tab-name">PLCs & Physical Actuators</span>
-            </button>
-          </div>
+  <!-- CTA SECTION -->
+  <section id="contact" class="py-32 relative z-10 border-t border-white/5">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-4xl md:text-6xl font-display font-bold mb-6">Stop Auditing Your Own Disasters.</h2>
+      <p class="text-xl text-slate-400 mb-10">Deploy sub-millisecond deterministic enforcement in hours. Apply for a staging pilot to prove latency metrics in your environment.</p>
+      
+      <form action="https://formspree.io/f/xvonzgkb" method="POST" class="max-w-md mx-auto bento-card p-8 rounded-2xl text-left">
+        <div class="mb-4">
+          <label class="block text-xs font-mono text-slate-400 mb-2">Corporate Email</label>
+          <input type="email" name="email" required class="w-full bg-void border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-electric transition-colors" placeholder="engineering@enterprise.com">
         </div>
-
-        <div class="moat-diagram reveal reveal-right">
-          <div class="purdue-panel glass-card">
-            <div class="panel-status">
-              <span class="status-dot active"></span>
-              <span class="status-label mono">PURDUE MODEL — INSTRUMENTATION MAP</span>
-            </div>
-
-            <div class="purdue-layers">
-              <div class="purdue-layer l4-5 active-highlight" id="layer-l4-5">
-                <div class="layer-header">
-                  <span class="layer-id mono">LEVEL 4 & 5</span>
-                  <span class="layer-name">Enterprise Web & ERP</span>
-                </div>
-                <p class="layer-desc">Protected by traditional IT firewalls. Blind to real-time OT threats. Attackers bypass via stolen credentials or supply chain compromise.</p>
-              </div>
-
-              <div class="purdue-layer l2-3" id="layer-l2-3">
-                <div class="layer-header">
-                  <span class="layer-id mono">LEVEL 2 & 3</span>
-                  <span class="layer-name">SCADA Gateways & HMI</span>
-                </div>
-                <div class="layer-body-split">
-                  <p class="layer-desc"><strong>SilentMesh Zone:</strong> eBPF instrumentation captures syscalls, network connects, and file modifications directly in the gateway kernel.</p>
-                  <span class="latency-badge">0.27ms enforcement</span>
-                </div>
-              </div>
-
-              <div class="purdue-layer l0-1" id="layer-l0-1">
-                <div class="layer-header">
-                  <span class="layer-id mono">LEVEL 0 & 1</span>
-                  <span class="layer-name">PLCs, Sensors & Actuators</span>
-                </div>
-                <p class="layer-desc">Safety-critical RTOS. Zero spare CPU. Running agents here trips safety loops. Hard vendor lock-in. No kernel access.</p>
-              </div>
-            </div>
-          </div>
+        <div class="mb-6">
+          <label class="block text-xs font-mono text-slate-400 mb-2">Infrastructure Type</label>
+          <select name="infra" class="w-full bg-void border border-white/10 rounded-md px-4 py-3 text-white focus:outline-none focus:border-electric transition-colors">
+            <option value="k8s">Kubernetes / Cloud-Native</option>
+            <option value="fintech">High-Frequency API Gateway</option>
+            <option value="enterprise">Sovereign Enterprise DB</option>
+          </select>
         </div>
-      </div>
+        <button type="submit" class="w-full bg-electric hover:bg-blue-600 text-white font-medium py-3 rounded-md transition-colors">Request Staging Pilot</button>
+      </form>
     </div>
   </section>
 
-  <!-- ========== EXPLOIT SIMULATOR ========== -->
-  <section id="simulator" class="simulator-section">
-    <div class="container">
-      <div class="section-header reveal reveal-up">
-        <span class="section-tag">LIVE DEMONSTRATION</span>
-        <h2 class="section-title">WITNESS KERNEL<br>ENFORCEMENT</h2>
-        <p class="section-subtitle">Simulate real OT attack vectors. Compare legacy security against SilentMesh's eBPF engine in real time.</p>
-      </div>
-
-      <div class="sim-dashboard reveal reveal-up">
-        <!-- Controls -->
-        <div class="sim-controls glass-card">
-          <h3 class="sim-panel-label mono">01 — SELECT ATTACK VECTOR</h3>
-          <div class="attack-selector">
-            <button class="attack-btn active" data-exploit="toctou">
-              <span class="attack-title">CVE-2026-27456: Firmware TOCTOU Race</span>
-              <span class="attack-desc">Symlink swap between stat() validation and openat() write</span>
-            </button>
-            <button class="attack-btn" data-exploit="modbus">
-              <span class="attack-title">Rogue Modbus Register Hijack</span>
-              <span class="attack-desc">Unauthorized binary injects coil write to safety interlock</span>
-            </button>
-            <button class="attack-btn" data-exploit="tamper">
-              <span class="attack-title">Evidence Destruction / Log Tamper</span>
-              <span class="attack-desc">Post-exploit unlink() and truncate() on forensic logs</span>
-            </button>
-          </div>
-
-          <button id="run-simulation-btn" class="btn btn-primary btn-magnetic btn-block">Trigger Attack Simulation</button>
-
-          <div class="sim-params">
-            <div class="sim-params-label mono">GATEWAY OS PARAMETERS</div>
-            <div class="param-row"><span class="param-key">Target Kernel</span><span class="param-val mono">Linux 4.19.0-ot-hardened</span></div>
-            <div class="param-row"><span class="param-key">Processor</span><span class="param-val mono">ARM Cortex-A72 (SCADA Edge)</span></div>
-            <div class="param-row"><span class="param-key">Safety Cycle</span><span class="param-val mono">10ms Hard Deadline</span></div>
-          </div>
-        </div>
-
-        <!-- Terminal -->
-        <div class="sim-terminal glass-card">
-          <div class="terminal-chrome">
-            <div class="chrome-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
-            <span class="chrome-title mono">REAL-TIME KERNEL EVENTS — RING BUFFER STREAM</span>
-          </div>
-          <div id="terminal-screen" class="terminal-body mono">
-            <div class="terminal-line system-msg">[SYSTEM] SilentMesh eBPF Nervous System active. Probes loaded.</div>
-            <div class="terminal-line system-msg">[SYSTEM] Ring buffer streaming. Hook latency: 512ns. Awaiting trigger.</div>
-            <div class="terminal-line prompt">▸ _</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Comparison Results -->
-      <div class="sim-results stagger-children">
-        <div class="result-card glass-card reveal reveal-up">
-          <div class="result-header">
-            <span class="result-badge badge-red">PASSIVE NETWORK MONITOR</span>
-            <span class="result-ts mono" id="net-time">—</span>
-          </div>
-          <h4 class="result-name">Claroty / Nozomi</h4>
-          <p class="result-status" id="net-status">Awaiting simulation…</p>
-          <div class="result-metric">
-            <span class="metric-label mono">Mitigation</span>
-            <span class="metric-value text-red mono" id="net-latency">FAIL (Alert Only)</span>
-          </div>
-        </div>
-
-        <div class="result-card glass-card reveal reveal-up">
-          <div class="result-header">
-            <span class="result-badge badge-amber">STANDARD AGENT EDR</span>
-            <span class="result-ts mono" id="edr-time">—</span>
-          </div>
-          <h4 class="result-name">Falcon / Tetragon</h4>
-          <p class="result-status" id="edr-status">Awaiting simulation…</p>
-          <div class="result-metric">
-            <span class="metric-label mono">Mitigation</span>
-            <span class="metric-value text-amber mono" id="edr-latency">—</span>
-          </div>
-        </div>
-
-        <div class="result-card result-card-sm glass-card reveal reveal-up">
-          <div class="result-header">
-            <span class="result-badge badge-green">SILENTMESH KERNEL ENGINE</span>
-            <span class="result-ts mono" id="sm-time">—</span>
-          </div>
-          <h4 class="result-name text-glow-blue">SilentMesh eBPF</h4>
-          <p class="result-status text-green" id="sm-status">Awaiting simulation…</p>
-          <div class="result-metric">
-            <span class="metric-label mono">Mitigation</span>
-            <span class="metric-value text-glow-green mono" id="sm-latency">0.27ms (Enforced)</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== PQC TELEMETRY ========== -->
-  <section id="tech-specs" class="specs-section">
-    <div class="specs-ambient-glow"></div>
-    <div class="container">
-      <div class="specs-grid">
-        <div class="specs-visual reveal reveal-left">
-          <div class="crypto-pipeline glass-card">
-            <div class="pipeline-title mono">QUANTUM-SAFE TELEMETRY PIPELINE</div>
-
-            <div class="pipeline-steps">
-              <div class="pipeline-step">
-                <span class="step-icon">⬡</span>
-                <div class="step-content">
-                  <div class="step-name">eBPF Telemetry Batch</div>
-                  <div class="step-desc">Ring buffer syscall events compiled into compressed telemetry packets.</div>
-                </div>
-              </div>
-              <div class="pipeline-connector">↓</div>
-              <div class="pipeline-step step-highlight-amber">
-                <span class="step-icon">◈</span>
-                <div class="step-content">
-                  <div class="step-name">Dilithium-3 Signature (FIPS 204)</div>
-                  <div class="step-desc">Each batch signed at the source. Prevents man-in-the-middle injection.</div>
-                </div>
-              </div>
-              <div class="pipeline-connector">↓</div>
-              <div class="pipeline-step step-highlight-teal">
-                <span class="step-icon">◉</span>
-                <div class="step-content">
-                  <div class="step-name">Hybrid TLS 1.3 — ML-KEM / Kyber-768</div>
-                  <div class="step-desc">Telemetry encrypted using Kyber-768 + X25519. Immune to future quantum decryption.</div>
-                </div>
-              </div>
-              <div class="pipeline-connector">↓</div>
-              <div class="pipeline-step">
-                <span class="step-icon">▣</span>
-                <div class="step-content">
-                  <div class="step-name">Sovereign Collector Console</div>
-                  <div class="step-desc">Verified and audited telemetry arrives at your SIEM / security platform.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="specs-text reveal reveal-right">
-          <span class="section-tag">POST-QUANTUM CRYPTOGRAPHY</span>
-          <h2 class="section-title text-left">Why Kyber-768<br>Matters Today</h2>
-          <p class="section-body">State-sponsored groups actively record encrypted industrial telemetry. They cannot decrypt it today — but they will when quantum computers arrive. Once decrypted, they obtain your gateway's entire process footprint, command history, and PLC access credentials.</p>
-          <p class="section-body">SilentMesh secures all gateway telemetry using <strong>Kyber-768 (ML-KEM)</strong> and <strong>Dilithium-3 (FIPS 204)</strong> signatures — making harvest-now attacks worthless.</p>
-
-          <div class="specs-checklist">
-            <div class="check-item"><span class="check-mark">✓</span><div><strong>NIST FIPS 203 & 204 Compliant.</strong> Built on verified lattice-based cryptography immune to Shor's algorithm.</div></div>
-            <div class="check-item"><span class="check-mark">✓</span><div><strong>Hybrid Security.</strong> Combined with X25519 elliptic curve for backward compatibility with legacy hardware.</div></div>
-            <div class="check-item"><span class="check-mark">✓</span><div><strong>Minimal Overhead.</strong> Optimized C implementation with &lt; 2% memory footprint on SCADA gateway boards.</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== EXPOSURE CALCULATOR ========== -->
-  <section class="calculator-section">
-    <div class="container">
-      <div class="calculator-panel glass-card reveal reveal-scale">
-        <div class="calc-inputs">
-          <h3 class="calc-heading">Assess Your Network's<br>Exposure Window</h3>
-          <p class="calc-desc">Input your infrastructure metrics to calculate active vulnerability windows and PLC trip probability.</p>
-
-          <div class="form-group">
-            <label for="gateway-range" class="form-label">Number of SCADA Gateways / HMIs</label>
-            <div class="slider-row">
-              <input type="range" id="gateway-range" min="10" max="1000" step="10" value="100" class="custom-range">
-              <span id="gateway-val" class="slider-readout mono">100</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="poll-frequency" class="form-label">Current Security Scan Frequency</label>
-            <select id="poll-frequency" class="form-select">
-              <option value="passive">Passive Network Only (No agents)</option>
-              <option value="60">Periodic Agent Polling (Every 60s)</option>
-              <option value="5" selected>Active EDR Agent (5ms CPU Loop)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="device-type" class="form-label">Target Device Safety Margin</label>
-            <select id="device-type" class="form-select">
-              <option value="critical" selected>Highly Sensitive (10ms Trip Deadline)</option>
-              <option value="moderate">Standard OT (50ms Trip Deadline)</option>
-              <option value="flexible">Batch Process (200ms Trip Deadline)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="calc-outputs">
-          <div class="calc-outputs-label mono">INFRASTRUCTURE EXPOSURE PROFILE</div>
-
-          <div class="output-metric">
-            <div class="output-meta">
-              <span class="output-name">Window of Vulnerability (Daily)</span>
-              <span class="output-desc">Time when sub-second attacks pass completely undetected.</span>
-            </div>
-            <div class="output-value text-red mono" id="calc-window">24.0 hrs</div>
-          </div>
-
-          <div class="output-metric">
-            <div class="output-meta">
-              <span class="output-name">PLC Trip Risk (EDR Overhead)</span>
-              <span class="output-desc">Probability of EDR validation delay causing a system trip.</span>
-            </div>
-            <div class="output-value text-amber mono" id="calc-trip-risk">84%</div>
-          </div>
-
-          <div class="calc-resolution">
-            <div class="resolution-label mono">SILENTMESH RESOLUTION</div>
-            <div class="resolution-stats">
-              <div class="res-stat"><span class="res-stat-val text-glow-green">0.0 sec</span><span class="res-stat-label">Exposure Window</span></div>
-              <div class="res-stat"><span class="res-stat-val text-glow-green">&lt; 0.1%</span><span class="res-stat-label">Halt/Trip Risk</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== COMPETITOR MATRIX ========== -->
-  <section id="comparison" class="comparison-section">
-    <div class="container">
-      <div class="section-header reveal reveal-up">
-        <span class="section-tag">COMPETITIVE ANALYSIS</span>
-        <h2 class="section-title">THE STRUCTURAL GAP</h2>
-        <p class="section-subtitle">How SilentMesh rewrites the rules of OT threat management.</p>
-      </div>
-
-      <div class="table-scroll reveal reveal-up">
-        <table class="comp-table">
-          <thead>
-            <tr>
-              <th class="th-feature">Vector / Capability</th>
-              <th class="th-competitor">Traditional EDR<br><small>CrowdStrike Falcon / Tetragon</small></th>
-              <th class="th-competitor">Network Sensors<br><small>Claroty / Dragos</small></th>
-              <th class="th-highlight">SilentMesh eBPF Engine</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="td-feature">Deployment Layer</td>
-              <td class="td-neg">User space agent</td>
-              <td class="td-neg">Out-of-band network mirror</td>
-              <td class="td-pos">Kernel space (eBPF / LSM)</td>
-            </tr>
-            <tr>
-              <td class="td-feature">Enforcement Latency</td>
-              <td class="td-neg">50ms – 500ms</td>
-              <td class="td-neg">Seconds to minutes (post-facto)</td>
-              <td class="td-pos text-glow-green">0.27ms (deterministic)</td>
-            </tr>
-            <tr>
-              <td class="td-feature">eBPF Hook Latency</td>
-              <td class="td-neutral">~2ms – 10ms</td>
-              <td class="td-neg">N/A (no host agents)</td>
-              <td class="td-pos text-glow-green">512ns</td>
-            </tr>
-            <tr>
-              <td class="td-feature">PLC Jitter Protection</td>
-              <td class="td-neg">FAIL — Violates RTOS loops</td>
-              <td class="td-pos">PASS — Passive</td>
-              <td class="td-pos text-glow-green">PASS — &lt;1% CPU overhead</td>
-            </tr>
-            <tr>
-              <td class="td-feature">Host Process Visibility</td>
-              <td class="td-pos">Full process tree</td>
-              <td class="td-neg">None (packets only)</td>
-              <td class="td-pos text-glow-green">Full process + syscall + network</td>
-            </tr>
-            <tr>
-              <td class="td-feature">Transit Encryption</td>
-              <td class="td-neutral">Standard TLS 1.2/1.3</td>
-              <td class="td-neutral">Standard TLS</td>
-              <td class="td-pos text-glow-green">Hybrid ML-KEM / Kyber-768</td>
-            </tr>
-            <tr>
-              <td class="td-feature">Deployment Speed</td>
-              <td class="td-neg">Weeks to months</td>
-              <td class="td-neg">Months (tap setup)</td>
-              <td class="td-pos text-glow-green">Hours (gateway install)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== CONVERSION FORM ========== -->
-  <section id="poc-form-section" class="form-section">
-    <div class="container">
-      <div class="form-grid">
-        <div class="form-pitch reveal reveal-left">
-          <span class="section-tag">DEPLOY DEFENSE</span>
-          <h2 class="section-title text-left">Deploy 0.27ms<br>Enforcement</h2>
-          <p class="section-body">Passive alarms will not save a generator from physical destruction. Stop analyzing your own breaches.</p>
-          <p class="section-body">Apply for a <strong>14-day staging pilot</strong>. We instrument up to 5 SCADA gateways in a staging environment to prove our latency metrics and capture local baseline telemetry.</p>
-
-          <div class="guarantee-block">
-            <div class="guarantee-label mono">THE SILENTMESH GUARANTEE</div>
-            <ul class="guarantee-list">
-              <li>Zero impact on physical PLC determinism.</li>
-              <li>Verified sub-millisecond TOCTOU race blocking.</li>
-              <li>Kyber-768 telemetry transport in 48 hours.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="form-card glass-card reveal reveal-right">
-          <h3 class="form-card-heading">Apply for Staging Pilot</h3>
-
-          <form id="contact-form" action="https://formspree.io/f/xvonzgkb" method="POST">
-            <div class="form-row-2">
-              <div class="form-group"><label for="user-name" class="form-label">Full Name</label><input type="text" id="user-name" name="name" placeholder="John Doe" required></div>
-              <div class="form-group"><label for="user-title" class="form-label">Job Title</label><input type="text" id="user-title" name="title" placeholder="VP, OT Cybersecurity" required></div>
-            </div>
-            <div class="form-group"><label for="user-email" class="form-label">Corporate Email</label><input type="email" id="user-email" name="email" placeholder="john@enterprise.com" required></div>
-            <div class="form-row-2">
-              <div class="form-group">
-                <label for="gateway-os" class="form-label">Primary Gateway OS</label>
-                <select id="gateway-os" name="gateway_os" class="form-select">
-                  <option value="rhel">Red Hat Enterprise Linux</option>
-                  <option value="ubuntu">Ubuntu Server (LTS)</option>
-                  <option value="debian">Debian GNU/Linux</option>
-                  <option value="rtos">Real-Time Linux Kernel</option>
-                  <option value="other">Other / Custom</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="scada-protocol" class="form-label">Primary Protocol</label>
-                <select id="scada-protocol" name="scada_protocol" class="form-select">
-                  <option value="modbus">Modbus TCP</option>
-                  <option value="ethernetip">EtherNet/IP</option>
-                  <option value="opcua">OPC-UA</option>
-                  <option value="dnp3">DNP3</option>
-                  <option value="multiple">Multiple Protocols</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="gateway-count" class="form-label">Number of SCADA Gateways</label>
-              <select id="gateway-count" name="gateway_count" class="form-select">
-                <option value="under50">1 – 49 Gateways</option>
-                <option value="under200">50 – 199 Gateways</option>
-                <option value="over200">200+ Gateways</option>
-              </select>
-            </div>
-            <div class="form-group"><label for="user-msg" class="form-label">Critical Threat Vectors / Notes</label><textarea id="user-msg" name="message" rows="3" placeholder="E.g., firmware TOCTOU validation, Modbus coil writes, DNP3 outstation attacks…" required></textarea></div>
-
-            <button type="submit" class="btn btn-primary btn-magnetic btn-block btn-submit">Deploy 0.27ms Defense</button>
-            <div class="form-status mono" id="form-status"></div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== FOOTER ========== -->
-  <footer class="main-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <svg class="logo-shield-sm" viewBox="0 0 56 64" fill="none"><path d="M28 2L4 12V34C4 47.5 14.5 59.5 28 62C41.5 59.5 52 47.5 52 34V12L28 2Z" fill="#090a0f" stroke="#2D63FF" stroke-width="1.5" stroke-opacity="0.6"/><circle cx="28" cy="30" r="7" fill="none" stroke="#2D63FF" stroke-width="1.2" stroke-opacity="0.7"/><circle cx="28" cy="30" r="2.5" fill="#2D63FF" fill-opacity="0.9"/></svg>
-            <span class="logo-w-silent">SILENT</span><span class="logo-w-mesh">MESH</span>
-          </div>
-          <p class="footer-tagline">Sovereign defense for real-time critical infrastructure.</p>
-          <div class="footer-cin mono">CIN: U62091KA2026PTC218985</div>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-col-heading mono">Registered Office</h4>
-          <p class="footer-text">SilentMesh Systems Private Limited<br>196, 9th Cross, 1st Main,<br>Mahaganapathi Nagar, Rajajinagar,<br>Bengaluru – 560010, Karnataka, India.</p>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-col-heading mono">ನೋಂದಾಯಿತ ಕಚೇರಿ</h4>
-          <p class="footer-text font-kn">ಸೈಲೆಂಟ್ಮೆಶ್ ಸಿಸ್ಟಮ್ಸ್ ಪ್ರೈವೇಟ್ ಲಿಮಿಟೆಡ್<br>196, 9ನೇ ಕ್ರಾಸ್, 1ನೇ ಮುಖ್ಯ ರಸ್ತೆ,<br>ಮಹಾಗಣಪತಿ ನಗರ, ರಾಜಾಜಿನಗರ,<br>ಬೆಂಗಳೂರು – 560010.</p>
-        </div>
-
-        <div class="footer-col">
-          <h4 class="footer-col-heading mono">Contact</h4>
-          <ul class="footer-links">
-            <li><span class="fk mono">Dir</span> Mayur Agarwal · Sujatha Agarwal</li>
-            <li><span class="fk mono">Mail</span> <a href="mailto:founder@silentmesh.me">founder@silentmesh.me</a></li>
-            <li><span class="fk mono">Web</span> <a href="https://www.silentmesh.me">www.silentmesh.me</a></li>
-            <li><span class="fk mono">Tel</span> <a href="tel:+918088669439">+91 80886 69439</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p class="footer-copy">&copy; 2026 SilentMesh Systems Private Limited. All rights reserved.</p>
-        <div class="footer-indicators">
-          <span class="f-ind"><span class="ind-dot green"></span> ML-KEM Ready</span>
-          <span class="f-ind"><span class="ind-dot green"></span> FIPS 204 Ready</span>
-        </div>
+  <!-- FOOTER -->
+  <footer class="py-10 border-t border-white/5 relative z-10 bg-void/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500 font-mono">
+      <div>&copy; 2026 SilentMesh Systems Private Limited.</div>
+      <div class="flex gap-6">
+        <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neon"></span> eBPF Ready</span>
+        <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-electric"></span> Ring-0 Enforcement</span>
       </div>
     </div>
   </footer>
 
+  <!-- Scripts -->
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.27/bundled/lenis.min.js"></script>
+  
   <script src="app.js"></script>
 </body>
 </html>
