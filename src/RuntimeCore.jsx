@@ -80,16 +80,7 @@ export default function RuntimeCore() {
         />
       </mesh>
 
-      {/* orchestration sphere */}
-      <mesh>
-        <icosahedronGeometry args={[1.4, 6]} />
-        <meshStandardMaterial
-          color="#00c9a7"
-          emissive="#00c9a7"
-          emissiveIntensity={2.5}
-          wireframe
-        />
-      </mesh>
+      {/* central core orb removed for a cleaner, more mysterious empty singularity aesthetic */}
 
       {/* atmospheric pulse — breathes in sync with light */}
       <mesh ref={pulseRef}>
