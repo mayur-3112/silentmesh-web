@@ -4,6 +4,40 @@ import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'fra
 import { Terminal, Shield, Activity, Network, Command, Cpu, Layers } from 'lucide-react';
 
 // ==========================================
+// ERROR BOUNDARY
+// ==========================================
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-void text-threat flex flex-col items-center justify-center font-mono p-8 text-center z-50 relative">
+          <div className="mb-6">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          </div>
+          <h1 className="text-2xl mb-4 tracking-widest">RUNTIME PANIC</h1>
+          <p className="text-white/50 text-sm max-w-lg mb-8">
+            {this.state.error?.message || "An unhandled exception occurred in the intelligence plane."}
+          </p>
+          <button onClick={() => window.location.reload()} className="px-6 py-3 border border-threat/30 hover:bg-threat/10 text-threat transition-colors uppercase tracking-widest text-xs">
+            Reboot System
+          </button>
+        </div>
+      );
+    }
+    return this.props.children; 
+  }
+}
+
+// ==========================================
 // UTILITIES & GLOBAL HOOKS
 // ==========================================
 const useMousePosition = () => {
@@ -254,6 +288,7 @@ const TerminalSection = () => {
             ))}
             {isTyping && (
               <motion.div 
+                key="cursor"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ repeat: Infinity, duration: 0.5 }}
@@ -324,4 +359,8 @@ const App = () => {
 
 // Mount
 const root = createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
