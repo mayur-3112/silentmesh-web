@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { motion, useScroll, useTransform, useInView, AnimatePresence, useMotionValue, useSpring, useMotionValueEvent } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView, AnimatePresence, useSpring } from 'framer-motion';
 
 // ============================================================
 // ERROR BOUNDARY
@@ -10,9 +10,9 @@ class ErrorBoundary extends React.Component {
   static getDerivedStateFromError() { return { hasError: true }; }
   render() {
     if (this.state.hasError) return (
-      <div className="min-h-screen bg-[#090a0f] flex flex-col items-center justify-center font-mono text-gray-500 p-8 text-center">
+      <div className="min-h-screen bg-[#050608] flex flex-col items-center justify-center font-mono text-gray-500 p-8 text-center">
         <p className="text-sm mb-4">Something went wrong.</p>
-        <button onClick={() => window.location.reload()} className="px-4 py-2 border border-gray-700 hover:border-[#00c9a7] text-sm transition-colors">Reload</button>
+        <button onClick={() => window.location.reload()} className="px-4 py-2 border border-gray-800 hover:border-[#00c9a7] text-sm transition-colors">Reload</button>
       </div>
     );
     return this.props.children;
@@ -20,7 +20,7 @@ class ErrorBoundary extends React.Component {
 }
 
 // ============================================================
-// LENIS SMOOTH SCROLL
+// LENIS SMOOTH SCROLL (Delegated Anchor Interception)
 // ============================================================
 const useLenis = () => {
   useEffect(() => {
@@ -40,15 +40,25 @@ const useLenis = () => {
     }
     requestAnimationFrame(raf);
 
-    // handle anchor clicks
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', (e) => {
-        const target = document.querySelector(a.getAttribute('href'));
-        if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: -80 }); }
-      });
-    });
+    // Event delegation for smooth anchor scrolling
+    const handleAnchorClick = (e) => {
+      const targetAnchor = e.target.closest('a[href^="#"]');
+      if (!targetAnchor) return;
+      const targetId = targetAnchor.getAttribute('href');
+      if (targetId === '#') return;
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: -85 });
+      }
+    };
 
-    return () => lenis.destroy();
+    document.addEventListener('click', handleAnchorClick);
+
+    return () => {
+      lenis.destroy();
+      document.removeEventListener('click', handleAnchorClick);
+    };
   }, []);
 };
 
@@ -58,47 +68,56 @@ const useLenis = () => {
 const CustomCursor = () => {
   const dotX = useMotionValue(-100);
   const dotY = useMotionValue(-100);
-  const ringX = useSpring(dotX, { stiffness: 150, damping: 20, mass: 0.5 });
-  const ringY = useSpring(dotY, { stiffness: 150, damping: 20, mass: 0.5 });
+  const ringX = useSpring(dotX, { stiffness: 220, damping: 22 });
+  const ringY = useSpring(dotY, { stiffness: 220, damping: 22 });
   const [state, setState] = useState('default'); // default | hovering | hovering-cta
   const [visible, setVisible] = useState(false);
+  const visibleRef = useRef(false);
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const move = (e) => {
-      dotX.set(e.clientX - 3);
-      dotY.set(e.clientY - 3);
-      if (!visible) setVisible(true);
+      dotX.set(e.clientX);
+      dotY.set(e.clientY);
+      if (!visibleRef.current) {
+        visibleRef.current = true;
+        setVisible(true);
+      }
     };
 
-    const leave = () => setVisible(false);
-    const enter = () => setVisible(true);
+    const leave = () => { visibleRef.current = false; setVisible(false); };
+    const enter = () => { visibleRef.current = true; setVisible(true); };
 
     window.addEventListener('mousemove', move);
     document.addEventListener('mouseleave', leave);
     document.addEventListener('mouseenter', enter);
 
-    // Hover detection
-    const addHoverListeners = () => {
-      document.querySelectorAll('a, button, [role="button"], input, textarea, select, .magnetic').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          const isCta = el.classList.contains('cta-primary') || el.getAttribute('type') === 'submit';
-          setState(isCta ? 'hovering-cta' : 'hovering');
-        });
-        el.addEventListener('mouseleave', () => setState('default'));
-      });
+    // Dynamic Hover Delegation
+    const handleMouseOver = (e) => {
+      const el = e.target.closest('a, button, [role="button"], input, textarea, select, .magnetic, .interactive-node');
+      if (el) {
+        const isCta = el.classList.contains('cta-primary') || el.getAttribute('type') === 'submit';
+        setState(isCta ? 'hovering-cta' : 'hovering');
+      }
     };
-    // Delay to let React render
-    setTimeout(addHoverListeners, 1000);
-    const observer = new MutationObserver(() => setTimeout(addHoverListeners, 200));
-    observer.observe(document.body, { childList: true, subtree: true });
+
+    const handleMouseOut = (e) => {
+      const el = e.target.closest('a, button, [role="button"], input, textarea, select, .magnetic, .interactive-node');
+      if (el) {
+        setState('default');
+      }
+    };
+
+    document.body.addEventListener('mouseover', handleMouseOver);
+    document.body.addEventListener('mouseout', handleMouseOut);
 
     return () => {
       window.removeEventListener('mousemove', move);
       document.removeEventListener('mouseleave', leave);
       document.removeEventListener('mouseenter', enter);
-      observer.disconnect();
+      document.body.removeEventListener('mouseover', handleMouseOver);
+      document.body.removeEventListener('mouseout', handleMouseOut);
     };
   }, []);
 
@@ -108,67 +127,63 @@ const CustomCursor = () => {
     <>
       <motion.div
         className={`cursor-dot ${state !== 'default' ? 'hovering' : ''}`}
-        style={{ x: dotX, y: dotY, opacity: visible ? 1 : 0 }}
+        style={{ x: dotX, y: dotY, translateX: '-50%', translateY: '-50%', opacity: visible ? 1 : 0 }}
       />
       <motion.div
         className={`cursor-ring ${state}`}
-        style={{
-          x: useTransform(ringX, v => v - (state === 'hovering-cta' ? 25 : state === 'hovering' ? 21 : 13)),
-          y: useTransform(ringY, v => v - (state === 'hovering-cta' ? 25 : state === 'hovering' ? 21 : 13)),
-          opacity: visible ? 1 : 0,
-        }}
+        style={{ x: ringX, y: ringY, translateX: '-50%', translateY: '-50%', opacity: visible ? 1 : 0 }}
       />
     </>
   );
 };
 
 // ============================================================
-// MAGNETIC BUTTON
+// MAGNETIC COMPONENT wrapper
 // ============================================================
 const MagneticButton = ({ children, className = '', as = 'a', ...props }) => {
   const ref = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 200, damping: 15 });
-  const springY = useSpring(y, { stiffness: 200, damping: 15 });
+  const springX = useSpring(x, { stiffness: 180, damping: 14 });
+  const springY = useSpring(y, { stiffness: 180, damping: 14 });
 
   const handleMouse = (e) => {
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
-    x.set((e.clientX - cx) * 0.2);
-    y.set((e.clientY - cy) * 0.2);
+    x.set((e.clientX - cx) * 0.22);
+    y.set((e.clientY - cy) * 0.22);
   };
 
   const reset = () => { x.set(0); y.set(0); };
 
+  const { as: tagType, ...propsWithoutAs } = props;
   const Tag = motion[as] || motion.a;
 
   return (
     <Tag ref={ref} onMouseMove={handleMouse} onMouseLeave={reset}
       style={{ x: springX, y: springY }}
-      className={`magnetic ${className}`} {...props}>
+      className={`magnetic ${className}`} {...propsWithoutAs}>
       {children}
     </Tag>
   );
 };
 
 // ============================================================
-// MOTION UTILITIES
+// ANIMATION LAYOUT UTILITIES
 // ============================================================
 const ease = [0.25, 0.1, 0.25, 1];
-const springCfg = { stiffness: 100, damping: 20 };
 
 const RevealBlock = ({ children, className = '', delay = 0, direction = 'up' }) => {
-  const dirs = { up: { y: 32 }, down: { y: -32 }, left: { x: 50 }, right: { x: -50 } };
+  const dirs = { up: { y: 24 }, down: { y: -24 }, left: { x: 30 }, right: { x: -30 } };
   const from = dirs[direction] || dirs.up;
   return (
     <motion.div
       initial={{ opacity: 0, ...from }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.7, delay, ease }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.8, delay, ease }}
       className={className}
     >{children}</motion.div>
   );
@@ -176,8 +191,10 @@ const RevealBlock = ({ children, className = '', delay = 0, direction = 'up' }) 
 
 const SectionLabel = ({ number, text }) => (
   <RevealBlock direction="left">
-    <div className="font-mono text-xs text-gray-500 tracking-[0.2em] uppercase mb-4">
-      {number && <span className="text-[#00c9a7] mr-3">{number}</span>}{text}
+    <div className="font-mono text-xs text-gray-500 tracking-[0.2em] uppercase mb-4 flex items-center gap-2">
+      {number && <span className="text-[#00c9a7]">{number}</span>}
+      <span className="w-1.5 h-px bg-gray-700" />
+      <span>{text}</span>
     </div>
   </RevealBlock>
 );
@@ -200,51 +217,122 @@ const Divider = () => (
     whileInView={{ scaleX: 1 }}
     viewport={{ once: true }}
     transition={{ duration: 1.2, ease }}
-    className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent mb-20 origin-left"
+    className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent mb-16 origin-left"
   />
 );
 
 const Section = ({ id, ariaLabel, children, className = '' }) => (
-  <section id={id} aria-label={ariaLabel} className={`relative w-full px-6 md:px-12 lg:px-24 overflow-hidden ${className}`}>
+  <section id={id} aria-label={ariaLabel} className={`relative w-full px-6 md:px-12 lg:px-24 ${className}`}>
     {children}
   </section>
 );
 
 // ============================================================
-// TOPOLOGY BACKGROUND (ambient living infrastructure)
+// LIVING RUNTIME TOPOLOGY (Hero Visual)
 // ============================================================
-const TopologyBackground = () => {
-  const nodes = useMemo(() => [
-    { cx: 10, cy: 20 }, { cx: 25, cy: 65 }, { cx: 42, cy: 30 },
-    { cx: 55, cy: 75 }, { cx: 70, cy: 25 }, { cx: 85, cy: 55 },
-    { cx: 35, cy: 50 }, { cx: 60, cy: 45 }, { cx: 78, cy: 70 },
-    { cx: 15, cy: 80 }, { cx: 90, cy: 35 }, { cx: 48, cy: 85 },
-  ], []);
-  const edges = useMemo(() => [
-    [0,2],[0,1],[1,6],[2,7],[2,4],[3,5],[3,8],[4,10],[5,8],[6,7],[7,4],[9,1],[9,11],[11,3],
-  ], []);
+const LivingTopology = () => {
+  const [hoveredNode, setHoveredNode] = useState(null);
+  
+  const nodes = [
+    { id: 'observe', cx: 120, cy: 100, label: '01 OBSERVE', title: 'eBPF Telemetry', color: '#00c9a7', desc: 'Kernel-space monitoring, low-overhead event ingestion.' },
+    { id: 'evaluate', cx: 280, cy: 180, label: '02 EVALUATE', title: 'Context Engine', color: '#00c9a7', desc: 'Anomalous parent-child tracing & system-call analysis.' },
+    { id: 'simulate', cx: 160, cy: 300, label: '03 SIMULATE', title: 'Shadow Mode Run', color: '#00c9a7', desc: 'Predict impact on active threads before mitigating.' },
+    { id: 'mitigate', cx: 340, cy: 380, label: '04 MITIGATE', title: 'Scoped Response', color: '#ff4a5a', desc: 'Targeted workload containment, namespaces restricted.' }
+  ];
 
   return (
-    <div className="absolute inset-0 pointer-events-none opacity-[0.035]">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="w-full h-full">
-        {edges.map(([a,b], i) => (
-          <motion.line key={`e${i}`} x1={nodes[a].cx} y1={nodes[a].cy} x2={nodes[b].cx} y2={nodes[b].cy}
-            stroke="#00c9a7" strokeWidth="0.15"
-            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-            transition={{ duration: 2.5, delay: i * 0.12, ease }} />
+    <div className="w-full h-full relative flex items-center justify-center min-h-[350px] md:min-h-[450px]">
+      {/* Background Living Elements */}
+      <svg viewBox="0 0 450 450" className="w-full h-full max-w-[450px] relative z-10" role="img" aria-label="Interactive runtime topology map">
+        {/* Connection Paths */}
+        <motion.path
+          d="M 120 100 Q 200 120, 280 180 T 160 300 T 340 380"
+          fill="none"
+          stroke="rgba(0, 201, 167, 0.1)"
+          strokeWidth="1.5"
+        />
+        {/* Flow pulses */}
+        <motion.path
+          d="M 120 100 Q 200 120, 280 180 T 160 300 T 340 380"
+          fill="none"
+          stroke="url(#pulseGradient)"
+          strokeWidth="2.5"
+          strokeDasharray="15 80"
+          animate={{ strokeDashoffset: [-200, 0] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: 'linear' }}
+        />
+
+        <defs>
+          <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#00c9a7" stopOpacity="0" />
+            <stop offset="50%" stopColor="#00c9a7" stopOpacity="1" />
+            <stop offset="100%" stopColor="#ff4a5a" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        {/* Ambient surrounding nodes */}
+        {[[60, 150], [90, 320], [380, 110], [410, 290]].map(([cx, cy], i) => (
+          <circle key={i} cx={cx} cy={cy} r="1.5" fill="rgba(255,255,255,0.15)" />
         ))}
-        {nodes.map((n, i) => (
-          <motion.circle key={`n${i}`} cx={n.cx} cy={n.cy} r="0.5" fill="#00c9a7"
-            initial={{ opacity: 0 }} animate={{ opacity: [0.2, 0.7, 0.2] }}
-            transition={{ duration: 4, repeat: Infinity, delay: i * 0.35 }} />
-        ))}
+
+        {/* Interactive nodes */}
+        {nodes.map((n, i) => {
+          const isHovered = hoveredNode === n.id;
+          return (
+            <g key={n.id} className="interactive-node"
+               onMouseEnter={() => setHoveredNode(n.id)}
+               onMouseLeave={() => setHoveredNode(null)}>
+              {/* Outer pulsing ring */}
+              <motion.circle
+                cx={n.cx} cy={n.cy} r={isHovered ? 24 : 14}
+                fill="none"
+                stroke={n.color}
+                strokeWidth="1"
+                strokeOpacity={isHovered ? 0.4 : 0.15}
+                animate={{ scale: isHovered ? [1, 1.1, 1] : [1, 1.2, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}
+              />
+              {/* Inner solid node */}
+              <circle cx={n.cx} cy={n.cy} r="5" fill={n.color} />
+              
+              {/* Hover text indicator */}
+              <text x={n.cx} y={n.cy - 20} textAnchor="middle" fill="#8892b0" fontSize="10" fontFamily="'JetBrains Mono', monospace">
+                {n.label}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Technical Detail Overlays */}
+        <foreignObject x="40" y="200" width="370" height="230" className="pointer-events-none">
+          <AnimatePresence>
+            {hoveredNode && (() => {
+              const nd = nodes.find(x => x.id === hoveredNode);
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  className="glass p-4 border border-[#00c9a7]/20 rounded shadow-xl text-left pointer-events-auto"
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-['Space_Grotesk'] text-sm font-semibold text-white tracking-wide">{nd.title}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00c9a7] animate-ping" />
+                  </div>
+                  <p className="text-xs text-gray-400 leading-relaxed font-light">{nd.desc}</p>
+                </motion.div>
+              );
+            })()}
+          </AnimatePresence>
+        </foreignObject>
       </svg>
     </div>
   );
 };
 
 // ============================================================
-// NAVIGATION with active section tracking
+// NAVIGATION
 // ============================================================
 const NavBar = () => {
   const [open, setOpen] = useState(false);
@@ -255,9 +343,9 @@ const NavBar = () => {
     const onScroll = () => {
       setScrolled(window.scrollY > 40);
       const sections = ['hero','problem','safety','how-it-works','philosophy','technical','contact'];
-      for (const id of sections.reverse()) {
+      for (const id of [...sections].reverse()) {
         const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top < 200) { setActiveSection(id); break; }
+        if (el && el.getBoundingClientRect().top < 150) { setActiveSection(id); break; }
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -276,15 +364,15 @@ const NavBar = () => {
     <motion.nav role="navigation" aria-label="Primary navigation"
       initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, delay: 0.3, ease }}
-      className={`fixed top-0 w-full z-40 transition-all duration-700 ${scrolled ? 'bg-[#090a0f]/80 backdrop-blur-2xl border-b border-white/[0.04] shadow-[0_4px_40px_rgba(0,0,0,0.5)]' : ''}`}
+      className={`fixed top-0 w-full z-40 transition-all duration-500 ${scrolled ? 'bg-[#050608]/85 backdrop-blur-2xl border-b border-white/[0.03] shadow-2xl' : ''}`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 flex items-center justify-between h-16">
-        <a href="#" className="font-['Space_Grotesk'] font-semibold text-lg text-white tracking-tight hover:text-[#00c9a7] transition-colors duration-300">
+        <a href="#" className="font-['Space_Grotesk'] font-bold text-lg text-white tracking-tight hover:text-[#00c9a7] transition-colors duration-300">
           SilentMesh
         </a>
         <div className="hidden md:flex items-center gap-8">
           {links.map(l => (
-            <a key={l.href} href={l.href} className={`relative text-sm transition-colors duration-300 py-1 ${activeSection === l.id ? 'text-white' : 'text-gray-500 hover:text-white'}`}>
+            <a key={l.href} href={l.href} className={`relative text-xs font-mono uppercase tracking-widest transition-colors duration-300 py-1 ${activeSection === l.id ? 'text-[#00c9a7]' : 'text-gray-400 hover:text-white'}`}>
               {l.label}
               <motion.span
                 className="absolute bottom-0 left-0 h-px bg-[#00c9a7]"
@@ -295,7 +383,7 @@ const NavBar = () => {
             </a>
           ))}
           <MagneticButton href="#contact"
-            className="cta-primary text-sm font-medium px-5 py-2 border border-[#00c9a7]/30 text-[#00c9a7] hover:bg-[#00c9a7] hover:text-[#090a0f] transition-all duration-300">
+            className="cta-primary text-xs font-mono tracking-wider px-5 py-2 border border-[#00c9a7]/30 text-[#00c9a7] hover:bg-[#00c9a7] hover:text-[#050608] transition-all duration-300">
             Request Access
           </MagneticButton>
         </div>
@@ -309,9 +397,10 @@ const NavBar = () => {
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}
-            className="md:hidden bg-[#090a0f]/95 backdrop-blur-xl border-t border-white/5 overflow-hidden">
+            className="md:hidden bg-[#050608]/95 backdrop-blur-xl border-t border-white/5 overflow-hidden">
             <div className="px-6 py-6 flex flex-col gap-4">
-              {links.map(l => <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-sm text-gray-500 hover:text-white">{l.label}</a>)}
+              {links.map(l => <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-sm font-mono tracking-wide text-gray-400 hover:text-white">{l.label}</a>)}
+              <a href="#contact" onClick={() => setOpen(false)} className="text-sm font-mono tracking-wide text-[#00c9a7]">Request Access</a>
             </div>
           </motion.div>
         )}
@@ -325,60 +414,62 @@ const NavBar = () => {
 // ============================================================
 const Hero = () => {
   const { scrollY } = useScroll();
-  const heroOpacity = useTransform(scrollY, [0, 700], [1, 0]);
-  const heroY = useTransform(scrollY, [0, 700], [0, 100]);
-  const gridOpacity = useTransform(scrollY, [0, 500], [0.025, 0]);
+  const heroOpacity = useTransform(scrollY, [0, 600], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 600], [1, 0.95]);
 
   return (
-    <Section id="hero" ariaLabel="Introduction" className="min-h-screen flex flex-col justify-center pt-20 pb-24 md:pt-28 md:pb-32">
-      <div className="ambient-mesh"><div className="blob blob-1"/><div className="blob blob-2"/><div className="blob blob-3"/></div>
-      <motion.div style={{ opacity: gridOpacity }} className="drift-grid" />
-      <TopologyBackground />
+    <Section id="hero" ariaLabel="Introduction" className="min-h-screen flex flex-col justify-center pt-24 pb-20 md:pt-32">
+      <div className="ambient-glow">
+        <div className="glow-blob blob-primary" />
+        <div className="glow-blob blob-secondary" />
+      </div>
+      <div className="grid-mesh" />
 
-      <motion.div style={{ opacity: heroOpacity, y: heroY }} className="relative z-10 max-w-5xl">
+      <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Text Block */}
+        <div className="lg:col-span-7 text-left">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.7, ease }}
+            className="inline-flex items-center gap-2.5 mb-8 px-4 py-1.5 border border-[#00c9a7]/20 rounded-full bg-[#00c9a7]/[0.03]"
+          >
+            <motion.span animate={{ scale: [1, 1.4, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-1.5 h-1.5 bg-[#00c9a7] rounded-full" />
+            <span className="font-mono text-[10px] text-[#00c9a7] tracking-[0.2em] uppercase">Linux Runtime Intelligence</span>
+          </motion.div>
+
+          <h1 className="text-4xl md:text-5xl lg:text-[4.5rem] font-['Space_Grotesk'] font-bold leading-[1.1] tracking-tight mb-8 text-white">
+            Runtime protection that <span className="text-accent-gradient">thinks in context.</span>
+          </h1>
+
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}
+            className="text-base md:text-lg text-gray-400 font-light leading-relaxed max-w-xl mb-10">
+            SilentMesh observes, evaluates, and mitigates in real time—with low-overhead eBPF instrumentation and reversible response workflows.
+          </motion.p>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8, ease }}
+            className="flex flex-wrap gap-4">
+            <MagneticButton href="#contact"
+              className="cta-primary inline-flex items-center justify-center px-6 py-3.5 bg-[#00c9a7] text-[#050608] font-mono text-xs uppercase tracking-wider hover:shadow-[0_0_30px_rgba(0,201,167,0.25)] transition-all duration-300">
+              Request Early Access <span className="ml-2">→</span>
+            </MagneticButton>
+            <a href="#safety"
+              className="inline-flex items-center justify-center px-6 py-3.5 border border-white/5 bg-white/[0.02] text-xs font-mono uppercase tracking-wider text-gray-400 hover:text-white hover:border-white/15 transition-all duration-300">
+              Explore Platform
+            </a>
+          </motion.div>
+        </div>
+
+        {/* Live Visual Block */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.5, ease }}
-          className="inline-flex items-center gap-2.5 mb-10 px-4 py-1.5 border border-[#00c9a7]/20 rounded-full bg-[#00c9a7]/[0.04]"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.4, ease }}
+          className="lg:col-span-5 relative"
         >
-          <motion.span animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-1.5 h-1.5 bg-[#00c9a7] rounded-full" />
-          <span className="font-['JetBrains_Mono'] text-[11px] text-[#00c9a7] tracking-[0.15em] uppercase">Runtime Visibility Platform</span>
-        </motion.div>
-
-        {['Runtime visibility', 'and scoped response', 'for Linux infrastructure.'].map((line, i) => (
-          <div key={i} className="overflow-hidden mb-1">
-            <motion.h1
-              initial={{ y: '110%' }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.9, delay: 0.6 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              className={`text-4xl md:text-6xl lg:text-[5.5rem] font-['Space_Grotesk'] font-bold leading-[1.08] tracking-tight ${i === 2 ? 'text-transparent' : 'text-white'}`}
-              style={i === 2 ? { WebkitTextStroke: '1.5px rgba(255,255,255,0.18)' } : {}}
-            >{line}</motion.h1>
-          </div>
-        ))}
-
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.1 }}
-          className="text-lg md:text-xl text-gray-500 font-light leading-relaxed max-w-2xl mt-8 mb-10">
-          Safety-focused telemetry and runtime containment workflows designed for production environments.
-        </motion.p>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 1.3, ease }}
-          className="flex flex-col sm:flex-row gap-3">
-          <MagneticButton href="#contact"
-            className="cta-primary inline-flex items-center justify-center px-7 py-3.5 bg-[#00c9a7] text-[#090a0f] font-medium text-sm hover:shadow-[0_0_40px_rgba(0,201,167,0.15)] transition-all duration-300">
-            Request Early Access <span className="ml-2">→</span>
-          </MagneticButton>
-          <MagneticButton href="#contact"
-            className="inline-flex items-center justify-center px-7 py-3.5 border border-white/10 text-sm text-gray-500 hover:text-white hover:border-white/20 transition-all duration-300">
-            Talk to Us
-          </MagneticButton>
-          <MagneticButton href="#technical"
-            className="inline-flex items-center justify-center px-7 py-3.5 border border-white/10 text-sm text-gray-500 hover:text-white hover:border-white/20 transition-all duration-300">
-            Read Architecture
-          </MagneticButton>
+          <LivingTopology />
         </motion.div>
       </motion.div>
     </Section>
@@ -390,32 +481,30 @@ const Hero = () => {
 // ============================================================
 const ProblemSection = () => {
   const points = [
-    'Alert volumes overwhelm operators before value is realized',
-    'Immediate blocking causes unintended production disruption',
-    'False positives erode trust in automated decision-making',
-    'Telemetry is opaque, making root-cause analysis difficult',
-    'Deployments require heavy coordination with large blast radius',
-    'Limited rollback capability when enforcement goes wrong',
+    { label: 'Alert Fatigue', desc: 'Detection breadth creates thousands of raw alarms that exhaust response capabilities.' },
+    { label: 'Unsafe Autonomous Blocking', desc: 'Opaque automation rules frequently block clean production threads, disrupting operation.' },
+    { label: 'Irreversible Enforcement', desc: 'When automatic remediation triggers incorrectly, restoring original container state causes friction.' },
+    { label: 'Opaque Telemetry Data', desc: 'Security operations lack the underlying system call trace necessary to audit decisions.' }
   ];
   return (
-    <Section id="problem" ariaLabel="The operational problem" className="py-24 md:py-36">
+    <Section id="problem" ariaLabel="The operational problem" className="py-20 md:py-32">
       <Divider />
-      <div className="max-w-4xl">
-        <SectionLabel number="01" text="The Problem" />
-        <SectionTitle>Runtime security today optimizes for detection breadth, not operational safety.</SectionTitle>
-        <RevealBlock delay={0.1}>
-          <p className="text-gray-500 text-lg leading-relaxed mb-14 max-w-2xl">
-            Existing tools generate noisy alerts, trigger risky automated blocks, and leave operators with limited visibility into why decisions were made.
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="lg:col-span-5 text-left">
+          <SectionLabel number="01" text="The Problem" />
+          <h2 className="text-3xl md:text-4xl font-['Space_Grotesk'] font-semibold leading-tight text-white mb-6">
+            Runtime security today optimizes for alerts, not operational continuity.
+          </h2>
+          <p className="text-gray-400 text-sm leading-relaxed font-light">
+            Security software often treats live production processes like test beds, triggering heavy global blocks without contextual verification or simple recovery pathways.
           </p>
-        </RevealBlock>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-0">
+        </div>
+        <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4">
           {points.map((p, i) => (
-            <RevealBlock key={i} delay={i * 0.07} direction={i % 2 === 0 ? 'left' : 'right'}>
-              <motion.div whileHover={{ x: 8, borderColor: 'rgba(0,201,167,0.12)' }}
-                className="flex items-start gap-3 py-4 border-b border-white/5 cursor-default group transition-colors duration-300">
-                <span className="text-[#00c9a7] mt-0.5 text-sm opacity-20 group-hover:opacity-100 transition-all duration-500">—</span>
-                <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">{p}</p>
-              </motion.div>
+            <RevealBlock key={i} delay={i * 0.1} className="glass p-6 border-white/5 cursor-default hover:border-white/10 transition-colors duration-300">
+              <span className="font-mono text-xs text-[#00c9a7] mb-2 block">{`0${i + 1}`}</span>
+              <h3 className="font-['Space_Grotesk'] text-white text-base font-medium mb-1.5">{p.label}</h3>
+              <p className="text-xs text-gray-500 leading-relaxed font-light">{p.desc}</p>
             </RevealBlock>
           ))}
         </div>
@@ -425,46 +514,172 @@ const ProblemSection = () => {
 };
 
 // ============================================================
-// 3. OPERATIONAL SAFETY
+// 3. OPERATIONAL SAFETY (Orbit/Threat Simulator Centerpiece)
 // ============================================================
 const SafetySection = () => {
-  const items = [
-    { title: 'Shadow mode', desc: 'Observe runtime behavior without enforcing. Validate policies safely before activation.' },
-    { title: 'Rollback controls', desc: 'Every containment action is reversible. Undo enforcement with a full audit trail.' },
-    { title: 'Operator approval', desc: 'Humans confirm before containment is applied. No autonomous blocking without input.' },
-    { title: 'Blast-radius reduction', desc: 'Scoped responses target specific workloads, not global enforcement rules.' },
-    { title: 'Policy simulation', desc: 'Test enforcement logic against historical data before deploying to production.' },
-    { title: 'Failure handling', desc: 'Configurable fail-open or fail-closed policies with observable enforcement failures and mitigation timeouts.' },
-  ];
+  const [simulationState, setSimulationState] = useState('idle'); // idle | threat | evaluating | mitigating | rollbacked
+  const timelineRef = useRef(null);
+
+  const startSimulation = () => {
+    setSimulationState('threat');
+    setTimeout(() => setSimulationState('evaluating'), 1200);
+    setTimeout(() => setSimulationState('mitigating'), 2600);
+  };
+
+  const resetSimulation = () => {
+    setSimulationState('rollbacked');
+    setTimeout(() => setSimulationState('idle'), 1800);
+  };
+
+  const getStatusText = () => {
+    switch (simulationState) {
+      case 'threat': return 'ANOMALOUS PID SIGNAL IN CONTAINER';
+      case 'evaluating': return 'EVALUATING RISK: PATH EXPLOIT PROBABLE';
+      case 'mitigating': return 'MITIGATION APPLIED: PROCESS CONTAINED';
+      case 'rollbacked': return 'ROLLBACK COMMAND ISSUED: REVERT SUCCESSFUL';
+      default: return 'SYSTEM MONITORING ACTIVE';
+    }
+  };
+
   return (
-    <Section id="safety" ariaLabel="Operational safety" className="py-24 md:py-36">
+    <Section id="safety" ariaLabel="Operational safety simulator" className="py-20 md:py-32">
       <Divider />
-      <div className="max-w-5xl">
-        <SectionLabel number="02" text="Operational Safety" />
-        <SectionTitle>Safety-first runtime operations.</SectionTitle>
-        <RevealBlock delay={0.1}>
-          <p className="text-gray-500 text-lg leading-relaxed max-w-2xl mb-14">
-            Runtime enforcement should reduce risk, not create it. Every mechanism is designed around operator visibility, controlled scope, and reversibility.
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Left Copy */}
+        <div className="lg:col-span-5 text-left">
+          <SectionLabel number="02" text="Operational Safety" />
+          <SectionTitle>Reversible runtime containment.</SectionTitle>
+          <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light">
+            Production response should be surgically precise. SilentMesh isolates anomalous system behaviors instantly while retaining the ability to undo changes instantly.
           </p>
-        </RevealBlock>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {items.map((item, i) => (
-            <RevealBlock key={i} delay={i * 0.08}>
-              <motion.div
-                whileHover={{ y: -8, boxShadow: '0 12px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,201,167,0.1)' }}
-                transition={{ type: 'spring', ...springCfg }}
-                className="glass p-6 h-full cursor-default group"
-              >
-                <motion.div className="w-9 h-9 rounded-full border border-[#00c9a7]/15 flex items-center justify-center mb-5 group-hover:border-[#00c9a7]/40 group-hover:shadow-[0_0_16px_rgba(0,201,167,0.1)] transition-all duration-500">
-                  <motion.span animate={{ scale: [1, 1.3, 1] }}
-                    transition={{ duration: 3.5, repeat: Infinity, delay: i * 0.5 }}
-                    className="w-2 h-2 rounded-full bg-[#00c9a7]" />
-                </motion.div>
-                <h3 className="font-['Space_Grotesk'] font-medium text-white text-sm mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
-              </motion.div>
-            </RevealBlock>
-          ))}
+
+          <div className="space-y-4">
+            <div className="flex gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#00c9a7] mt-1.5 flex-shrink-0" />
+              <p className="text-xs text-gray-500 leading-relaxed"><strong className="text-white font-medium">Shadow Validation:</strong> Observe alert outcomes before enforcement mode is activated.</p>
+            </div>
+            <div className="flex gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#00c9a7] mt-1.5 flex-shrink-0" />
+              <p className="text-xs text-gray-500 leading-relaxed"><strong className="text-white font-medium">Atomic Reversals:</strong> Rolling back containment triggers a kernel state swap with zero container restart cost.</p>
+            </div>
+          </div>
+
+          <div className="mt-8 flex gap-3">
+            {simulationState === 'idle' && (
+              <button onClick={startSimulation} className="px-5 py-2.5 bg-[#00c9a7] text-[#050608] font-mono text-[10px] uppercase tracking-wider font-semibold">
+                Simulate Threat
+              </button>
+            )}
+            {simulationState === 'mitigating' && (
+              <button onClick={resetSimulation} className="px-5 py-2.5 border border-[#00c9a7]/30 text-[#00c9a7] font-mono text-[10px] uppercase tracking-wider hover:bg-[#00c9a7] hover:text-[#050608] transition-all">
+                Trigger Rollback
+              </button>
+            )}
+            {simulationState !== 'idle' && simulationState !== 'mitigating' && (
+              <div className="px-5 py-2.5 bg-white/5 border border-white/5 text-gray-500 font-mono text-[10px] uppercase tracking-wider cursor-not-allowed">
+                Simulating...
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Orbit Simulation Canvas */}
+        <div className="lg:col-span-7 flex justify-center">
+          <div ref={timelineRef} className="w-full max-w-[400px] aspect-square relative bg-[#0a0b0e] border border-white/[0.03] rounded-lg p-6 flex flex-col justify-between overflow-hidden">
+            {/* Ambient status readout */}
+            <div className="flex items-center justify-between border-b border-white/[0.04] pb-3 z-10">
+              <span className="font-mono text-[9px] text-gray-500">SIMULATION ENGINE v1.2</span>
+              <span className={`font-mono text-[9px] tracking-wide px-2 py-0.5 rounded ${
+                simulationState === 'threat' || simulationState === 'evaluating' ? 'bg-[#ff4a5a]/10 text-[#ff4a5a]' :
+                simulationState === 'mitigating' ? 'bg-[#ff9800]/10 text-[#ff9800]' :
+                simulationState === 'rollbacked' ? 'bg-[#00c9a7]/20 text-[#00c9a7]' : 'bg-[#00c9a7]/10 text-[#00c9a7]'
+              }`}>
+                {simulationState.toUpperCase()}
+              </span>
+            </div>
+
+            {/* Orbit SVG */}
+            <svg viewBox="0 0 300 240" className="w-full flex-grow relative z-10" role="img" aria-label="Runtime safety execution path simulator">
+              {/* Connection Lines from Center Shield */}
+              {[[150, 40], [240, 100], [210, 190], [90, 190], [60, 100]].map(([x, y], i) => (
+                <line key={i} x1="150" y1="120" x2={x} y2={y} stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+              ))}
+
+              {/* Loop Connections */}
+              <path d="M 150 40 L 240 100 L 210 190 L 90 190 L 60 100 Z" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" strokeDasharray="3 3" />
+
+              {/* Pulsing signal on path during evaluation */}
+              {simulationState === 'evaluating' && (
+                <motion.circle r="3" fill="#ff4a5a"
+                  animate={{
+                    cx: [150, 240, 210],
+                    cy: [40, 100, 190],
+                  }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                />
+              )}
+
+              {/* Central Shield Hub */}
+              <circle cx="150" cy="120" r="28" fill="#050608" stroke={
+                simulationState === 'threat' || simulationState === 'evaluating' ? '#ff4a5a' :
+                simulationState === 'mitigating' ? '#ff9800' : '#00c9a7'
+              } strokeWidth="1.5" className="transition-colors duration-500" />
+              
+              <text x="150" y="124" textAnchor="middle" fill="#fff" fontSize="8" fontFamily="'Space Grotesk', sans-serif" fontWeight="bold">
+                MESH
+              </text>
+
+              {/* Node - 01 OBSERVE */}
+              <circle cx="150" cy="40" r="10" fill="#050608" stroke="#00c9a7" strokeWidth="1" />
+              <circle cx="150" cy="40" r="3" fill="#00c9a7" />
+              <text x="150" y="24" textAnchor="middle" fill="#8892b0" fontSize="8" fontFamily="'JetBrains Mono', monospace">OBSERVE</text>
+
+              {/* Node - 02 EVALUATE */}
+              <circle cx="240" cy="100" r="10" fill="#050608" stroke={simulationState !== 'idle' && simulationState !== 'rollbacked' ? '#ff4a5a' : '#00c9a7'} strokeWidth="1" />
+              <circle cx="240" cy="100" r="3" fill={simulationState !== 'idle' && simulationState !== 'rollbacked' ? '#ff4a5a' : '#00c9a7'} />
+              <text x="240" y="85" textAnchor="left" fill="#8892b0" fontSize="8" fontFamily="'JetBrains Mono', monospace">EVALUATE</text>
+
+              {/* Node - 03 SIMULATE */}
+              <circle cx="210" cy="190" r="10" fill="#050608" stroke={simulationState === 'mitigating' || simulationState === 'evaluating' ? '#ff9800' : '#00c9a7'} strokeWidth="1" />
+              <circle cx="210" cy="190" r="3" fill={simulationState === 'mitigating' || simulationState === 'evaluating' ? '#ff9800' : '#00c9a7'} />
+              <text x="210" y="212" textAnchor="middle" fill="#8892b0" fontSize="8" fontFamily="'JetBrains Mono', monospace">SIMULATE</text>
+
+              {/* Node - 04 MITIGATE */}
+              <circle cx="90" cy="190" r="10" fill="#050608" stroke={simulationState === 'mitigating' ? '#ff4a5a' : '#00c9a7'} strokeWidth="1" />
+              <circle cx="90" cy="190" r="3" fill={simulationState === 'mitigating' ? '#ff4a5a' : '#00c9a7'} />
+              <text x="90" y="212" textAnchor="middle" fill="#8892b0" fontSize="8" fontFamily="'JetBrains Mono', monospace">MITIGATE</text>
+
+              {/* Mitigate Red containment field ring */}
+              {simulationState === 'mitigating' && (
+                <motion.circle cx="90" cy="190" r="18" fill="none" stroke="#ff4a5a" strokeWidth="1" strokeDasharray="3 3"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0.2, 0.6] }}
+                  transition={{ duration: 2.2, repeat: Infinity }}
+                />
+              )}
+
+              {/* Node - 05 ROLLBACK */}
+              <circle cx="60" cy="100" r="10" fill="#050608" stroke={simulationState === 'rollbacked' ? '#00c9a7' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+              <circle cx="60" cy="100" r="3" fill={simulationState === 'rollbacked' ? '#00c9a7' : 'rgba(255,255,255,0.2)'} />
+              <text x="60" y="85" textAnchor="middle" fill="#8892b0" fontSize="8" fontFamily="'JetBrains Mono', monospace">ROLLBACK</text>
+
+              {/* Rollback Sweep animation */}
+              {simulationState === 'rollbacked' && (
+                <motion.circle cx="60" cy="100" r="120" fill="none" stroke="#00c9a7" strokeWidth="1.5" strokeOpacity="0.4"
+                  initial={{ r: 0 }} animate={{ r: 200, opacity: 0 }}
+                  transition={{ duration: 1.5, ease: 'easeOut' }}
+                />
+              )}
+            </svg>
+
+            {/* Readout log console */}
+            <div className="bg-[#050608] border border-white/[0.04] p-3 text-left">
+              <span className="font-mono text-[9px] text-[#00c9a7] block tracking-wide uppercase mb-1">Status Report</span>
+              <span className="font-mono text-[10px] text-gray-300 block font-light leading-snug">
+                {getStatusText()}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </Section>
@@ -475,23 +690,26 @@ const SafetySection = () => {
 // 4. DESIGN PRINCIPLES
 // ============================================================
 const PrinciplesSection = () => {
-  const principles = ['Shadow-first deployment','Reversible mitigation','Observable enforcement','Progressive trust','Linux-native telemetry','Operator visibility first'];
+  const principles = [
+    { title: 'Observe First', desc: 'No blocking actions are executed until comprehensive behavioral context is mapped.' },
+    { title: 'Reversible Logic', desc: 'Every containment policy maintains a native kernel rollback mechanism.' },
+    { title: 'Minimum Overhead', desc: 'Telemetry leverages non-blocking eBPF hook points, protecting application latency.' },
+    { title: 'Progressive Trust', desc: 'Workload policies phase from dry-run simulations to selective micro-enforcement.' }
+  ];
   return (
-    <Section id="principles" ariaLabel="Design principles" className="py-24 md:py-36">
+    <Section id="principles" ariaLabel="Platform principles" className="py-20 md:py-32">
       <Divider />
       <div className="max-w-4xl">
         <SectionLabel number="03" text="Design Principles" />
-        <SectionTitle>Built around operational realism.</SectionTitle>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
+        <SectionTitle>Built around operational constraint.</SectionTitle>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-10">
           {principles.map((p, i) => (
-            <RevealBlock key={i} delay={i * 0.07}>
-              <motion.div whileHover={{ scale: 1.04, borderColor: 'rgba(0,201,167,0.25)', backgroundColor: 'rgba(0,201,167,0.03)' }}
-                transition={{ type: 'spring', ...springCfg }}
-                className="flex items-center gap-3 px-5 py-4 border border-white/5 cursor-default">
-                <motion.span animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                  className="w-1.5 h-1.5 rounded-full bg-[#00c9a7] flex-shrink-0" />
-                <span className="text-sm text-gray-300">{p}</span>
-              </motion.div>
+            <RevealBlock key={i} delay={i * 0.08} className="border border-white/5 bg-white/[0.01] p-6 hover:border-[#00c9a7]/20 transition-all duration-300">
+              <h3 className="font-['Space_Grotesk'] text-white text-base font-semibold mb-2 flex items-center gap-3">
+                <span className="w-1.5 h-1.5 bg-[#00c9a7] rounded-full" />
+                {p.title}
+              </h3>
+              <p className="text-xs text-gray-500 leading-relaxed font-light">{p.desc}</p>
             </RevealBlock>
           ))}
         </div>
@@ -501,147 +719,100 @@ const PrinciplesSection = () => {
 };
 
 // ============================================================
-// 5. RUNTIME WORKFLOW CANVAS — THE CENTERPIECE
+// 5. PROGRESSIVE TRUST (Isometric Layer centerpiece)
 // ============================================================
-const WorkflowCanvas = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-120px' });
-  const [activeStage, setActiveStage] = useState(-1);
-
-  useEffect(() => {
-    if (!isInView) return;
-    let stage = 0;
-    const interval = setInterval(() => {
-      setActiveStage(stage);
-      stage++;
-      if (stage > 4) { stage = 0; }
-    }, 2200);
-    return () => clearInterval(interval);
-  }, [isInView]);
+const HowItWorksSection = () => {
+  const [activeStage, setActiveStage] = useState(0);
 
   const stages = [
-    { label: 'Observe', x: 90, desc: 'Collect runtime events using Linux-native instrumentation.' },
-    { label: 'Evaluate', x: 270, desc: 'Correlate events with workload context and policy conditions.' },
-    { label: 'Simulate', x: 450, desc: 'Validate response logic in shadow mode — no production impact.' },
-    { label: 'Mitigate', x: 630, desc: 'Apply controlled, scoped containment with operator approval.' },
-    { label: 'Rollback', x: 810, desc: 'Reverse any action with full audit trail and recovery visibility.' },
+    { label: 'Observe', color: '#00c9a7', desc: 'Low-impact eBPF probes gather granular context around socket connections, syscall arguments, and namespaces.', stats: '95% telemetry coverage' },
+    { label: 'Evaluate', color: '#00c9a7', desc: 'System calls are mapped to process lineages and cross-referenced with local behavior parameters.', stats: 'anomaly identification in <1ms' },
+    { label: 'Simulate', color: '#00c9a7', desc: 'Response policies execute in shadow mode. Evaluate blast-radius impact on dry-run containers.', stats: 'zero risk simulation' },
+    { label: 'Mitigate', color: '#ff4a5a', desc: 'Apply targeted response vectors: cgroup restriction, socket teardown, or namespace isolation.', stats: 'containment in 8ms' },
+    { label: 'Rollback', color: '#00c9a7', desc: 'Restore namespaces, resume suspended workloads, and reconnect sockets instantly with zero state loss.', stats: 'reversion in 22ms' }
   ];
 
   return (
-    <Section id="how-it-works" ariaLabel="Runtime workflow" className="py-24 md:py-36">
+    <Section id="how-it-works" ariaLabel="The progressive trust pipeline" className="py-20 md:py-32">
       <Divider />
-      <div className="max-w-6xl" ref={ref}>
+      <div className="max-w-6xl">
         <SectionLabel number="04" text="How It Works" />
-        <SectionTitle>Five-stage runtime response workflow.</SectionTitle>
+        <SectionTitle>Five levels of progressive trust.</SectionTitle>
+        <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12 font-light">
+          SilentMesh routes process actions through five stages of system validation, isolating execution vectors with surgical precision.
+        </p>
 
-        <RevealBlock delay={0.15}>
-          <div className="relative mt-12 mb-10 glass-elevated p-8 md:p-12 overflow-hidden">
-            {/* Ambient background glow */}
-            <motion.div
-              animate={isInView ? {
-                background: stages.map((s,i) =>
-                  `radial-gradient(300px circle at ${s.x/9.2}% 50%, ${i === activeStage ? 'rgba(0,201,167,0.06)' : 'transparent'}, transparent)`
-                )[activeStage] || 'none'
-              } : {}}
-              transition={{ duration: 0.8 }}
-              className="absolute inset-0 pointer-events-none"
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Isometric SVG */}
+          <div className="lg:col-span-6 flex justify-center">
+            <svg viewBox="0 0 350 480" className="w-full max-w-[350px] h-auto overflow-visible" role="img" aria-label="3D isometric visualization of safety layers">
+              {/* Laser Core Line */}
+              <line x1="175" y1="60" x2="175" y2="400" stroke="rgba(0, 201, 167, 0.1)" strokeWidth="1.5" />
+              <motion.line x1="175" y1="60" x2="175" y2="400" stroke="#00c9a7" strokeWidth="2.5" strokeDasharray="30 200"
+                animate={{ strokeDashoffset: [-400, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
+              />
 
-            <svg viewBox="0 0 900 180" className="w-full h-auto relative z-10" style={{ minHeight: '120px' }}>
-              {/* Connection lines */}
-              {stages.slice(0,-1).map((s, i) => (
-                <React.Fragment key={`p${i}`}>
-                  <motion.line x1={s.x + 24} y1={70} x2={stages[i+1].x - 24} y2={70}
-                    stroke="rgba(255,255,255,0.06)" strokeWidth="1"
-                    initial={{ pathLength: 0 }} animate={isInView ? { pathLength: 1 } : {}}
-                    transition={{ duration: 0.8, delay: 0.4 + i * 0.25, ease }} />
-                  {/* Signal pulse */}
-                  {isInView && (
-                    <motion.circle r="4" fill="#00c9a7"
-                      initial={{ opacity: 0 }}
-                      animate={{
-                        cx: [s.x + 24, stages[i+1].x - 24],
-                        cy: [70, 70],
-                        opacity: activeStage === i ? [0, 0.9, 0.9, 0] : 0,
-                      }}
-                      transition={{ duration: 1, ease: 'easeInOut' }}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-
-              {/* Stage nodes */}
-              {stages.map((s, i) => {
-                const active = i === activeStage;
-                const completed = i < activeStage;
+              {/* Isometric diamond layers */}
+              {stages.map((st, i) => {
+                const cy = 80 + i * 80;
+                const isActive = activeStage === i;
                 return (
-                  <motion.g key={`s${i}`}
-                    initial={{ opacity: 0, scale: 0.3 }}
-                    animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ duration: 0.6, delay: 0.3 + i * 0.15, type: 'spring', stiffness: 150 }}
-                    style={{ transformOrigin: `${s.x}px 70px` }}
-                  >
-                    {/* Containment scope ring — only on active */}
-                    <motion.circle cx={s.x} cy={70} r={30} fill="none"
-                      stroke={active ? 'rgba(0,201,167,0.2)' : 'transparent'} strokeWidth="1"
-                      strokeDasharray="4 4"
-                      animate={active ? { r: [26, 34, 26], opacity: [0.5, 0.2, 0.5] } : { opacity: 0 }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                  <g key={i} className="cursor-pointer isometric-stage" onClick={() => setActiveStage(i)}>
+                    {/* Shadow Layer Grid Rhombus */}
+                    <polygon
+                      points={`175,${cy - 35} 295,${cy} 175,${cy + 35} 55,${cy}`}
+                      fill={isActive ? 'rgba(0, 201, 167, 0.05)' : 'rgba(255, 255, 255, 0.01)'}
+                      stroke={isActive ? '#00c9a7' : 'rgba(255, 255, 255, 0.04)'}
+                      strokeWidth={isActive ? '1.5' : '1'}
+                      className="transition-all duration-300"
                     />
-                    {/* Node */}
-                    <motion.circle cx={s.x} cy={70} r={18}
-                      fill={active ? 'rgba(0,201,167,0.05)' : '#0a0a0f'}
-                      stroke={active ? 'rgba(0,201,167,0.5)' : completed ? 'rgba(0,201,167,0.25)' : 'rgba(255,255,255,0.08)'}
-                      strokeWidth={active ? 1.5 : 1}
-                      animate={{ scale: active ? 1.1 : 1 }}
-                      transition={{ type: 'spring', ...springCfg }}
-                    />
-                    {/* Core dot */}
-                    <motion.circle cx={s.x} cy={70} r={active ? 5 : 3}
-                      fill="#00c9a7"
-                      animate={{ opacity: active ? 1 : completed ? 0.7 : 0.3 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                    {/* Label */}
-                    <text x={s.x} y={116} textAnchor="middle" fontSize="10" fontFamily="'JetBrains Mono', monospace"
-                      fill={active ? 'rgba(0,201,167,0.7)' : 'rgba(255,255,255,0.25)'}>
-                      0{i+1}
+
+                    {/* Nodes inside layer */}
+                    <circle cx="175" cy={cy} r={isActive ? 5 : 3} fill={isActive ? '#00c9a7' : 'rgba(255,255,255,0.2)'} />
+                    <circle cx="140" cy={cy - 10} r="2" fill="rgba(255,255,255,0.1)" />
+                    <circle cx="210" cy={cy + 10} r="2" fill="rgba(255,255,255,0.1)" />
+
+                    {/* Label Tag */}
+                    <text x="45" y={cy + 4} fill={isActive ? '#fff' : 'rgba(255,255,255,0.25)'} fontSize="9" fontFamily="'JetBrains Mono', monospace" fontWeight={isActive ? 'bold' : 'normal'}>
+                      {`0${i + 1}`} {st.label.toUpperCase()}
                     </text>
-                    <text x={s.x} y={135} textAnchor="middle" fontSize="12" fontFamily="'Space Grotesk', sans-serif"
-                      fontWeight={active ? '600' : '400'}
-                      fill={active ? '#fff' : 'rgba(255,255,255,0.5)'}>
-                      {s.label}
-                    </text>
-                  </motion.g>
+                  </g>
                 );
               })}
-
-              {/* Rollback reverse path — visible when rollback is active */}
-              <motion.path
-                d={`M ${stages[4].x - 24} 55 C ${stages[3].x} 30, ${stages[2].x} 30, ${stages[1].x + 24} 55`}
-                fill="none" stroke="rgba(0,201,167,0.15)" strokeWidth="1" strokeDasharray="6 4"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: activeStage === 4 ? 1 : 0, opacity: activeStage === 4 ? 0.6 : 0 }}
-                transition={{ duration: 1.2, ease }}
-              />
-              {activeStage === 4 && (
-                <text x={450} y={25} textAnchor="middle" fontSize="9" fontFamily="'JetBrains Mono', monospace" fill="rgba(0,201,167,0.4)">
-                  rollback path
-                </text>
-              )}
             </svg>
           </div>
-        </RevealBlock>
 
-        {/* Step descriptions */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-          {stages.map((s, i) => (
-            <RevealBlock key={i} delay={0.3 + i * 0.08}>
-              <motion.div animate={{ opacity: i === activeStage ? 1 : 0.5 }} transition={{ duration: 0.4 }}>
-                <p className="text-xs text-gray-500 leading-relaxed">{s.desc}</p>
-              </motion.div>
-            </RevealBlock>
-          ))}
+          {/* Right Stage Copy Details */}
+          <div className="lg:col-span-6 text-left">
+            <div className="glass-elevated p-8 border-accent-dim min-h-[220px] flex flex-col justify-between">
+              <div>
+                <span className="font-mono text-[9px] text-[#00c9a7] tracking-[0.25em] uppercase block mb-2">Stage Details</span>
+                <h3 className="font-['Space_Grotesk'] text-white text-xl font-medium mb-3">
+                  {activeStage + 1}. {stages[activeStage].label}
+                </h3>
+                <p className="text-xs text-gray-400 leading-relaxed font-light">
+                  {stages[activeStage].desc}
+                </p>
+              </div>
+
+              <div className="border-t border-white/[0.04] mt-6 pt-4 flex items-center justify-between">
+                <span className="font-mono text-[9px] text-gray-500">PERFORMANCE TARGETS</span>
+                <span className="font-mono text-[10px] text-[#00c9a7] font-semibold tracking-wide uppercase">{stages[activeStage].stats}</span>
+              </div>
+            </div>
+            
+            {/* Quick selectors */}
+            <div className="flex gap-2 mt-4">
+              {stages.map((st, i) => (
+                <button key={i} onClick={() => setActiveStage(i)} className={`flex-1 py-2 font-mono text-[9px] border transition-colors ${
+                  activeStage === i ? 'bg-[#00c9a7]/10 border-[#00c9a7]/30 text-[#00c9a7]' : 'bg-transparent border-white/5 text-gray-500 hover:text-white'
+                }`}>
+                  {st.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </Section>
@@ -649,7 +820,7 @@ const WorkflowCanvas = () => {
 };
 
 // ============================================================
-// 6. EXAMPLE WORKFLOW (typewriter orchestration)
+// 6. EXAMPLE WORKFLOW
 // ============================================================
 const ExampleWorkflow = () => {
   const ref = useRef(null);
@@ -657,11 +828,11 @@ const ExampleWorkflow = () => {
   const [visibleLines, setVisibleLines] = useState(0);
 
   const lines = [
-    { prefix: 'DETECT', text: 'Unexpected binary execution detected in container workload' },
-    { prefix: 'CORRELATE', text: 'Event correlated with process lineage and workload context' },
-    { prefix: 'SHADOW', text: 'Policy evaluated in shadow mode — no production impact' },
-    { prefix: 'RECOMMEND', text: 'Operator receives containment recommendation with full context' },
-    { prefix: 'CONTAIN', text: 'Scoped response applied — rollback available at any time' },
+    { prefix: 'DETECT', text: 'Unexpected socket call initiated by unauthorized task worker' },
+    { prefix: 'CORRELATE', text: 'Parent task verified: execution context matches baseline profile' },
+    { prefix: 'SHADOW', text: 'Dry-run containment simulation completes successfully, zero production impact' },
+    { prefix: 'RECOMMEND', text: 'Platform telemetry outputs recommendation for localized process isolation' },
+    { prefix: 'CONTAIN', text: 'Cgroup namespace frozen. System metrics intact. Rollback window active' },
   ];
 
   useEffect(() => {
@@ -672,43 +843,35 @@ const ExampleWorkflow = () => {
   }, [isInView, visibleLines]);
 
   return (
-    <Section id="example" ariaLabel="Example workflow" className="py-24 md:py-36">
+    <Section id="example" ariaLabel="Example workflow" className="py-20 md:py-32">
       <Divider />
       <div className="max-w-3xl">
         <SectionLabel number="05" text="Example Workflow" />
-        <SectionTitle>What a runtime response looks like.</SectionTitle>
+        <SectionTitle>Believable containment logs.</SectionTitle>
         <RevealBlock delay={0.1}>
-          <div ref={ref} className="glass p-6 md:p-8 mt-8 font-['JetBrains_Mono'] text-sm leading-loose relative overflow-hidden">
+          <div ref={ref} className="glass p-6 md:p-8 mt-8 font-mono text-xs leading-loose relative overflow-hidden">
             <div className="flex items-center gap-2 mb-6 pb-4 border-b border-white/5">
-              <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-              <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
-              <motion.div animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 2, repeat: Infinity }}
-                className="w-2.5 h-2.5 rounded-full bg-[#00c9a7]/50" />
-              <span className="ml-3 text-[10px] text-gray-600">runtime-workflow.log</span>
+              <div className="w-2 h-2 rounded-full bg-white/10" />
+              <div className="w-2 h-2 rounded-full bg-white/10" />
+              <span className="ml-3 text-[9px] text-gray-500 font-mono tracking-wider">runtime-isolation.log</span>
             </div>
             {lines.map((line, i) => (
               <motion.div key={i}
-                initial={{ opacity: 0, x: -20, filter: 'blur(6px)' }}
-                animate={i < visibleLines ? { opacity: 1, x: 0, filter: 'blur(0px)' } : {}}
+                initial={{ opacity: 0, x: -10 }}
+                animate={i < visibleLines ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.5, ease }}
-                className="flex items-start gap-3 mb-3"
+                className="flex items-start gap-4 mb-3"
               >
-                <span className="text-[#00c9a7]/40 flex-shrink-0 text-[10px] mt-0.5 w-24 text-right tracking-wider">[{line.prefix}]</span>
-                <span className={i < visibleLines - 1 ? 'text-gray-500' : 'text-gray-300'}>{line.text}</span>
+                <span className="text-[#00c9a7]/50 flex-shrink-0 text-[9px] mt-0.5 w-20 text-right tracking-widest">[{line.prefix}]</span>
+                <span className={i < visibleLines - 1 ? 'text-gray-500' : 'text-gray-300 font-light'}>{line.text}</span>
               </motion.div>
             ))}
-            <AnimatePresence>
-              {visibleLines >= lines.length && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-                  className="mt-5 pt-4 border-t border-white/5 flex items-center gap-2">
-                  <motion.span animate={{ scale: [1, 1.4, 1] }} transition={{ duration: 1.5, repeat: 2 }} className="text-[#00c9a7] text-xs">✓</motion.span>
-                  <span className="text-[#00c9a7]/70 text-xs">Workflow complete — all actions auditable and reversible</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-            {visibleLines < lines.length && visibleLines > 0 && (
-              <motion.div key="cursor" animate={{ opacity: [0, 1, 0] }} transition={{ duration: 0.7, repeat: Infinity }}
-                className="w-2 h-4 bg-[#00c9a7]/50 mt-2 ml-28" />
+            {visibleLines >= lines.length && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}
+                className="mt-5 pt-4 border-t border-white/5 flex items-center gap-2 text-[#00c9a7]">
+                <span>✓</span>
+                <span className="text-[10px] tracking-wide uppercase">Audit State Locked — Mitigation Complete</span>
+              </motion.div>
             )}
           </div>
         </RevealBlock>
@@ -721,119 +884,98 @@ const ExampleWorkflow = () => {
 // 7. DEPLOYMENT PHILOSOPHY
 // ============================================================
 const DeploymentPhilosophy = () => {
-  const tenets = ['Observe before enforce','Progressive rollout','Reversible policies','Operator visibility first'];
   return (
-    <Section id="philosophy" ariaLabel="Deployment philosophy" className="py-24 md:py-36">
+    <Section id="philosophy" ariaLabel="Deployment philosophy" className="py-20 md:py-32">
       <Divider />
       <div className="max-w-3xl">
         <SectionLabel number="06" text="Deployment Philosophy" />
         <SectionTitle>Observe before enforce.</SectionTitle>
         <RevealBlock delay={0.1}>
-          <p className="text-gray-500 text-lg leading-relaxed mb-10">
-            Runtime enforcement should never be deployed as a binary switch. SilentMesh follows a progressive model: observe first, validate in shadow, enforce with scope, and always maintain rollback.
+          <p className="text-gray-400 text-sm leading-relaxed mb-6 font-light">
+            Enforcement is not a binary choice. It is a spectrum of operations that scales with telemetry confidence and organizational trust parameters.
+          </p>
+          <p className="text-gray-400 text-sm leading-relaxed font-light">
+            SilentMesh validates behavior indicators first, isolates anomalous execution vectors within narrow containment layers, and ensures recovery triggers are available before enforcing policy.
           </p>
         </RevealBlock>
-        <div className="flex flex-wrap gap-3">
-          {tenets.map((t, i) => (
-            <RevealBlock key={i} delay={i * 0.1}>
-              <motion.span whileHover={{ scale: 1.06, borderColor: 'rgba(0,201,167,0.3)', backgroundColor: 'rgba(0,201,167,0.05)' }}
-                className="inline-block px-5 py-3 border border-white/8 text-sm text-gray-400 cursor-default transition-all duration-300">
-                {t}
-              </motion.span>
-            </RevealBlock>
-          ))}
-        </div>
       </div>
     </Section>
   );
 };
 
 // ============================================================
-// 8. TECHNICAL PHILOSOPHY with animated lineage SVG
+// 8. TECHNICAL PHILOSOPHY (eBPF Lineage Tree)
 // ============================================================
 const TechnicalPhilosophy = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
-  const [hoveredNode, setHoveredNode] = useState(null);
+  const [hoveredTrace, setHoveredTrace] = useState(null);
 
-  const nodes = [
-    { cx: 150, cy: 30, label: 'init', color: '#fff', safe: true },
-    { cx: 150, cy: 90, label: 'containerd', color: '#fff', safe: true },
-    { cx: 80, cy: 155, label: 'nginx', color: '#00c9a7', safe: true },
-    { cx: 220, cy: 155, label: 'unknown', color: '#ef4444', safe: false },
-    { cx: 50, cy: 225, label: 'worker', color: '#00c9a7', safe: true },
-    { cx: 115, cy: 225, label: 'logger', color: '#00c9a7', safe: true },
-    { cx: 220, cy: 225, label: 'blocked', color: '#ef4444', safe: false },
+  const treeNodes = [
+    { id: 'init', cx: 160, cy: 30, label: 'systemd (PID 1)', probe: 'none' },
+    { id: 'dockerd', cx: 160, cy: 90, label: 'containerd (PID 840)', probe: 'tracepoint/sched/sched_process_fork' },
+    { id: 'nginx', cx: 90, cy: 160, label: 'nginx (PID 1021)', probe: 'kprobe/sys_socket' },
+    { id: 'python', cx: 230, cy: 160, label: 'python3 (PID 1024)', probe: 'kprobe/sys_execve' },
+    { id: 'helper', cx: 230, cy: 230, label: 'curl helper (PID 1028)', probe: 'tracepoint/syscalls/sys_enter_connect' }
   ];
-  const edges = [[0,1],[1,2],[1,3],[2,4],[2,5],[3,6]];
+  const treeEdges = [['init','dockerd'],['dockerd','nginx'],['dockerd','python'],['python','helper']];
 
   return (
-    <Section id="technical" ariaLabel="Technical philosophy" className="py-24 md:py-36">
+    <Section id="technical" ariaLabel="Technical philosophy" className="py-20 md:py-32">
       <Divider />
-      <div className="max-w-5xl flex flex-col lg:flex-row gap-16 items-start" ref={ref}>
-        <div className="flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start" ref={ref}>
+        <div className="lg:col-span-5 text-left">
           <SectionLabel number="07" text="Technical Philosophy" />
-          <SectionTitle>Linux-native telemetry using eBPF-based instrumentation.</SectionTitle>
+          <SectionTitle>Linux-native eBPF instrumentation.</SectionTitle>
           <RevealBlock delay={0.1}>
-            <p className="text-gray-500 text-lg leading-relaxed mb-6">
-              SilentMesh collects runtime events through eBPF-based instrumentation attached to Linux kernel subsystems. Controlled response mechanisms allow operators to scope containment workflows precisely, maintaining production stability while reducing risk.
+            <p className="text-gray-400 text-sm leading-relaxed mb-6 font-light">
+              Telemetry shouldn't degrade runtime performance. SilentMesh instruments system-call execution contexts using sandboxed kernel probes.
             </p>
-            <p className="text-gray-500 leading-relaxed">
-              Operators retain full visibility into what was observed, what was evaluated, and why a containment recommendation was generated. Every enforcement action is auditable and reversible.
+            <p className="text-gray-400 text-sm leading-relaxed font-light">
+              Hover over the execution nodes in the tree diagram to inspect the active eBPF hooks monitoring process lifecycle changes.
             </p>
           </RevealBlock>
         </div>
 
-        <RevealBlock delay={0.2} direction="right" className="w-full lg:w-2/5 flex-shrink-0">
-          <div className="glass-elevated p-6 relative">
-            <svg viewBox="0 0 300 280" className="w-full h-auto">
-              {edges.map(([a,b], i) => (
-                <motion.line key={`le${i}`}
-                  x1={nodes[a].cx} y1={nodes[a].cy} x2={nodes[b].cx} y2={nodes[b].cy}
-                  stroke={nodes[b].safe ? 'rgba(0,201,167,0.2)' : 'rgba(239,68,68,0.25)'}
-                  strokeWidth="1" strokeDasharray="4 4"
-                  initial={{ pathLength: 0 }} animate={isInView ? { pathLength: 1 } : {}}
-                  transition={{ duration: 0.8, delay: 0.4 + i * 0.15, ease }}
-                />
-              ))}
-              {nodes.map((n, i) => (
-                <motion.g key={`ln${i}`}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.5, delay: 0.6 + i * 0.1, type: 'spring', stiffness: 180 }}
-                  style={{ transformOrigin: `${n.cx}px ${n.cy}px`, cursor: 'default' }}
-                  onMouseEnter={() => setHoveredNode(i)}
-                  onMouseLeave={() => setHoveredNode(null)}
-                >
-                  <motion.circle cx={n.cx} cy={n.cy} r={hoveredNode === i ? 14 : 11}
-                    fill="#0a0a0f"
-                    stroke={n.safe ? 'rgba(0,201,167,0.35)' : 'rgba(239,68,68,0.45)'}
-                    strokeWidth={hoveredNode === i ? 1.5 : 1}
-                    transition={{ type: 'spring', stiffness: 300 }}
+        {/* eBPF Lineage Tree SVG */}
+        <RevealBlock delay={0.2} className="lg:col-span-7 flex justify-center">
+          <div className="w-full max-w-[360px] aspect-square bg-[#0a0b0e] border border-white/[0.03] rounded-lg p-6 flex flex-col justify-between overflow-hidden">
+            <svg viewBox="0 0 320 260" className="w-full flex-grow overflow-visible" role="img" aria-label="Process execution lineage tree map">
+              {/* Lines */}
+              {treeEdges.map(([a, b], i) => {
+                const nodeA = treeNodes.find(x => x.id === a);
+                const nodeB = treeNodes.find(x => x.id === b);
+                return (
+                  <motion.line key={i} x1={nodeA.cx} y1={nodeA.cy} x2={nodeB.cx} y2={nodeB.cy}
+                    stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1"
+                    initial={{ pathLength: 0 }} animate={isInView ? { pathLength: 1 } : {}}
+                    transition={{ duration: 0.8, delay: i * 0.15 }}
                   />
-                  <motion.circle cx={n.cx} cy={n.cy} r={hoveredNode === i ? 4 : 3} fill={n.color} opacity={0.8} />
-                  <text x={n.cx} y={n.cy + (hoveredNode === i ? 26 : 22)} textAnchor="middle"
-                    fill={hoveredNode === i ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.35)'}
-                    fontSize="9" fontFamily="'JetBrains Mono', monospace">
-                    {n.label}
-                  </text>
-                </motion.g>
-              ))}
-              {/* Containment scope ring */}
-              <motion.circle cx={220} cy={190} r={55} fill="none"
-                stroke="rgba(239,68,68,0.12)" strokeWidth="1" strokeDasharray="3 3"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={isInView ? { scale: 1, opacity: 1 } : {}}
-                transition={{ duration: 1.5, delay: 1.5, ease }}
-                style={{ transformOrigin: '220px 190px' }}
-              />
-              <motion.text x={268} y={258}
-                initial={{ opacity: 0 }} animate={isInView ? { opacity: 0.4 } : {}}
-                transition={{ delay: 2 }}
-                fill="rgba(239,68,68,0.4)" fontSize="8" fontFamily="'JetBrains Mono', monospace">
-                containment scope
-              </motion.text>
+                );
+              })}
+
+              {/* Circles */}
+              {treeNodes.map((n, i) => {
+                const isHovered = hoveredTrace === n.id;
+                return (
+                  <g key={n.id} className="cursor-default" onMouseEnter={() => setHoveredTrace(n.id)} onMouseLeave={() => setHoveredTrace(null)}>
+                    <circle cx={n.cx} cy={n.cy} r={isHovered ? 12 : 8} fill="#050608" stroke="#00c9a7" strokeWidth="1.2" className="transition-all duration-300" />
+                    <circle cx={n.cx} cy={n.cy} r="3" fill="#00c9a7" />
+                    <text x={n.cx + 14} y={n.cy + 3} textAnchor="start" fill={isHovered ? '#fff' : 'rgba(255,255,255,0.4)'} fontSize="7" fontFamily="'JetBrains Mono', monospace">
+                      {n.label}
+                    </text>
+                  </g>
+                );
+              })}
             </svg>
+
+            {/* Hook detail box */}
+            <div className="bg-[#050608] border border-white/[0.04] p-3 text-left min-h-[60px]">
+              <span className="font-mono text-[8px] text-gray-500 block tracking-widest uppercase mb-0.5">Active eBPF Probe</span>
+              <span className="font-mono text-[10px] text-[#00c9a7] block font-medium">
+                {hoveredTrace ? treeNodes.find(x => x.id === hoveredTrace).probe : 'Hover on node to inspect kernel hook point'}
+              </span>
+            </div>
           </div>
         </RevealBlock>
       </div>
@@ -846,66 +988,26 @@ const TechnicalPhilosophy = () => {
 // ============================================================
 const TransparencySection = () => {
   const items = [
-    'Autonomously block workloads without operator input',
-    'Replace existing SOC or incident-response workflows',
-    'Guarantee prevention of all attack scenarios',
-    'Require deep kernel modifications or custom modules',
-    'Make enforcement decisions without observable reasoning',
+    'Apply autonomous block decisions without SRE oversight.',
+    'Replace traditional log aggregators or security monitoring tools.',
+    'Guarantee coverage of every possible runtime threat vector.',
+    'Require kernel modifications or out-of-tree loadable modules.',
+    'Isolate containers without maintaining transactional audit history.'
   ];
   return (
-    <Section id="transparency" ariaLabel="Architecture transparency" className="py-24 md:py-36">
+    <Section id="transparency" ariaLabel="Architecture transparency" className="py-20 md:py-32">
       <Divider />
       <div className="max-w-3xl">
         <SectionLabel number="08" text="Architecture Transparency" />
         <SectionTitle>What SilentMesh does not do.</SectionTitle>
-        <RevealBlock delay={0.1}>
-          <p className="text-gray-500 text-lg leading-relaxed mb-10">
-            Honest scope boundaries build trust. These are the things SilentMesh explicitly does not claim to do.
-          </p>
-        </RevealBlock>
-        {items.map((item, i) => (
-          <RevealBlock key={i} delay={i * 0.08} direction="left">
-            <motion.div whileHover={{ x: 10, borderColor: 'rgba(239,68,68,0.08)' }}
-              className="flex items-start gap-4 py-4 border-b border-white/5 cursor-default group transition-colors duration-300">
-              <span className="text-gray-700 group-hover:text-red-400/50 mt-0.5 text-xs transition-colors duration-300">✕</span>
-              <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">{item}</p>
-            </motion.div>
-          </RevealBlock>
-        ))}
-      </div>
-    </Section>
-  );
-};
-
-// ============================================================
-// 10-13. REMAINING SECTIONS (audience, compat, realities, why)
-// ============================================================
-const AudienceSection = () => {
-  const audiences = [
-    { label: 'Platform engineering teams', desc: 'Managing runtime behavior across multi-service infrastructure.' },
-    { label: 'DevSecOps teams', desc: 'Integrating security workflows into deployment pipelines.' },
-    { label: 'Linux infrastructure operators', desc: 'Running production workloads where stability is non-negotiable.' },
-    { label: 'Cloud-native engineering orgs', desc: 'Operating containerized and orchestrated environments at scale.' },
-    { label: 'Runtime-conscious security teams', desc: 'Seeking enforcement that respects operational constraints.' },
-  ];
-  return (
-    <Section id="audience" ariaLabel="Who this is for" className="py-24 md:py-36">
-      <Divider />
-      <div className="max-w-3xl">
-        <SectionLabel number="09" text="Who This Is For" />
-        <SectionTitle>Built for teams that deploy enforcement carefully.</SectionTitle>
-        <div className="grid grid-cols-1 gap-1 mt-8">
-          {audiences.map((a, i) => (
-            <RevealBlock key={i} delay={i * 0.07}>
-              <motion.div whileHover={{ x: 8, borderColor: 'rgba(0,201,167,0.12)' }}
-                className="flex items-start gap-4 py-5 border-b border-white/5 cursor-default group transition-colors duration-300">
-                <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 3.5, repeat: Infinity, delay: i * 0.6 }}
-                  className="w-1.5 h-1.5 rounded-full bg-[#00c9a7] mt-2 flex-shrink-0" />
-                <div>
-                  <h3 className="font-['Space_Grotesk'] font-medium text-white text-sm mb-1 group-hover:text-[#00c9a7] transition-colors duration-300">{a.label}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{a.desc}</p>
-                </div>
-              </motion.div>
+        <p className="text-gray-400 text-sm leading-relaxed mb-10 font-light">
+          We maintain explicit architectural boundaries. To build operational trust, here is what SilentMesh does not claim to execute:
+        </p>
+        <div className="space-y-4">
+          {items.map((item, i) => (
+            <RevealBlock key={i} delay={i * 0.08} direction="left" className="flex items-start gap-4 py-3 border-b border-white/[0.03]">
+              <span className="text-gray-600 text-xs mt-0.5">✕</span>
+              <p className="text-xs text-gray-400 font-light leading-relaxed">{item}</p>
             </RevealBlock>
           ))}
         </div>
@@ -914,128 +1016,235 @@ const AudienceSection = () => {
   );
 };
 
-const CompatibilitySection = () => (
-  <Section id="compatibility" ariaLabel="Compatibility" className="py-24 md:py-36">
-    <Divider />
-    <div className="max-w-3xl">
-      <SectionLabel number="10" text="Compatibility" />
-      <SectionTitle>Designed for Linux workloads.</SectionTitle>
-      <RevealBlock delay={0.1}>
-        <p className="text-gray-500 text-lg leading-relaxed mb-8">
-          SilentMesh is designed for Linux workloads across cloud, hybrid, containerized, and edge environments. It operates at the runtime layer, independent of orchestration platform or deployment model.
-        </p>
-      </RevealBlock>
-      <div className="flex flex-wrap gap-3">
-        {['Linux','Kubernetes','Containers','VMs','Cloud','Hybrid','Edge'].map((env, i) => (
-          <RevealBlock key={i} delay={0.15 + i * 0.05}>
-            <motion.span whileHover={{ scale: 1.08, borderColor: 'rgba(0,201,167,0.3)', backgroundColor: 'rgba(0,201,167,0.04)', color: '#e5e7eb' }}
-              className="inline-block px-4 py-2 border border-white/8 text-xs text-gray-500 font-['JetBrains_Mono'] tracking-wider cursor-default transition-all duration-300">
-              {env}
-            </motion.span>
-          </RevealBlock>
-        ))}
-      </div>
-    </div>
-  </Section>
-);
+// ============================================================
+// 10. WORKLOAD MATRIX (ICP & Compatibility centerpiece)
+// ============================================================
+const WorkloadMatrix = () => {
+  const [selectedRole, setSelectedRole] = useState(0);
 
-const DeploymentRealities = () => {
-  const items = ['High tuning burden before operators see value','Alert fatigue from noisy, low-confidence detections',
-    'Unsafe automated blocking in production environments','Difficult progressive rollout without proper staging tools',
-    'Weak operator trust in opaque enforcement decisions','Limited rollback capability when things go wrong'];
+  const matrix = [
+    {
+      role: 'Platform Engineering',
+      useCase: 'Deploy runtime visibility across microservices with zero agent maintenance.',
+      compat: ['Containers', 'Kubernetes', 'Multi-tenant Isolation'],
+      hooks: ['Cgroup tracepoints', 'Network namespace isolation']
+    },
+    {
+      role: 'DevSecOps Teams',
+      useCase: 'Inject policy-simulation validation steps directly into canary deployment chains.',
+      compat: ['Virtual Machines', 'Kubernetes', 'CI/CD Pipelines'],
+      hooks: ['Dry-run shadow enforcement', 'Audit report generation']
+    },
+    {
+      role: 'SRE Operators',
+      useCase: 'Maintain service uptime SLAs while safely quarantining anomalous threads.',
+      compat: ['Bare Metal', 'Virtual Machines', 'Kernel Containment'],
+      hooks: ['Reversible process suspension', 'Dynamic rollback triggers']
+    }
+  ];
+
   return (
-    <Section id="realities" ariaLabel="Deployment realities" className="py-24 md:py-36">
+    <Section id="audience" ariaLabel="Workload and audience matrix" className="py-20 md:py-32">
       <Divider />
-      <div className="max-w-3xl">
-        <SectionLabel number="11" text="Deployment Realities" />
-        <SectionTitle>Common challenges in runtime security today.</SectionTitle>
-        <RevealBlock delay={0.1}>
-          <p className="text-gray-500 text-lg leading-relaxed mb-10">These are operational observations, not competitive claims. Understanding these tradeoffs shaped how we designed SilentMesh.</p>
-        </RevealBlock>
-        {items.map((obs, i) => (
-          <RevealBlock key={i} delay={i * 0.06} direction={i % 2 === 0 ? 'left' : 'right'}>
-            <motion.div whileHover={{ x: 8 }}
-              className="flex items-start gap-3 py-3.5 border-b border-white/5 group hover:border-[#00c9a7]/10 transition-colors duration-300 cursor-default">
-              <span className="text-[#00c9a7] mt-0.5 text-sm opacity-20 group-hover:opacity-100 transition-all duration-500">—</span>
-              <p className="text-sm text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">{obs}</p>
-            </motion.div>
-          </RevealBlock>
-        ))}
+      <div className="max-w-5xl">
+        <SectionLabel number="09" text="Workload Matrix" />
+        <SectionTitle>Interactive operational matrix.</SectionTitle>
+        <p className="text-gray-400 text-sm leading-relaxed max-w-xl mb-12 font-light">
+          Explore how SilentMesh aligns runtime telemetry hooks with target workloads based on team parameters.
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Left Selector Column */}
+          <div className="lg:col-span-4 flex flex-col gap-3">
+            {matrix.map((item, i) => (
+              <button
+                key={i}
+                onClick={() => setSelectedRole(i)}
+                className={`w-full text-left p-5 border font-['Space_Grotesk'] transition-all ${
+                  selectedRole === i
+                    ? 'bg-[#00c9a7]/5 border-[#00c9a7]/30 text-white'
+                    : 'bg-transparent border-white/5 text-gray-500 hover:text-white'
+                }`}
+              >
+                <span className="font-mono text-[9px] text-[#00c9a7] tracking-wider block mb-1">ROLE 0{i+1}</span>
+                <span className="text-sm font-semibold">{item.role}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Right Visual Result Column */}
+          <div className="lg:col-span-8 glass p-8 border-accent-dim flex flex-col justify-between">
+            <div>
+              <span className="font-mono text-[9px] text-gray-500 block uppercase mb-2">Primary Application</span>
+              <p className="text-sm text-gray-300 font-light leading-relaxed mb-8">
+                {matrix[selectedRole].useCase}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <span className="font-mono text-[9px] text-[#00c9a7] block uppercase tracking-wider mb-3">Target Environments</span>
+                  <div className="flex flex-wrap gap-2">
+                    {matrix[selectedRole].compat.map((c, i) => (
+                      <span key={i} className="px-3 py-1.5 border border-white/5 bg-white/[0.01] font-mono text-[10px] text-gray-400">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="font-mono text-[9px] text-[#00c9a7] block uppercase tracking-wider mb-3">Kernel Enforcements</span>
+                  <div className="flex flex-wrap gap-2">
+                    {matrix[selectedRole].hooks.map((h, i) => (
+                      <span key={i} className="px-3 py-1.5 border border-white/5 bg-white/[0.01] font-mono text-[10px] text-gray-400">
+                        {h}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t border-white/[0.04] pt-4 mt-8 flex justify-between items-center text-[10px] text-gray-600 font-mono">
+              <span>COMPATIBILITY VERIFIED</span>
+              <span>LINUX KERNEL 5.4+ REQUIRED</span>
+            </div>
+          </div>
+        </div>
       </div>
     </Section>
   );
 };
 
-const WhyWeBuiltThis = () => (
-  <Section id="why" ariaLabel="Why we built this" className="py-24 md:py-36">
-    <Divider />
-    <div className="max-w-2xl">
-      <SectionLabel number="12" text="Why We Built This" />
-      {['We became interested in runtime security after observing how difficult it is to deploy enforcement safely in production environments.',
-        'Many existing workflows optimize for detection breadth while leaving operators with high tuning burden and limited rollback safety. Enforcement decisions are often opaque, and the tools that make them lack the operational caution that production infrastructure demands.',
-        'SilentMesh explores a more operationally cautious approach — one where observability comes before enforcement, where every action is reversible, and where operators retain clear visibility into what happened and why.'
-      ].map((p, i) => (
-        <RevealBlock key={i} delay={i * 0.12}>
-          <p className="text-lg text-gray-400 leading-relaxed mb-5">{p}</p>
-        </RevealBlock>
-      ))}
-    </div>
-  </Section>
-);
+// ============================================================
+// 11. DEPLOYMENT REALITIES (Editorial layout)
+// ============================================================
+const DeploymentRealities = () => {
+  return (
+    <Section id="realities" ariaLabel="Deployment realities" className="py-20 md:py-32">
+      <Divider />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 text-left">
+        <div className="lg:col-span-5">
+          <SectionLabel number="10" text="Deployment Realities" />
+          <h2 className="text-3xl md:text-4xl font-['Space_Grotesk'] font-semibold leading-tight text-white mb-6">
+            Why building runtime trust is hard.
+          </h2>
+          <p className="text-gray-400 text-xs tracking-wider font-mono text-[#00c9a7] uppercase mb-4">
+            AN ENGINEERING ESSAY ON CAUTION
+          </p>
+        </div>
+        <div className="lg:col-span-7 space-y-6 text-gray-400 font-light leading-relaxed text-sm">
+          <p>
+            When we began researching process telemetry, we noticed a consistent pattern: security tools attempt to automate mitigation too quickly. The logic is simple—if a thread diverges from expected profiles, suspend it immediately.
+          </p>
+          <p>
+            But in production environment realities, unexpected process states are often legitimate events. A configuration script restarts, database shards shift, or a container process spins up an authorized helper task.
+          </p>
+          <p className="border-l border-[#00c9a7]/30 pl-4 py-2 italic text-gray-300">
+            "Automated protection should never degrade target service availability. The risk of automated false positives often outpaces the risk of the anomalous process itself."
+          </p>
+          <p>
+            SilentMesh was designed around this caution. We focus on capturing clean process lineages using kernel tracepoints, validating rules inside risk-controlled simulation layers, and keeping operators in the loop with instant rollback functionality.
+          </p>
+        </div>
+      </div>
+    </Section>
+  );
+};
 
 // ============================================================
-// 14. CTA
+// 12. CTA / CONTACT (AJAX Submit)
 // ============================================================
-const CTASection = () => (
-  <Section id="contact" ariaLabel="Request access" className="py-24 md:py-36">
-    <Divider />
-    <div className="max-w-lg relative">
-      <SectionLabel text="Get in Touch" />
-      <SectionTitle>Request early access.</SectionTitle>
-      <RevealBlock delay={0.1}>
-        <p className="text-gray-500 leading-relaxed mb-8">
-          SilentMesh is in early development. If your team is working on runtime security for Linux infrastructure, we would like to hear from you.
+const CTASection = () => {
+  const [formStatus, setFormStatus] = useState('idle'); // idle | loading | success | error
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setFormStatus('loading');
+    const form = e.target;
+    const data = new FormData(form);
+    
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (response.ok) {
+        setFormStatus('success');
+        form.reset();
+      } else {
+        setFormStatus('error');
+      }
+    } catch (err) {
+      setFormStatus('error');
+    }
+  };
+
+  return (
+    <Section id="contact" ariaLabel="Request access" className="py-20 md:py-32">
+      <Divider />
+      <div className="max-w-lg mx-auto relative text-center">
+        <SectionLabel text="Access Registry" />
+        <h2 className="text-3xl md:text-4xl font-['Space_Grotesk'] font-semibold leading-tight text-white mb-6">
+          Request early access.
+        </h2>
+        <p className="text-gray-400 text-sm leading-relaxed mb-8 font-light max-w-sm mx-auto">
+          SilentMesh is currently in early evaluation phase. If your team is interested in deploying safety-focused runtime telemetry, request entry below.
         </p>
-      </RevealBlock>
-      <RevealBlock delay={0.15}>
-        <form action="https://formspree.io/f/xvonzgkb" method="POST" className="glass-elevated p-6 md:p-8 space-y-5 relative overflow-hidden">
-          <motion.div animate={{ x: ['-100%', '300%'] }}
-            transition={{ duration: 5, repeat: Infinity, repeatDelay: 8, ease: 'easeInOut' }}
-            className="absolute top-0 left-0 w-1/4 h-px bg-gradient-to-r from-transparent via-[#00c9a7]/30 to-transparent" />
+
+        <form action="https://formspree.io/f/xvonzgkb" method="POST" onSubmit={handleFormSubmit} className="glass p-6 md:p-8 space-y-4 text-left relative overflow-hidden">
+          <div className="scan-line" />
+          
           <div>
-            <label htmlFor="email" className="block font-['JetBrains_Mono'] text-[10px] text-gray-600 uppercase tracking-[0.15em] mb-2">Email</label>
-            <input id="email" type="email" name="email" required placeholder="you@company.com"
-              className="w-full bg-[#090a0f] border border-white/8 px-4 py-3 text-sm text-white placeholder:text-gray-700 focus:outline-none focus:border-[#00c9a7]/40 transition-colors duration-300" />
+            <label htmlFor="email" className="block font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-1.5">Email Address</label>
+            <input id="email" type="email" name="email" required placeholder="name@company.com"
+              className="w-full bg-[#050608] border border-white/5 px-4 py-3 text-xs text-white placeholder:text-gray-700 focus:outline-none focus:border-[#00c9a7]/30 transition-colors" />
           </div>
           <div>
-            <label htmlFor="message" className="block font-['JetBrains_Mono'] text-[10px] text-gray-600 uppercase tracking-[0.15em] mb-2">Context (optional)</label>
-            <textarea id="message" name="message" rows="3" placeholder="What runtime challenges does your team face?"
-              className="w-full bg-[#090a0f] border border-white/8 px-4 py-3 text-sm text-white placeholder:text-gray-700 focus:outline-none focus:border-[#00c9a7]/40 transition-colors duration-300 resize-none" />
+            <label htmlFor="message" className="block font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-1.5">Context / Infrastructure Goals</label>
+            <textarea id="message" name="message" rows="3" placeholder="What workloads are you looking to trace?"
+              className="w-full bg-[#050608] border border-white/5 px-4 py-3 text-xs text-white placeholder:text-gray-700 focus:outline-none focus:border-[#00c9a7]/30 transition-colors resize-none" />
           </div>
-          <MagneticButton as="button" type="submit"
-            className="cta-primary w-full py-3.5 bg-[#00c9a7] text-[#090a0f] font-medium text-sm hover:shadow-[0_0_30px_rgba(0,201,167,0.12)] transition-all duration-300">
-            Request Access
-          </MagneticButton>
+
+          <button type="submit" disabled={formStatus === 'loading'}
+            className="cta-primary w-full py-3 bg-[#00c9a7] text-[#050608] font-mono text-xs uppercase tracking-wider font-semibold hover:shadow-[0_0_20px_rgba(0,201,167,0.15)] transition-all disabled:opacity-50">
+            {formStatus === 'loading' ? 'Registering...' : 'Request Access'}
+          </button>
+
+          <AnimatePresence>
+            {formStatus === 'success' && (
+              <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                className="mt-3 p-3 bg-[#00c9a7]/10 border border-[#00c9a7]/20 text-[#00c9a7] text-[11px] font-mono text-center">
+                ✓ REGISTRATION SUBMITTED SUCCESSFULLY. WE WILL GET IN TOUCH.
+              </motion.div>
+            )}
+            {formStatus === 'error' && (
+              <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                className="mt-3 p-3 bg-red-950/20 border border-red-500/20 text-[#ff4a5a] text-[11px] font-mono text-center">
+                ✕ REGISTRATION FAILED. PLEASE TRY AGAIN LATER.
+              </motion.div>
+            )}
+          </AnimatePresence>
         </form>
-      </RevealBlock>
-    </div>
-  </Section>
-);
+      </div>
+    </Section>
+  );
+};
 
 // ============================================================
 // FOOTER
 // ============================================================
 const Footer = () => (
-  <footer className="w-full px-6 md:px-12 lg:px-24 py-8 border-t border-white/5">
+  <footer className="w-full px-6 md:px-12 lg:px-24 py-8 border-t border-white/[0.03]">
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-      <span className="font-['Space_Grotesk'] text-sm text-gray-600">&copy; 2026 SilentMesh</span>
-      <span className="font-['JetBrains_Mono'] text-[10px] text-gray-700 tracking-[0.15em] uppercase">Runtime Visibility Platform</span>
+      <span className="font-['Space_Grotesk'] text-xs text-gray-600">&copy; 2026 SilentMesh</span>
+      <span className="font-mono text-[9px] text-gray-700 tracking-widest uppercase">Runtime Visibility Platform</span>
     </div>
   </footer>
 );
 
 // ============================================================
-// APP
+// APP ENTRYPOINT
 // ============================================================
 const App = () => {
   useLenis();
@@ -1048,15 +1257,13 @@ const App = () => {
         <ProblemSection />
         <SafetySection />
         <PrinciplesSection />
-        <WorkflowCanvas />
+        <HowItWorksSection />
         <ExampleWorkflow />
         <DeploymentPhilosophy />
         <TechnicalPhilosophy />
         <TransparencySection />
-        <AudienceSection />
-        <CompatibilitySection />
+        <WorkloadMatrix />
         <DeploymentRealities />
-        <WhyWeBuiltThis />
         <CTASection />
       </main>
       <Footer />
