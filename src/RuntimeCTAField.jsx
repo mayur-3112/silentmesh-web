@@ -9,28 +9,27 @@ export default function RuntimeCTAField() {
     <motion.div 
       initial={false}
       animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 40 }}
-      transition={{ duration: 1.2, ease: "easeInOut" }}
-      className={`pointer-events-auto absolute bottom-[10vh] left-[8vw] flex items-center gap-8 ${!isVisible ? 'pointer-events-none' : ''}`}
+      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      className={`pointer-events-auto absolute bottom-[10vh] left-[8vw] flex items-center gap-6 ${!isVisible ? 'pointer-events-none' : ''}`}
     >
-      <motion.button
-        whileHover={{
-          scale: 1.04,
-        }}
-        whileTap={{
-          scale: 0.98,
-        }}
-        className="group relative overflow-hidden rounded-full border border-[#00c9a7]/20 bg-[#00c9a7]/10 px-10 py-5 text-sm tracking-[0.2em] text-white backdrop-blur-2xl"
+      <button 
+        data-cursor="hover"
+        className="group relative inline-flex items-center gap-4 overflow-hidden rounded-full border border-white/10 bg-white/[0.02] px-8 py-4 backdrop-blur-xl transition-all hover:border-[#00c9a7]/40 hover:bg-[#00c9a7]/10"
       >
-        <span className="relative z-10">
-          REQUEST EARLY ACCESS
-        </span>
+        <span className="font-mono text-sm tracking-[0.2em] text-white">INITIALIZE DEMO</span>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#00c9a7] text-black transition-transform group-hover:translate-x-1">
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </div>
+      </button>
 
-        <div className="absolute inset-0 bg-[#00c9a7]/10 opacity-0 transition duration-500 group-hover:opacity-100" />
-      </motion.button>
-
-      <div className="text-sm tracking-[0.2em] text-white/35">
-        OPERATIONAL TRUST LAYER ACTIVE
-      </div>
+      <button 
+        data-cursor="hover"
+        className="font-mono text-sm tracking-[0.2em] text-white/40 transition hover:text-white"
+      >
+        READ WHITE PAPER
+      </button>
     </motion.div>
   );
 }

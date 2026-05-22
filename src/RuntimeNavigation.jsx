@@ -5,16 +5,16 @@ export default function RuntimeNavigation() {
         SILENTMESH
       </div>
 
-      <div className="flex items-center gap-10 text-sm tracking-[0.2em] text-white/40">
-        <button className="transition hover:text-[#00c9a7]">
+      <div className="flex items-center gap-10 text-sm tracking-[0.2em] text-white/40 font-mono">
+        <button data-cursor="hover" className="transition hover:text-[#00c9a7]">
           ORCHESTRATION
         </button>
 
-        <button className="transition hover:text-[#00c9a7]">
+        <button data-cursor="hover" className="transition hover:text-[#00c9a7]">
           RUNTIME STATES
         </button>
 
-        <button className="transition hover:text-[#00c9a7]">
+        <button data-cursor="hover" className="transition hover:text-[#00c9a7]">
           ARCHITECTURE
         </button>
       </div>
