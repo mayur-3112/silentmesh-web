@@ -11,13 +11,13 @@ export default function RuntimeParticles() {
 
   return (
     <points ref={particles}>
-      <sphereGeometry args={[12, 64, 64]} />
+      <sphereGeometry args={[18, 24, 24]} />
 
       <pointsMaterial
         color="#00c9a7"
-        size={0.03}
+        size={0.02}
         transparent
-        opacity={0.5}
+        opacity={0.3}
       />
     </points>
   );

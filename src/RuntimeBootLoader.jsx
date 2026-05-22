@@ -19,7 +19,7 @@ export default function RuntimeBootLoader({ onComplete }) {
       animate={{
         opacity: booted ? 0 : 1,
       }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#020408]"
+      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#020408] ${booted ? 'pointer-events-none' : ''}`}
     >
       <div className="text-center">
         <p className="mb-6 text-sm tracking-[0.4em] text-[#00c9a7]/70">

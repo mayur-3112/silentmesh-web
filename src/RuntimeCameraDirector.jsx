@@ -7,14 +7,8 @@ export default function RuntimeCameraDirector() {
 
     const targetX = Math.sin(t * 0.08) * 2.5;
     const targetY = Math.cos(t * 0.06) * 1.2;
-    const targetZ = 12 + Math.sin(t * 0.04) * 1.5;
-
-    easing.damp3(
-      state.camera.position,
-      [targetX, targetY, targetZ],
-      0.18,
-      delta
-    );
+    easing.damp(state.camera.position, "x", targetX, 0.18, delta);
+    easing.damp(state.camera.position, "y", targetY, 0.18, delta);
 
     state.camera.lookAt(0, 0, 0);
   });

@@ -13,7 +13,7 @@ export default function RuntimeTopology() {
   const lines = useMemo(() => {
     const arr = [];
 
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 30; i++) {
       const points = [];
 
       for (let j = 0; j < 6; j++) {
@@ -46,7 +46,7 @@ export default function RuntimeTopology() {
         const curve = new THREE.CatmullRomCurve3(points);
 
         const geometry = new THREE.BufferGeometry().setFromPoints(
-          curve.getPoints(100)
+          curve.getPoints(40)
         );
 
         return (
