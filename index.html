@@ -3,63 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SilentMesh — Runtime Visibility Platform</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,15 85,35 85,75 50,95 15,75 15,35' fill='none' stroke='%2300c9a7' stroke-width='8'/><circle cx='50' cy='55' r='18' fill='%2300c9a7'/></svg>">
-  <meta name="description" content="Low-overhead telemetry and safety-focused runtime response workflows designed for production Linux environments.">
-  <meta name="theme-color" content="#090a0f">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-  <!-- Lenis smooth scroll -->
-  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-
-  <!-- GSAP & ScrollTrigger -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['Space Grotesk', 'sans-serif'],
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          colors: {
-            void: '#090a0f',
-            surface: '#111111',
-            accent: '#00c9a7',
-            muted: '#6b7280',
-            subtle: '#1a1a1f',
-          },
-        }
-      }
+  <title>SilentMesh — Cinematic Runtime Universe</title>
+  <style>
+    body, html, #root {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #05070b;
+      overflow: hidden;
     }
-  </script>
-
-  <link rel="stylesheet" href="styles.css">
-
-  <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "framer-motion": "https://esm.sh/framer-motion@10.16.4?deps=react@18.2.0,react-dom@18.2.0"
-      }
-    }
-  </script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </style>
 </head>
-<body class="bg-void text-gray-200 antialiased">
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-accent focus:text-void font-mono text-sm">
-    Skip to content
-  </a>
+<body>
   <div id="root"></div>
-  <script type="text/babel" data-type="module" src="app.jsx"></script>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
