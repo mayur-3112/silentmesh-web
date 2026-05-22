@@ -4,14 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SilentMesh — Cinematic Runtime Universe</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS via CDN for rapid integration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            void: '#090a0f',
+            surface: '#111111',
+            accent: '#00c9a7',
+            muted: '#6b7280',
+            subtle: '#1a1a1f',
+          },
+        }
+      }
+    }
+  </script>
+
   <style>
     body, html, #root {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
       background: #05070b;
-      overflow: hidden;
+      overflow-x: hidden;
     }
   </style>
 </head>
