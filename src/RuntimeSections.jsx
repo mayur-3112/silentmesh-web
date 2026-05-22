@@ -643,13 +643,40 @@ function POCForm() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setError(null);
+
+    const formspreeId = import.meta.env.VITE_FORMSPREE_ID || "xqnqjdyy";
+
+    try {
+      const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        const data = await response.json();
+        setError(data.error || "Form submission failed. Please try again.");
+      }
+    } catch (err) {
+      setError("Failed to connect to the security gateway. Try again later.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputClass =
@@ -776,12 +803,23 @@ function POCForm() {
                 data-cursor="hover"
               />
 
+              {error && (
+                <div className="text-xs font-mono text-[#ff4a5a] text-center bg-[#ff4a5a]/5 py-2 px-3 rounded-xl border border-[#ff4a5a]/15">
+                  ⚠ {error}
+                </div>
+              )}
+
               <button
                 type="submit"
+                disabled={submitting}
                 data-cursor="hover"
-                className="w-full rounded-full border border-[#00c9a7]/40 bg-[#00c9a7]/10 py-3 font-mono text-sm tracking-[0.15em] text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60 transition-all duration-300"
+                className={`w-full rounded-full border py-3 font-mono text-sm tracking-[0.15em] transition-all duration-300 ${
+                  submitting
+                    ? "border-amber-500/20 bg-amber-500/5 text-amber-500/50 cursor-not-allowed"
+                    : "border-[#00c9a7]/40 bg-[#00c9a7]/10 text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60"
+                }`}
               >
-                REQUEST ACCESS →
+                {submitting ? "SENDING REQUEST..." : "REQUEST ACCESS →"}
               </button>
             </form>
           )}
