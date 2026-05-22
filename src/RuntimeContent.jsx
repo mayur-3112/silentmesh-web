@@ -132,7 +132,7 @@ export default function RuntimeContent() {
         className={`absolute bottom-[12vh] w-full px-6 text-center md:bottom-[15vh] md:px-0 ${zone !== "deep-runtime" ? "pointer-events-none" : "pointer-events-auto"}`}
       >
         <p className="mb-3 font-mono text-[10px] tracking-[0.3em] text-[#00c9a7] md:mb-4 md:text-sm md:tracking-[0.4em]">
-          [ END OF DEMONSTRATION ]
+          [ CONTINUE BELOW ]
         </p>
         <h2 className="mb-6 text-2xl font-light tracking-tight text-white md:mb-10 md:text-6xl">
           The infrastructure <br className="md:hidden" /><span className="font-semibold text-white">revolution.</span>
@@ -141,11 +141,12 @@ export default function RuntimeContent() {
         <button 
           data-cursor="hover"
           className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/10 bg-white/[0.02] px-6 py-3 backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/[0.05] md:gap-4 md:px-8 md:py-4"
+          onClick={() => { const el = document.getElementById("orchestration"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
         >
           <span className="font-mono text-xs tracking-[0.15em] text-white md:text-sm md:tracking-[0.2em]">DEPLOY SILENTMESH</span>
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#00c9a7] text-black transition-transform group-hover:translate-x-1 md:h-8 md:w-8">
             <svg className="h-3.5 w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </div>
         </button>

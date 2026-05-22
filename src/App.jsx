@@ -9,6 +9,7 @@ import RuntimeBootLoader from "./RuntimeBootLoader";
 import RuntimeTelemetryBridge from "./RuntimeTelemetryBridge";
 import { preloadRuntimeAssets } from "./RuntimeAssetStreaming";
 import RuntimeCustomCursor from "./RuntimeCustomCursor";
+import RuntimeSections from "./RuntimeSections";
 
 export default function App() {
   const [booted, setBooted] = useState(false);
@@ -49,7 +50,7 @@ export default function App() {
       <RuntimeCustomCursor />
       
       <main className="relative bg-[#05070b]">
-        {/* runtime world */}
+        {/* runtime world — fixed 3D background */}
         <div className="fixed inset-0 z-0">
           <Canvas
             camera={{ position: [0, 0, 12], fov: isMobile ? 55 : 45 }}
@@ -67,7 +68,7 @@ export default function App() {
           </Canvas>
         </div>
 
-        {/* overlay ui */}
+        {/* overlay ui — fixed cinematic HUD */}
         {booted && (
           <div className="fixed inset-0 z-10 pointer-events-none">
             <RuntimeInterfaceLayer />
@@ -75,8 +76,13 @@ export default function App() {
           </div>
         )}
 
-        {/* scroll space */}
+        {/* cinematic scroll space */}
         <div className="h-[500vh]" />
+
+        {/* real website content sections */}
+        <div className="relative z-20">
+          <RuntimeSections />
+        </div>
       </main>
     </>
   );

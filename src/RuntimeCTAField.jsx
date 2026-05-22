@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
 import { useRuntimeScroll } from "./RuntimeScrollDirector";
 
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
 export default function RuntimeCTAField() {
   const zone = useRuntimeScroll((s) => s.zone);
   const isVisible = zone === "surface";
@@ -15,6 +20,7 @@ export default function RuntimeCTAField() {
       <button 
         data-cursor="hover"
         className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/10 bg-white/[0.02] px-6 py-3 backdrop-blur-xl transition-all hover:border-[#00c9a7]/40 hover:bg-[#00c9a7]/10 md:gap-4 md:px-8 md:py-4"
+        onClick={() => scrollTo("poc-form")}
       >
         <span className="font-mono text-xs tracking-[0.15em] text-white md:text-sm md:tracking-[0.2em]">INITIALIZE DEMO</span>
         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#00c9a7] text-black transition-transform group-hover:translate-x-1 md:h-8 md:w-8">
@@ -27,6 +33,7 @@ export default function RuntimeCTAField() {
       <button 
         data-cursor="hover"
         className="font-mono text-xs tracking-[0.15em] text-white/40 transition hover:text-white md:text-sm md:tracking-[0.2em]"
+        onClick={() => scrollTo("architecture")}
       >
         READ WHITE PAPER
       </button>
