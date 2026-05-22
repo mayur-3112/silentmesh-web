@@ -488,7 +488,8 @@ function Architecture() {
     let currentIndex = 1;
     intervalRef.current = setInterval(() => {
       if (currentIndex < targetLogs.length) {
-        setLogs((prev) => [...prev, targetLogs[currentIndex]]);
+        const nextLog = targetLogs[currentIndex];
+        setLogs((prev) => [...prev, nextLog]);
         currentIndex++;
       } else {
         clearInterval(intervalRef.current);
