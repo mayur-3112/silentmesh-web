@@ -347,13 +347,14 @@ function POCForm() {
     infrastructure: "",
     message: "",
   });
+  const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Request submitted. We'll be in touch within 24 hours.");
+    setSubmitted(true);
   };
 
   const inputClass =
@@ -384,10 +385,13 @@ function POCForm() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
         {/* left — copy + guarantee */}
         <motion.div {...stagger(0)}>
-          <p className="text-sm md:text-base leading-relaxed text-white/60 mb-8">
-            SilentMesh is currently in controlled deployment with select
-            critical infrastructure operators. Request access to begin a
-            proof-of-concept in your environment.
+          <p className="text-sm md:text-base leading-relaxed text-white/60 mb-4">
+            One unsafe enforcement action in production can become an outage event.
+            SilentMesh eliminates that risk.
+          </p>
+          <p className="text-sm md:text-base leading-relaxed text-white/40 mb-8">
+            Currently in controlled deployment with select critical infrastructure
+            operators. Request access to begin a proof-of-concept.
           </p>
 
           <div
@@ -406,80 +410,88 @@ function POCForm() {
         </motion.div>
 
         {/* right — form */}
-        <motion.form
-          {...stagger(1)}
-          onSubmit={handleSubmit}
-          className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm space-y-5"
-          data-cursor="hover"
-        >
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            required
-            value={form.name}
-            onChange={handleChange}
-            className={inputClass}
-            data-cursor="hover"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            value={form.email}
-            onChange={handleChange}
-            className={inputClass}
-            data-cursor="hover"
-          />
-          <input
-            type="text"
-            name="organization"
-            placeholder="Organization"
-            required
-            value={form.organization}
-            onChange={handleChange}
-            className={inputClass}
-            data-cursor="hover"
-          />
+        <motion.div {...stagger(1)} className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm">
+          {submitted ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#00c9a7]/30 bg-[#00c9a7]/10">
+                <svg className="h-7 w-7 text-[#00c9a7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="mb-2 font-mono text-sm tracking-[0.2em] text-[#00c9a7]">REQUEST RECEIVED</p>
+              <p className="text-sm text-white/40">We'll be in touch within 24 hours.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                required
+                value={form.name}
+                onChange={handleChange}
+                className={inputClass}
+                data-cursor="hover"
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                required
+                value={form.email}
+                onChange={handleChange}
+                className={inputClass}
+                data-cursor="hover"
+              />
+              <input
+                type="text"
+                name="organization"
+                placeholder="Organization"
+                required
+                value={form.organization}
+                onChange={handleChange}
+                className={inputClass}
+                data-cursor="hover"
+              />
 
-          <select
-            name="infrastructure"
-            required
-            value={form.infrastructure}
-            onChange={handleChange}
-            className={`${inputClass} appearance-none`}
-            data-cursor="hover"
-          >
-            <option value="" disabled>
-              Infrastructure Type
-            </option>
-            <option value="power">Power Grid / Energy</option>
-            <option value="water">Water / Utilities</option>
-            <option value="manufacturing">Manufacturing / SCADA</option>
-            <option value="transportation">Transportation</option>
-            <option value="defense">Defense / Sovereign</option>
-            <option value="other">Other</option>
-          </select>
+              <select
+                name="infrastructure"
+                required
+                value={form.infrastructure}
+                onChange={handleChange}
+                className={`${inputClass} appearance-none`}
+                style={{ colorScheme: 'dark' }}
+                data-cursor="hover"
+              >
+                <option value="" disabled>Infrastructure Type</option>
+                <option value="power">Power Grid / Energy</option>
+                <option value="water">Water / Utilities</option>
+                <option value="manufacturing">Manufacturing / SCADA</option>
+                <option value="transportation">Transportation</option>
+                <option value="defense">Defense / Sovereign</option>
+                <option value="other">Other</option>
+              </select>
 
-          <textarea
-            name="message"
-            placeholder="Message"
-            rows={4}
-            value={form.message}
-            onChange={handleChange}
-            className={`${inputClass} resize-none`}
-            data-cursor="hover"
-          />
+              <textarea
+                name="message"
+                placeholder="Message"
+                rows={4}
+                value={form.message}
+                onChange={handleChange}
+                className={`${inputClass} resize-none`}
+                data-cursor="hover"
+              />
 
-          <button
-            type="submit"
-            data-cursor="hover"
-            className="w-full rounded-full border border-[#00c9a7]/40 bg-[#00c9a7]/10 py-3 font-mono text-sm tracking-[0.15em] text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60 transition-all duration-300"
-          >
-            REQUEST ACCESS →
-          </button>
-        </motion.form>
+              <button
+                type="submit"
+                data-cursor="hover"
+                className="w-full rounded-full border border-[#00c9a7]/40 bg-[#00c9a7]/10 py-3 font-mono text-sm tracking-[0.15em] text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60 transition-all duration-300"
+              >
+                REQUEST ACCESS →
+              </button>
+            </form>
+          )}
+        </motion.div>
       </div>
     </section>
   );

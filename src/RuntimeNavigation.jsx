@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function scrollTo(id) {
   const el = document.getElementById(id);
@@ -7,6 +7,15 @@ function scrollTo(id) {
 
 export default function RuntimeNavigation() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 100);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const navItems = [
     { label: "ORCHESTRATION", target: "orchestration" },
@@ -15,7 +24,7 @@ export default function RuntimeNavigation() {
   ];
 
   return (
-    <div className="pointer-events-auto absolute left-0 top-0 z-[60] flex w-full items-center justify-between px-6 py-6 md:px-12 md:py-10">
+    <div className={`pointer-events-auto absolute left-0 top-0 z-[60] flex w-full items-center justify-between px-6 py-6 transition-all duration-500 md:px-12 md:py-10 ${scrolled ? 'bg-[#05070b]/80 backdrop-blur-xl py-4 md:py-5' : ''}`}>
       <div
         className="text-base font-semibold tracking-[0.25em] text-white/70 md:text-lg"
         data-cursor="hover"

@@ -79,8 +79,9 @@ export default function App() {
         {/* cinematic scroll space */}
         <div className="h-[500vh]" />
 
-        {/* real website content sections */}
+        {/* gradient bridge — smooth fade from 3D to content */}
         <div className="relative z-20">
+          <div className="h-[30vh] bg-gradient-to-b from-transparent via-[#05070b]/70 to-[#05070b]" />
           <RuntimeSections />
         </div>
       </main>
