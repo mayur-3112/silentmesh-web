@@ -72,84 +72,10 @@ const TopologyShader = {
   `
 };
 
-function TopologyLine({ points, isInner, centerDist }) {
-  const zone = useRuntimeScroll((s) => s.zone);
-
-  const geometry = useMemo(() => {
-    const curve = new THREE.CatmullRomCurve3(points);
-    return new THREE.BufferGeometry().setFromPoints(
-      curve.getPoints(isInner ? 45 : 25)
-    );
-  }, [points, isInner]);
-
-  const uniforms = useMemo(() => ({
-    uTime: { value: 0 },
-    uZone: { value: 0 },
-    uCoreInfluence: { value: 0.1 },
-    uColor: { value: new THREE.Color(isInner ? "#00c9a7" : "#145246") },
-    uOpacity: { value: 0 },
-  }), [isInner]);
-
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    uniforms.uTime.value = t;
-
-    let zoneVal = 0.0;
-    let influenceVal = 0.1;
-    let baseOpacity = 0.0;
-
-    switch (zone) {
-      case "surface":
-        zoneVal = 0.0;
-        influenceVal = 0.1;
-        baseOpacity = isInner ? 0.2 : 0.06;
-        break;
-      case "observation":
-        zoneVal = 1.0;
-        influenceVal = 0.3;
-        baseOpacity = isInner ? 0.3 : 0.1;
-        break;
-      case "orchestration":
-        zoneVal = 2.0;
-        influenceVal = 0.9;
-        baseOpacity = isInner ? 0.6 : 0.2;
-        break;
-      case "containment":
-        zoneVal = 3.0;
-        influenceVal = 1.6;
-        baseOpacity = isInner ? 0.75 : 0.25;
-        break;
-      case "deep-runtime":
-        zoneVal = 4.0;
-        influenceVal = 0.4;
-        baseOpacity = isInner ? 0.25 : 0.08;
-        break;
-      default:
-        zoneVal = 0.0;
-        influenceVal = 0.1;
-        baseOpacity = 0.1;
-    }
-
-    uniforms.uZone.value = zoneVal;
-    uniforms.uCoreInfluence.value = influenceVal;
-    uniforms.uOpacity.value = baseOpacity;
-  });
-
-  return (
-    <line geometry={geometry}>
-      <shaderMaterial
-        vertexShader={TopologyShader.vertexShader}
-        fragmentShader={TopologyShader.fragmentShader}
-        uniforms={uniforms}
-        transparent
-        depthWrite={false}
-      />
-    </line>
-  );
-}
-
 export default function RuntimeTopology() {
   const group = useRef();
+  const materialsRef = useRef([]);
+  const zone = useRuntimeScroll((s) => s.zone);
 
   const lines = useMemo(() => {
     const arr = [];
@@ -161,7 +87,7 @@ export default function RuntimeTopology() {
       
       const angle = Math.random() * Math.PI * 2;
       
-      // Giant darkness pockets / topology dead zones (Issue 2)
+      // Giant darkness pockets / topology dead zones
       const deadZone1 = angle > 0.8 && angle < 2.0;
       const deadZone2 = angle > 3.6 && angle < 4.8;
       if (deadZone1 || deadZone2) continue;
@@ -183,21 +109,99 @@ export default function RuntimeTopology() {
     return arr;
   }, []);
 
+  const geometries = useMemo(() => {
+    return lines.map((line) => {
+      const curve = new THREE.CatmullRomCurve3(line.points);
+      return new THREE.BufferGeometry().setFromPoints(
+        curve.getPoints(line.isInner ? 45 : 25)
+      );
+    });
+  }, [lines]);
+
+  const uniformInstances = useMemo(() => {
+    return lines.map((line) => ({
+      uTime: { value: 0 },
+      uZone: { value: 0 },
+      uCoreInfluence: { value: 0.1 },
+      uColor: { value: new THREE.Color(line.isInner ? "#00c9a7" : "#145246") },
+      uOpacity: { value: 0 },
+    }));
+  }, [lines]);
+
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     group.current.rotation.y = t * 0.02;
     group.current.rotation.x = Math.sin(t * 0.05) * 0.05;
+
+    let zoneVal = 0.0;
+    let influenceVal = 0.1;
+    let baseOpacityInner = 0.0;
+    let baseOpacityOuter = 0.0;
+
+    switch (zone) {
+      case "surface":
+        zoneVal = 0.0;
+        influenceVal = 0.1;
+        baseOpacityInner = 0.2;
+        baseOpacityOuter = 0.06;
+        break;
+      case "observation":
+        zoneVal = 1.0;
+        influenceVal = 0.3;
+        baseOpacityInner = 0.3;
+        baseOpacityOuter = 0.1;
+        break;
+      case "orchestration":
+        zoneVal = 2.0;
+        influenceVal = 0.9;
+        baseOpacityInner = 0.6;
+        baseOpacityOuter = 0.2;
+        break;
+      case "containment":
+        zoneVal = 3.0;
+        influenceVal = 1.6;
+        baseOpacityInner = 0.75;
+        baseOpacityOuter = 0.25;
+        break;
+      case "deep-runtime":
+        zoneVal = 4.0;
+        influenceVal = 0.4;
+        baseOpacityInner = 0.25;
+        baseOpacityOuter = 0.08;
+        break;
+      default:
+        zoneVal = 0.0;
+        influenceVal = 0.1;
+        baseOpacityInner = 0.1;
+        baseOpacityOuter = 0.05;
+    }
+
+    materialsRef.current.forEach((mat, i) => {
+      if (!mat) return;
+      const line = lines[i];
+      mat.uniforms.uTime.value = t;
+      mat.uniforms.uZone.value = zoneVal;
+      mat.uniforms.uCoreInfluence.value = influenceVal;
+      
+      const distanceFade = Math.max(0.1, 1 - (line.centerDist / 14));
+      const baseOpacity = line.isInner ? baseOpacityInner : baseOpacityOuter;
+      mat.uniforms.uOpacity.value = baseOpacity * distanceFade;
+    });
   });
 
   return (
     <group ref={group}>
       {lines.map((line, i) => (
-        <TopologyLine
-          key={i}
-          points={line.points}
-          isInner={line.isInner}
-          centerDist={line.centerDist}
-        />
+        <line key={i} geometry={geometries[i]}>
+          <shaderMaterial
+            ref={(el) => (materialsRef.current[i] = el)}
+            vertexShader={TopologyShader.vertexShader}
+            fragmentShader={TopologyShader.fragmentShader}
+            uniforms={uniformInstances[i]}
+            transparent
+            depthWrite={false}
+          />
+        </line>
       ))}
     </group>
   );

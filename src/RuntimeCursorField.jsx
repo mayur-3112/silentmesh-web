@@ -24,7 +24,7 @@ export default function RuntimeCursorField() {
 
   return (
     <mesh ref={field}>
-      <sphereGeometry args={[1.2, 64, 64]} />
+      <sphereGeometry args={[1.2, 16, 16]} />
 
       <meshBasicMaterial
         color="#00c9a7"

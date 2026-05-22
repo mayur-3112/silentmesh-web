@@ -84,7 +84,7 @@ export default function RuntimeCore() {
 
       {/* atmospheric pulse — breathes in sync with light */}
       <mesh ref={pulseRef}>
-        <sphereGeometry args={[2.8, 64, 64]} />
+        <sphereGeometry args={[2.8, 20, 20]} />
         <meshBasicMaterial
           color="#00c9a7"
           transparent
