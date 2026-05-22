@@ -386,8 +386,7 @@ function POCForm() {
         {/* left — copy + guarantee */}
         <motion.div {...stagger(0)}>
           <p className="text-sm md:text-base leading-relaxed text-white/60 mb-4">
-            One unsafe enforcement action in production can become an outage event.
-            SilentMesh eliminates that risk.
+            Security teams hesitate to enforce runtime controls in production because one unsafe action can become an outage event. SilentMesh eliminates that risk.
           </p>
           <p className="text-sm md:text-base leading-relaxed text-white/40 mb-8">
             Currently in controlled deployment with select critical infrastructure

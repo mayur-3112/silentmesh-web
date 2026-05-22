@@ -9,16 +9,30 @@ export default function RuntimeCore() {
   const pulseRef = useRef();
   const zone = useRuntimeScroll((s) => s.zone);
 
+  const containmentStartRef = useRef(0);
+  const lastZoneRef = useRef();
+
   useFrame((state) => {
     const t = state.clock.elapsedTime;
 
     core.current.rotation.y = t * 0.12;
     core.current.scale.setScalar(1 + Math.sin(t * 1.2) * 0.04);
 
+    if (zone === "containment" && lastZoneRef.current !== "containment") {
+      containmentStartRef.current = t;
+    }
+    lastZoneRef.current = zone;
+
+    const elapsed = t - containmentStartRef.current;
+    // Core flare peaks high on entry and decays
+    const flare = zone === "containment" ? Math.max(0, Math.exp(-elapsed * 1.8) * 12.0) : 0;
+
     // Core breathing light — the orb shapes the world
     const breathe = 0.6 + Math.sin(t * 0.8) * 0.3;
     const urgency = zone === "containment" ? 2.5 : zone === "orchestration" ? 1.4 : 1.0;
-    lightRef.current.intensity = (4 + breathe * 6) * urgency;
+    
+    // Total light intensity combines base breathing, zone urgency, and the ignition flare
+    lightRef.current.intensity = (4 + breathe * 6) * urgency + flare * 15.0;
 
     // Shift light color based on zone for emotional arc
     if (zone === "containment") {
@@ -29,9 +43,9 @@ export default function RuntimeCore() {
       lightRef.current.color.lerp(new THREE.Color("#00c9a7"), 0.02);
     }
 
-    // Atmospheric pulse breathes with the light
-    pulseRef.current.material.opacity = 0.02 + breathe * 0.03;
-    pulseRef.current.scale.setScalar(1 + Math.sin(t * 0.5) * 0.08);
+    // Atmospheric pulse breathes with the light and flares on ignition
+    pulseRef.current.material.opacity = 0.02 + (breathe * 0.03) + (flare * 0.05);
+    pulseRef.current.scale.setScalar(1 + Math.sin(t * 0.5) * 0.08 + (flare * 0.4));
   });
 
   return (

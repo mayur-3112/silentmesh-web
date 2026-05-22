@@ -4,14 +4,14 @@ import * as THREE from "three";
 import { useRuntimeScroll } from "./RuntimeScrollDirector";
 
 export default function RuntimeContainmentPulse() {
-  const ringRef = useRef();
+  const groupRef = useRef();
   const [triggered, setTriggered] = useState(false);
   const [active, setActive] = useState(false);
   const startTimeRef = useRef(0);
   const zone = useRuntimeScroll((s) => s.zone);
 
   useFrame((state) => {
-    if (!ringRef.current) return;
+    if (!groupRef.current) return;
 
     // Trigger ONCE when entering containment zone
     if (zone === "containment" && !triggered) {
@@ -27,39 +27,73 @@ export default function RuntimeContainmentPulse() {
 
     if (active) {
       const elapsed = state.clock.elapsedTime - startTimeRef.current;
-      const duration = 2.5;
+      const duration = 2.2;
       const progress = Math.min(elapsed / duration, 1);
 
-      // Rapid expansion with deceleration
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const scale = eased * 25;
+      // Fast initial explosion, slow final expansion
+      const eased = 1 - Math.pow(1 - progress, 4);
 
-      // Opacity: flash bright then fade
-      const opacity = progress < 0.15
-        ? progress / 0.15 * 0.5
-        : Math.max(0, 0.5 * (1 - (progress - 0.15) / 0.85));
+      // Animate the three concentric rings
+      groupRef.current.children.forEach((child, index) => {
+        // Stagger the final scale: outer is largest, inner is smallest
+        const maxScale = index === 0 ? 32 : index === 1 ? 26 : 20;
+        const scale = eased * maxScale;
+        child.scale.setScalar(scale);
 
-      ringRef.current.scale.setScalar(scale);
-      ringRef.current.material.opacity = opacity;
+        // Opacity: rapid flash, then slow linear decay
+        const opacity = progress < 0.1
+          ? (progress / 0.1) * 0.7
+          : Math.max(0, 0.7 * (1 - (progress - 0.1) / 0.9));
+        
+        child.material.opacity = opacity;
+      });
 
       if (progress >= 1) {
         setActive(false);
       }
     } else {
-      ringRef.current.material.opacity = 0;
-      ringRef.current.scale.setScalar(0.01);
+      // Inactive: keep everything hidden and minimized
+      groupRef.current.children.forEach((child) => {
+        if (child.material) child.material.opacity = 0;
+        child.scale.setScalar(0.01);
+      });
     }
   });
 
   return (
-    <mesh ref={ringRef} rotation={[Math.PI / 2, 0, 0]}>
-      <torusGeometry args={[1, 0.08, 16, 128]} />
-      <meshBasicMaterial
-        color="#ef4444"
-        transparent
-        opacity={0}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+    <group ref={groupRef}>
+      {/* Ring 1 - horizontal */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1, 0.03, 16, 128]} />
+        <meshBasicMaterial
+          color="#ef4444"
+          transparent
+          opacity={0}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Ring 2 - tilted X */}
+      <mesh rotation={[Math.PI / 2 + 0.35, 0.2, 0]}>
+        <torusGeometry args={[0.85, 0.02, 16, 96]} />
+        <meshBasicMaterial
+          color="#f43f5e"
+          transparent
+          opacity={0}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Ring 3 - tilted Y */}
+      <mesh rotation={[Math.PI / 2 - 0.25, -0.3, 0.15]}>
+        <torusGeometry args={[0.7, 0.015, 16, 80]} />
+        <meshBasicMaterial
+          color="#fda4af"
+          transparent
+          opacity={0}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
   );
 }
