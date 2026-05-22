@@ -1,8 +1,17 @@
 import { motion } from "framer-motion";
+import { useRuntimeScroll } from "./RuntimeScrollDirector";
 
 export default function RuntimeCTAField() {
+  const zone = useRuntimeScroll((s) => s.zone);
+  const isVisible = zone === "surface";
+
   return (
-    <div className="pointer-events-auto absolute bottom-[10vh] left-[8vw] flex items-center gap-8">
+    <motion.div 
+      initial={false}
+      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 40 }}
+      transition={{ duration: 1.2, ease: "easeInOut" }}
+      className={`pointer-events-auto absolute bottom-[10vh] left-[8vw] flex items-center gap-8 ${!isVisible ? 'pointer-events-none' : ''}`}
+    >
       <motion.button
         whileHover={{
           scale: 1.04,
@@ -22,6 +31,6 @@ export default function RuntimeCTAField() {
       <div className="text-sm tracking-[0.2em] text-white/35">
         OPERATIONAL TRUST LAYER ACTIVE
       </div>
-    </div>
+    </motion.div>
   );
 }

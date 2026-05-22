@@ -1,8 +1,17 @@
 import { motion } from "framer-motion";
+import { useRuntimeScroll } from "./RuntimeScrollDirector";
 
 export default function RuntimeHeroTypography() {
+  const zone = useRuntimeScroll((s) => s.zone);
+  const isVisible = zone === "surface";
+
   return (
-    <div className="absolute left-[8vw] top-[18vh] max-w-[900px]">
+    <motion.div 
+      initial={false}
+      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : -40 }}
+      transition={{ duration: 1.2, ease: "easeInOut" }}
+      className={`absolute left-[8vw] top-[18vh] max-w-[900px] ${!isVisible ? 'pointer-events-none' : ''}`}
+    >
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -34,6 +43,6 @@ export default function RuntimeHeroTypography() {
         Linux-native runtime visibility and reversible mitigation
         designed for operational trust.
       </motion.p>
-    </div>
+    </motion.div>
   );
 }
