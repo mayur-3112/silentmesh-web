@@ -58,7 +58,7 @@ export default function App() {
             gl={{ powerPreference: isMobile ? "default" : "high-performance", antialias: false }}
           >
             <color attach="background" args={["#05070b"]} />
-            <fog attach="fog" args={["#05070b", 8, 28]} />
+            <fog attach="fog" args={["#05070b", 6, 22]} />
 
             <Suspense fallback={null}>
               {booted && <RuntimeUniverse />}

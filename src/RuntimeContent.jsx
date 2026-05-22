@@ -24,9 +24,9 @@ export default function RuntimeContent() {
             </p>
           </div>
           
-          <h2 className="mb-3 text-2xl font-light tracking-tight text-white md:mb-4 md:text-5xl">
+          <h2 className="mb-3 text-2xl font-light tracking-tight text-white/85 md:mb-4 md:text-5xl">
             Deep structural <br />
-            <span className="font-medium text-white">visibility.</span>
+            <span className="font-medium text-white/90">visibility.</span>
           </h2>
           
           <p className="mb-6 text-sm leading-relaxed text-white/40 md:mb-8 md:text-base">
@@ -66,9 +66,9 @@ export default function RuntimeContent() {
             </p>
           </div>
           
-          <h2 className="relative z-10 mb-3 text-2xl font-light tracking-tight text-white md:mb-4 md:text-5xl">
+          <h2 className="relative z-10 mb-3 text-2xl font-light tracking-tight text-white/85 md:mb-4 md:text-5xl">
             Surgical <br />
-            <span className="font-medium text-white">intervention.</span>
+            <span className="font-medium text-white/90">intervention.</span>
           </h2>
           
           <p className="relative z-10 text-sm leading-relaxed text-white/40 md:text-base">
@@ -102,9 +102,9 @@ export default function RuntimeContent() {
           <div className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.8)] md:h-3 md:w-3" />
         </div>
         
-        <h2 className="mb-4 text-3xl font-light tracking-tight text-white md:mb-6 md:text-7xl">
+        <h2 className="mb-4 text-3xl font-light tracking-tight text-white/85 md:mb-6 md:text-7xl">
           Absolute <br />
-          <span className="font-bold text-white">containment.</span>
+          <span className="font-bold text-white/90">containment.</span>
         </h2>
         
         <p className="mx-auto max-w-md px-4 text-sm leading-relaxed text-white/40 md:max-w-xl md:px-0 md:text-lg">

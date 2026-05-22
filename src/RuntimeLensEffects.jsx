@@ -9,17 +9,17 @@ export default function RuntimeLensEffects() {
   return (
     <EffectComposer>
       <Bloom
-        intensity={1.8}
-        luminanceThreshold={0.15}
-        luminanceSmoothing={0.9}
+        intensity={2.2}
+        luminanceThreshold={0.12}
+        luminanceSmoothing={0.95}
       />
 
-      <Noise opacity={0.015} />
+      <Noise opacity={0.018} />
 
       <Vignette
         eskil={false}
-        offset={0.15}
-        darkness={0.8}
+        offset={0.1}
+        darkness={1.1}
       />
     </EffectComposer>
   );
