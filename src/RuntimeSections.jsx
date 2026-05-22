@@ -502,63 +502,53 @@ function POCForm() {
    ═══════════════════════════════════════════════ */
 function Footer() {
   return (
-    <footer className="bg-[#030507] border-t border-white/5 py-16 px-6 md:px-12 lg:px-24">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
-        {/* col 1 — brand */}
+    <footer className="bg-[#030507] border-t border-white/5 py-20 px-6 md:px-12 lg:px-24">
+      <div className="flex flex-col gap-16">
+        {/* Big Typography Header */}
         <div>
-          <p className="font-mono text-sm tracking-[0.25em] text-white mb-2">
+          <h2 className="font-mono text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[0.25em] text-white select-none">
             SILENTMESH
-          </p>
-          <p className="text-xs text-white/40 leading-relaxed mb-4">
-            Runtime Orchestration for Critical Infrastructure
-          </p>
-          <p className="text-xs text-white/25">
-            © 2026 SilentMesh Systems Private Limited
-          </p>
+          </h2>
         </div>
 
-        {/* col 2 — legal */}
-        <div className="space-y-2 text-xs text-white/35 leading-relaxed">
-          <p>
-            <span className="text-white/50">CIN:</span>{" "}
-            U62091KA2026PTC218985
-          </p>
-          <p>
-            <span className="text-white/50">Registered:</span> 196, 9th Cross,
-            1st Main, Mahaganapathi Nagar, Rajajinagar, Bengaluru – 560010,
-            Karnataka
-          </p>
-          <p>
-            <span className="text-white/50">Directors:</span> Mayur Agarwal |
-            Sujatha Agarwal
-          </p>
-        </div>
+        {/* Minimal Bottom Grid */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-t border-white/5 pt-12">
+          {/* Brand & Tagline */}
+          <div className="space-y-4 max-w-md">
+            <p className="text-sm text-white/40 leading-relaxed">
+              Runtime Orchestration for Critical Infrastructure
+            </p>
+            <p className="text-xs text-white/20 font-mono">
+              © 2026 SilentMesh Systems Private Limited
+            </p>
+          </div>
 
-        {/* col 3 — contact */}
-        <div className="space-y-2 text-xs text-white/40">
-          <a
-            href="https://www.silentmesh.me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block hover:text-[#00c9a7] transition-colors"
-            data-cursor="hover"
-          >
-            www.silentmesh.me
-          </a>
-          <a
-            href="mailto:founder@silentmesh.me"
-            className="block hover:text-[#00c9a7] transition-colors"
-            data-cursor="hover"
-          >
-            founder@silentmesh.me
-          </a>
-          <a
-            href="tel:+918088669439"
-            className="block hover:text-[#00c9a7] transition-colors"
-            data-cursor="hover"
-          >
-            +91 80886 69439
-          </a>
+          {/* Contact Details Only */}
+          <div className="space-y-3 font-mono text-xs md:text-sm">
+            <a
+              href="https://www.silentmesh.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
+              data-cursor="hover"
+            >
+              www.silentmesh.me
+            </a>
+            <a
+              href="mailto:founder@silentmesh.me"
+              className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
+              data-cursor="hover"
+            >
+              founder@silentmesh.me
+            </a>
+            <a
+              href="tel:+918088669439"
+              className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
+              data-cursor="hover"
+            >
+              +91 80886 69439
+            </a>
+          </div>
         </div>
       </div>
     </footer>
