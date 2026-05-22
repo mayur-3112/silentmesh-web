@@ -12,12 +12,16 @@ import RuntimeCustomCursor from "./RuntimeCustomCursor";
 
 export default function App() {
   const [booted, setBooted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const mobile = window.innerWidth < 768;
+    setIsMobile(mobile);
+
     preloadRuntimeAssets();
     
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: mobile ? 1.0 : 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -48,9 +52,9 @@ export default function App() {
         {/* runtime world */}
         <div className="fixed inset-0 z-0">
           <Canvas
-            camera={{ position: [0, 0, 12], fov: 45 }}
-            dpr={[1, 1.5]}
-            gl={{ powerPreference: "high-performance", antialias: false }}
+            camera={{ position: [0, 0, 12], fov: isMobile ? 55 : 45 }}
+            dpr={isMobile ? [1, 1] : [1, 1.5]}
+            gl={{ powerPreference: isMobile ? "default" : "high-performance", antialias: false }}
           >
             <color attach="background" args={["#05070b"]} />
             <fog attach="fog" args={["#05070b", 8, 28]} />
@@ -59,7 +63,7 @@ export default function App() {
               {booted && <RuntimeUniverse />}
             </Suspense>
 
-            {booted && <RuntimeLensEffects />}
+            {booted && !isMobile && <RuntimeLensEffects />}
           </Canvas>
         </div>
 

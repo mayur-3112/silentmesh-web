@@ -1,11 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export default function RuntimeCustomCursor() {
   const dotRef = useRef(null);
   const ringRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768 || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      setIsMobile(mobile);
+      return mobile;
+    };
+
+    if (checkMobile()) return;
+
     document.body.style.cursor = "none";
 
     const dot = dotRef.current;
@@ -67,17 +76,27 @@ export default function RuntimeCustomCursor() {
       }
     };
 
+    const onResize = () => {
+      if (checkMobile()) {
+        document.body.style.cursor = "auto";
+      }
+    };
+
     window.addEventListener("mousemove", moveCursor);
     document.addEventListener("mouseover", onMouseOver);
     document.addEventListener("mouseout", onMouseOut);
+    window.addEventListener("resize", onResize);
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       document.removeEventListener("mouseover", onMouseOver);
       document.removeEventListener("mouseout", onMouseOut);
+      window.removeEventListener("resize", onResize);
       document.body.style.cursor = "auto";
     };
   }, []);
+
+  if (isMobile) return null;
 
   return (
     <>

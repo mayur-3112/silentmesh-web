@@ -290,3 +290,53 @@ body::after {
   display: inline-block;
   margin-right: 8px;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Mobile Responsive Overrides
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Restore native cursor on touch devices */
+@media (pointer: coarse) {
+  body,
+  a, button, [role="button"], input, textarea, select, label,
+  .interactive-node, .clickable {
+    cursor: auto !important;
+  }
+}
+
+/* Reduce ambient effects on mobile for performance */
+@media (max-width: 767px) {
+  .ambient-glow .glow-blob {
+    filter: blur(80px);
+    opacity: 0.5;
+  }
+  .ambient-glow .blob-primary {
+    width: 300px;
+    height: 300px;
+  }
+  .ambient-glow .blob-secondary {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .grid-mesh {
+    background-size: 48px 48px;
+    opacity: 0.01;
+  }
+  
+  /* Disable film grain on mobile for performance */
+  body::after {
+    display: none;
+  }
+}
+
+/* Tablet breakpoint */
+@media (max-width: 1023px) {
+  .split-sticky-container {
+    grid-template-columns: 1fr;
+  }
+  .sticky-canvas-wrapper {
+    position: relative;
+    height: auto;
+  }
+}

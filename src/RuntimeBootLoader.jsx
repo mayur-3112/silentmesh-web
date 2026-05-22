@@ -21,12 +21,12 @@ export default function RuntimeBootLoader({ onComplete }) {
       }}
       className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#020408] ${booted ? 'pointer-events-none' : ''}`}
     >
-      <div className="text-center">
-        <p className="mb-6 text-sm tracking-[0.4em] text-[#00c9a7]/70">
+      <div className="text-center px-6">
+        <p className="mb-6 text-[10px] tracking-[0.3em] text-[#00c9a7]/70 md:text-sm md:tracking-[0.4em]">
           INITIALIZING ORCHESTRATION LAYER
         </p>
 
-        <div className="h-[1px] w-[240px] overflow-hidden bg-white/10 mx-auto">
+        <div className="h-[1px] w-[180px] overflow-hidden bg-white/10 mx-auto md:w-[240px]">
           <motion.div
             initial={{ x: "-100%" }}
             animate={{ x: "100%" }}
