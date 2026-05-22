@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SilentMesh | Runtime Intelligence</title>
-  
-  <meta name="description" content="A Linux runtime intelligence and behavioral security platform.">
-  
+  <title>SilentMesh — Runtime Visibility Platform</title>
+  <meta name="description" content="Low-overhead telemetry and safety-focused runtime response workflows designed for production Linux environments.">
+  <meta name="theme-color" content="#090a0f">
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -19,48 +19,40 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
             display: ['Space Grotesk', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            void: '#000000',
-            machine: '#0a0a0a',
-            panel: '#111111',
-            runtime: '#00ff66',
-            threat: '#ff2a2a',
+            void: '#090a0f',
+            surface: '#111111',
+            accent: '#00c9a7',
+            muted: '#6b7280',
+            subtle: '#1a1a1f',
           },
-          letterSpacing: {
-            tighter: '-0.04em',
-            widest: '0.2em',
-          }
         }
       }
     }
   </script>
 
-  <!-- Custom Styles -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Import Maps for React & Framer Motion -->
   <script type="importmap">
     {
       "imports": {
         "react": "https://esm.sh/react@18.2.0",
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "framer-motion": "https://esm.sh/framer-motion@10.16.4?deps=react@18.2.0,react-dom@18.2.0",
-        "lucide-react": "https://esm.sh/lucide-react@0.292.0?deps=react@18.2.0"
+        "framer-motion": "https://esm.sh/framer-motion@10.16.4?deps=react@18.2.0,react-dom@18.2.0"
       }
     }
   </script>
-  
-  <!-- Babel Standalone for in-browser JSX parsing -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body class="bg-void text-white antialiased selection:bg-runtime selection:text-black">
+<body class="bg-void text-gray-200 antialiased">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-void focus:rounded font-mono text-sm">
+    Skip to content
+  </a>
   <div id="root"></div>
-  
-  <!-- App Entry -->
   <script type="text/babel" data-type="module" src="app.jsx"></script>
 </body>
 </html>
