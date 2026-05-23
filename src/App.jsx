@@ -77,7 +77,7 @@ export default function App() {
         )}
 
         {/* cinematic scroll space */}
-        <div className="h-[500vh]" />
+        <div className="h-[200vh]" />
 
         {/* gradient bridge — smooth fade from 3D to content */}
         <div className="relative z-20">

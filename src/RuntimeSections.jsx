@@ -158,43 +158,45 @@ function PainPoints() {
       id="pain-points"
       className="relative bg-[#05070b] py-24 px-6 md:py-32 md:px-12 lg:px-24 border-t border-white/5"
     >
-      <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#ff4a5a] mb-4">
-        The Realities of Production Security
-      </motion.p>
-      <motion.h2
-        {...reveal}
-        className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
-      >
-        Why Industrial Security Fails
-      </motion.h2>
+      <div className="max-w-7xl mx-auto w-full">
+        <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#ff4a5a] mb-4">
+          The Realities of Production Security
+        </motion.p>
+        <motion.h2
+          {...reveal}
+          className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
+        >
+          Why Industrial Security Fails
+        </motion.h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-        {cards.map((c, i) => (
-          <motion.div
-            key={c.title}
-            {...stagger(i)}
-            data-cursor="hover"
-            className="rounded-2xl border border-white/5 bg-white/[0.01] p-6 md:p-8 backdrop-blur-sm flex flex-col gap-5 hover:border-white/10 transition-all duration-300"
-            style={{
-              boxShadow: `0 8px 30px ${c.glowColor}`,
-            }}
-          >
-            <div className="flex items-center justify-between">
-              <c.Icon />
-              <span className={`font-mono text-[10px] tracking-widest ${c.badgeColor} px-2.5 py-1 rounded-full border`}>
-                {c.badge}
-              </span>
-            </div>
-            <div>
-              <h3 className="text-xl font-light text-white/90 mb-3 font-display">
-                {c.title}
-              </h3>
-              <p className="text-sm md:text-base leading-relaxed text-white/40">
-                {c.body}
-              </p>
-            </div>
-          </motion.div>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {cards.map((c, i) => (
+            <motion.div
+              key={c.title}
+              {...stagger(i)}
+              data-cursor="hover"
+              className="rounded-2xl border border-white/5 bg-white/[0.01] p-6 md:p-8 backdrop-blur-sm flex flex-col gap-5 hover:border-white/10 transition-all duration-300"
+              style={{
+                boxShadow: `0 8px 30px ${c.glowColor}`,
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <c.Icon />
+                <span className={`font-mono text-[10px] tracking-widest ${c.badgeColor} px-2.5 py-1 rounded-full border`}>
+                  {c.badge}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-xl font-light text-white/90 mb-3 font-display">
+                  {c.title}
+                </h3>
+                <p className="text-sm md:text-base leading-relaxed text-white/40">
+                  {c.body}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -234,57 +236,59 @@ function Orchestration() {
       id="orchestration"
       className="relative bg-[#05070b] py-24 px-6 md:py-32 md:px-12 lg:px-24"
     >
-      {/* heading */}
-      <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
-        How SilentMesh operates at the kernel level
-      </motion.p>
-      <motion.h2
-        {...reveal}
-        className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
-      >
-        Runtime Orchestration
-      </motion.h2>
+      <div className="max-w-7xl mx-auto w-full">
+        {/* heading */}
+        <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
+          How SilentMesh operates at the kernel level
+        </motion.p>
+        <motion.h2
+          {...reveal}
+          className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
+        >
+          Runtime Orchestration
+        </motion.h2>
 
-      {/* 3-col cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16">
-        {cards.map((c, i) => (
-          <motion.div
-            key={c.label}
-            {...stagger(i)}
-            data-cursor="hover"
-            className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm flex flex-col gap-4"
-          >
-            <c.Icon />
-            <h3 className="font-mono text-sm tracking-[0.25em] text-[#00c9a7]">
-              {c.label}
-            </h3>
-            <p className="text-sm md:text-base leading-relaxed text-white/60">
-              {c.body}
-            </p>
-          </motion.div>
-        ))}
+        {/* 3-col cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16">
+          {cards.map((c, i) => (
+            <motion.div
+              key={c.label}
+              {...stagger(i)}
+              data-cursor="hover"
+              className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm flex flex-col gap-4"
+            >
+              <c.Icon />
+              <h3 className="font-mono text-sm tracking-[0.25em] text-[#00c9a7]">
+                {c.label}
+              </h3>
+              <p className="text-sm md:text-base leading-relaxed text-white/60">
+                {c.body}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* stats bar */}
+        <motion.div
+          {...reveal}
+          className="rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5"
+        >
+          {stats.map((s) => (
+            <div
+              key={s.label}
+              className="flex flex-col items-center justify-center py-8 px-4 text-center"
+              data-cursor="hover"
+            >
+              <span className="font-mono text-2xl md:text-3xl text-[#00c9a7] mb-1">
+                {s.value}
+              </span>
+              <span className="text-[11px] md:text-xs tracking-wider text-white/40 uppercase">
+                {s.label}
+              </span>
+            </div>
+          ))}
+        </motion.div>
       </div>
-
-      {/* stats bar */}
-      <motion.div
-        {...reveal}
-        className="rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5"
-      >
-        {stats.map((s) => (
-          <div
-            key={s.label}
-            className="flex flex-col items-center justify-center py-8 px-4 text-center"
-            data-cursor="hover"
-          >
-            <span className="font-mono text-2xl md:text-3xl text-[#00c9a7] mb-1">
-              {s.value}
-            </span>
-            <span className="text-[11px] md:text-xs tracking-wider text-white/40 uppercase">
-              {s.label}
-            </span>
-          </div>
-        ))}
-      </motion.div>
     </section>
   );
 }
@@ -326,48 +330,50 @@ function RuntimeStates() {
       id="runtime-states"
       className="relative bg-[#05070b] py-24 px-6 md:py-32 md:px-12 lg:px-24"
     >
-      <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
-        Five operational states. One continuous loop.
-      </motion.p>
-      <motion.h2
-        {...reveal}
-        className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
-      >
-        Runtime Lifecycle
-      </motion.h2>
+      <div className="max-w-7xl mx-auto w-full">
+        <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
+          Five operational states. One continuous loop.
+        </motion.p>
+        <motion.h2
+          {...reveal}
+          className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
+        >
+          Runtime Lifecycle
+        </motion.h2>
 
-      {/* vertical timeline */}
-      <div className="relative max-w-2xl mx-auto pl-10 md:pl-14">
-        {/* continuous line */}
-        <div className="absolute left-3 md:left-5 top-0 bottom-0 w-px bg-white/10" />
+        {/* vertical timeline */}
+        <div className="relative max-w-2xl mx-auto pl-10 md:pl-14">
+          {/* continuous line */}
+          <div className="absolute left-3 md:left-5 top-0 bottom-0 w-px bg-white/10" />
 
-        {states.map((s, i) => (
-          <motion.div
-            key={s.title}
-            {...stagger(i)}
-            className="relative mb-12 last:mb-0"
-          >
-            {/* dot */}
-            <span
-              className="absolute -left-7 md:-left-9 top-1 w-4 h-4 rounded-full border-2"
-              style={{
-                borderColor: s.color,
-                backgroundColor: `${s.color}22`,
-                boxShadow: `0 0 12px ${s.color}55`,
-              }}
-            />
-
-            <h3
-              className="font-mono text-sm tracking-[0.25em] mb-2"
-              style={{ color: s.color }}
+          {states.map((s, i) => (
+            <motion.div
+              key={s.title}
+              {...stagger(i)}
+              className="relative mb-12 last:mb-0"
             >
-              {s.title}
-            </h3>
-            <p className="text-sm md:text-base leading-relaxed text-white/60">
-              {s.body}
-            </p>
-          </motion.div>
-        ))}
+              {/* dot */}
+              <span
+                className="absolute -left-7 md:-left-9 top-1 w-4 h-4 rounded-full border-2"
+                style={{
+                  borderColor: s.color,
+                  backgroundColor: `${s.color}22`,
+                  boxShadow: `0 0 12px ${s.color}55`,
+                }}
+              />
+
+              <h3
+                className="font-mono text-sm tracking-[0.25em] mb-2"
+                style={{ color: s.color }}
+              >
+                {s.title}
+              </h3>
+              <p className="text-sm md:text-base leading-relaxed text-white/60">
+                {s.body}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -505,127 +511,129 @@ function Architecture() {
       id="architecture"
       className="relative bg-[#05070b] py-24 px-6 md:py-32 md:px-12 lg:px-24"
     >
-      <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
-        Purpose-built for OT/ICS environments
-      </motion.p>
-      <motion.h2
-        {...reveal}
-        className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
-      >
-        Interactive Exploit Simulator
-      </motion.h2>
+      <div className="max-w-7xl mx-auto w-full">
+        <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
+          Purpose-built for OT/ICS environments
+        </motion.p>
+        <motion.h2
+          {...reveal}
+          className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
+        >
+          Interactive Exploit Simulator
+        </motion.h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-        {/* left — controls */}
-        <motion.div {...stagger(0)} className="flex flex-col gap-6">
-          <p className="text-sm md:text-base leading-relaxed text-white/60">
-            SilentMesh operates as a lightweight Linux daemon with zero dependencies. Click on any of the threat vectors below to test the eBPF / LSM kernel boundaries in real time.
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+          {/* left — controls */}
+          <motion.div {...stagger(0)} className="flex flex-col gap-6">
+            <p className="text-sm md:text-base leading-relaxed text-white/60">
+              SilentMesh operates as a lightweight Linux daemon with zero dependencies. Click on any of the threat vectors below to test the eBPF / LSM kernel boundaries in real time.
+            </p>
 
-          {/* Tab Selector */}
-          <div className="grid grid-cols-3 gap-2">
-            {Object.keys(exploits).map((key) => (
+            {/* Tab Selector */}
+            <div className="grid grid-cols-3 gap-2">
+              {Object.keys(exploits).map((key) => (
+                <button
+                  key={key}
+                  disabled={simulating}
+                  onClick={() => handleExploitSelect(key)}
+                  className={`py-3 px-2 text-[10px] md:text-xs font-mono tracking-wider rounded-xl border transition-all duration-300 ${
+                    selectedExploit === key
+                      ? "border-[#00c9a7] bg-[#00c9a7]/10 text-[#00c9a7] shadow-[0_0_15px_rgba(0,201,167,0.15)]"
+                      : "border-white/5 bg-white/[0.01] text-white/40 hover:text-white/70 hover:border-white/15"
+                  }`}
+                  data-cursor="hover"
+                >
+                  {key.toUpperCase()}
+                </button>
+              ))}
+            </div>
+
+            {/* Vector Info Panel */}
+            <div className="rounded-xl border border-white/5 bg-white/[0.01] p-5 backdrop-blur-sm">
+              <h4 className="font-mono text-xs text-[#00c9a7] tracking-wider mb-2 uppercase">
+                Vector Profile: {exploits[selectedExploit].name}
+              </h4>
+              <p className="text-sm text-white/50 leading-relaxed">
+                {exploits[selectedExploit].desc}
+              </p>
+            </div>
+
+            {/* Trigger Button & Status */}
+            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
               <button
-                key={key}
                 disabled={simulating}
-                onClick={() => handleExploitSelect(key)}
-                className={`py-3 px-2 text-[10px] md:text-xs font-mono tracking-wider rounded-xl border transition-all duration-300 ${
-                  selectedExploit === key
-                    ? "border-[#00c9a7] bg-[#00c9a7]/10 text-[#00c9a7] shadow-[0_0_15px_rgba(0,201,167,0.15)]"
-                    : "border-white/5 bg-white/[0.01] text-white/40 hover:text-white/70 hover:border-white/15"
+                onClick={triggerSimulation}
+                className={`flex-grow rounded-full border py-4 font-mono text-sm tracking-[0.15em] transition-all duration-300 ${
+                  simulating
+                    ? "border-amber-500/20 bg-amber-500/5 text-amber-500/50 cursor-not-allowed"
+                    : "border-[#00c9a7]/40 bg-[#00c9a7]/10 text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60"
                 }`}
                 data-cursor="hover"
+                style={{
+                  boxShadow: simulating ? "none" : "0 0 20px rgba(0, 201, 167, 0.1)",
+                }}
               >
-                {key.toUpperCase()}
+                {simulating ? "SIMULATION RUNNING..." : "TRIGGER SIMULATED EXPLOIT →"}
               </button>
-            ))}
-          </div>
 
-          {/* Vector Info Panel */}
-          <div className="rounded-xl border border-white/5 bg-white/[0.01] p-5 backdrop-blur-sm">
-            <h4 className="font-mono text-xs text-[#00c9a7] tracking-wider mb-2 uppercase">
-              Vector Profile: {exploits[selectedExploit].name}
-            </h4>
-            <p className="text-sm text-white/50 leading-relaxed">
-              {exploits[selectedExploit].desc}
-            </p>
-          </div>
-
-          {/* Trigger Button & Status */}
-          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
-            <button
-              disabled={simulating}
-              onClick={triggerSimulation}
-              className={`flex-grow rounded-full border py-4 font-mono text-sm tracking-[0.15em] transition-all duration-300 ${
-                simulating
-                  ? "border-amber-500/20 bg-amber-500/5 text-amber-500/50 cursor-not-allowed"
-                  : "border-[#00c9a7]/40 bg-[#00c9a7]/10 text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60"
-              }`}
-              data-cursor="hover"
-              style={{
-                boxShadow: simulating ? "none" : "0 0 20px rgba(0, 201, 167, 0.1)",
-              }}
-            >
-              {simulating ? "SIMULATION RUNNING..." : "TRIGGER SIMULATED EXPLOIT →"}
-            </button>
-
-            {mitigated && (
-              <div className="flex items-center justify-center gap-3 px-5 py-3 rounded-full border border-green-500/20 bg-green-500/5 text-green-400 font-mono text-xs tracking-wider">
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-ping" />
-                MITIGATED IN {latency}
-              </div>
-            )}
-          </div>
-
-          {/* Checklist */}
-          <ul className="space-y-2.5 border-t border-white/5 pt-6">
-            {checklist.map((item) => (
-              <li
-                key={item}
-                className="flex items-start gap-3 text-xs md:text-sm text-white/50"
-              >
-                <span className="mt-0.5 text-[#00c9a7]">✓</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-
-        {/* right — terminal card */}
-        <motion.div
-          {...stagger(1)}
-          data-cursor="hover"
-          className="rounded-2xl border border-white/5 bg-[#030507] overflow-hidden backdrop-blur-sm h-[400px] flex flex-col w-full"
-        >
-          {/* title bar */}
-          <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 bg-[#080b11]">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]/80" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]/80" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00c9a7]/80" />
-              <span className="ml-3 font-mono text-[10px] tracking-widest text-white/30 uppercase">
-                interactive_sandbox
-              </span>
+              {mitigated && (
+                <div className="flex items-center justify-center gap-3 px-5 py-3 rounded-full border border-green-500/20 bg-green-500/5 text-green-400 font-mono text-xs tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-ping" />
+                  MITIGATED IN {latency}
+                </div>
+              )}
             </div>
-            {simulating && (
-              <span className="text-[10px] font-mono text-amber-500 animate-pulse tracking-widest">
-                EXECUTION_ACTIVE
-              </span>
-            )}
-          </div>
 
-          {/* code */}
-          <div className="flex-1 p-5 md:p-6 font-mono text-[11px] md:text-xs leading-relaxed space-y-2 overflow-y-auto scrollbar-thin">
-            {logs.map((l, i) => (
-              <div key={i} style={{ color: l.color }}>
-                {l.text}
+            {/* Checklist */}
+            <ul className="space-y-2.5 border-t border-white/5 pt-6">
+              {checklist.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-3 text-xs md:text-sm text-white/50"
+                >
+                  <span className="mt-0.5 text-[#00c9a7]">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* right — terminal card */}
+          <motion.div
+            {...stagger(1)}
+            data-cursor="hover"
+            className="rounded-2xl border border-white/5 bg-[#030507] overflow-hidden backdrop-blur-sm h-[400px] flex flex-col w-full"
+          >
+            {/* title bar */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 bg-[#080b11]">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]/80" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]/80" />
+                <span className="w-2.5 h-2.5 rounded-full bg-[#00c9a7]/80" />
+                <span className="ml-3 font-mono text-[10px] tracking-widest text-white/30 uppercase">
+                  interactive_sandbox
+                </span>
               </div>
-            ))}
-            {/* blinking cursor */}
-            <span className="inline-block w-2.5 h-4 bg-[#00c9a7] animate-pulse mt-1" />
-            <div ref={terminalEndRef} />
-          </div>
-        </motion.div>
+              {simulating && (
+                <span className="text-[10px] font-mono text-amber-500 animate-pulse tracking-widest">
+                  EXECUTION_ACTIVE
+                </span>
+              )}
+            </div>
+
+            {/* code */}
+            <div className="flex-1 p-5 md:p-6 font-mono text-[11px] md:text-xs leading-relaxed space-y-2 overflow-y-auto scrollbar-thin">
+              {logs.map((l, i) => (
+                <div key={i} style={{ color: l.color }}>
+                  {l.text}
+                </div>
+              ))}
+              {/* blinking cursor */}
+              <span className="inline-block w-2.5 h-4 bg-[#00c9a7] animate-pulse mt-1" />
+              <div ref={terminalEndRef} />
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -694,136 +702,156 @@ function POCForm() {
       id="poc-form"
       className="relative bg-[#05070b] py-24 px-6 md:py-32 md:px-12 lg:px-24"
     >
-      <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
-        Request early access to the runtime orchestration layer
-      </motion.p>
-      <motion.h2
-        {...reveal}
-        className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
-      >
-        Deploy SilentMesh
-      </motion.h2>
+      <div className="max-w-7xl mx-auto w-full">
+        <motion.p {...reveal} className="font-mono text-xs md:text-sm tracking-[0.3em] text-[#00c9a7] mb-4">
+          Request early access to the runtime orchestration layer
+        </motion.p>
+        <motion.h2
+          {...reveal}
+          className="text-3xl md:text-5xl font-light tracking-tight text-white mb-16"
+        >
+          Deploy SilentMesh
+        </motion.h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-        {/* left — copy + guarantee */}
-        <motion.div {...stagger(0)}>
-          <p className="text-sm md:text-base leading-relaxed text-white/60 mb-4">
-            Security teams hesitate to enforce runtime controls in production because one unsafe action can become an outage event. SilentMesh eliminates that risk.
-          </p>
-          <p className="text-sm md:text-base leading-relaxed text-white/40 mb-8">
-            Currently in controlled deployment with select critical infrastructure
-            operators. Request access to begin a proof-of-concept.
-          </p>
-
-          <div
-            className="rounded-2xl border border-[#00c9a7]/20 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm space-y-3"
-            data-cursor="hover"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+          {/* left — copy + guarantee */}
+          <motion.div 
+            {...stagger(0)}
+            className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm flex flex-col justify-between gap-8 h-full"
           >
-            {guarantees.map((g) => (
-              <p
-                key={g}
-                className="font-mono text-sm text-white/70 tracking-wide"
-              >
-                {g}
+            <div>
+              <p className="text-sm md:text-base leading-relaxed text-white/70 mb-4">
+                Security teams hesitate to enforce runtime controls in production because one unsafe action can become an outage event. SilentMesh eliminates that risk.
               </p>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* right — form */}
-        <motion.div {...stagger(1)} className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm">
-          {submitted ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#00c9a7]/30 bg-[#00c9a7]/10">
-                <svg className="h-7 w-7 text-[#00c9a7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="mb-2 font-mono text-sm tracking-[0.2em] text-[#00c9a7]">REQUEST RECEIVED</p>
-              <p className="text-sm text-white/40">We'll be in touch within 24 hours.</p>
+              <p className="text-sm md:text-base leading-relaxed text-white/40">
+                Currently in controlled deployment with select critical infrastructure
+                operators. Request access to begin a proof-of-concept.
+              </p>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                required
-                value={form.name}
-                onChange={handleChange}
-                className={inputClass}
-                data-cursor="hover"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                required
-                value={form.email}
-                onChange={handleChange}
-                className={inputClass}
-                data-cursor="hover"
-              />
-              <input
-                type="text"
-                name="organization"
-                placeholder="Organization"
-                required
-                value={form.organization}
-                onChange={handleChange}
-                className={inputClass}
-                data-cursor="hover"
-              />
 
-              <select
-                name="infrastructure"
-                required
-                value={form.infrastructure}
-                onChange={handleChange}
-                className={`${inputClass} bg-[#0a0c12] ${form.infrastructure === "" ? "text-white/25" : "text-white"}`}
-                style={{ colorScheme: 'dark' }}
-                data-cursor="hover"
-              >
-                <option value="" disabled className="text-white/30 bg-[#0a0c12]">Infrastructure Type</option>
-                <option value="power" className="text-white bg-[#0a0c12]">Power Grid / Energy</option>
-                <option value="water" className="text-white bg-[#0a0c12]">Water / Utilities</option>
-                <option value="manufacturing" className="text-white bg-[#0a0c12]">Manufacturing / SCADA</option>
-                <option value="transportation" className="text-white bg-[#0a0c12]">Transportation</option>
-                <option value="defense" className="text-white bg-[#0a0c12]">Defense / Sovereign</option>
-                <option value="other" className="text-white bg-[#0a0c12]">Other</option>
-              </select>
+            <div
+              className="rounded-xl border border-[#00c9a7]/20 bg-[#00c9a7]/5 p-5 space-y-3"
+              data-cursor="hover"
+            >
+              {guarantees.map((g) => (
+                <p
+                  key={g}
+                  className="font-mono text-xs md:text-sm text-[#00c9a7] tracking-wide"
+                >
+                  {g}
+                </p>
+              ))}
+            </div>
+          </motion.div>
 
-              <textarea
-                name="message"
-                placeholder="Message"
-                rows={4}
-                value={form.message}
-                onChange={handleChange}
-                className={`${inputClass} resize-none`}
-                data-cursor="hover"
-              />
-
-              {error && (
-                <div className="text-xs font-mono text-[#ff4a5a] text-center bg-[#ff4a5a]/5 py-2 px-3 rounded-xl border border-[#ff4a5a]/15">
-                  ⚠ {error}
+          {/* right — form */}
+          <motion.div 
+            {...stagger(1)} 
+            className="rounded-2xl border border-white/5 bg-white/[0.02] p-6 md:p-8 backdrop-blur-sm flex flex-col h-full"
+          >
+            {submitted ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center my-auto">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#00c9a7]/30 bg-[#00c9a7]/10">
+                  <svg className="h-7 w-7 text-[#00c9a7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
-              )}
+                <p className="mb-2 font-mono text-sm tracking-[0.2em] text-[#00c9a7]">REQUEST RECEIVED</p>
+                <p className="text-sm text-white/40">We'll be in touch within 24 hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col justify-between h-full gap-6">
+                <div className="space-y-5">
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    required
+                    value={form.name}
+                    onChange={handleChange}
+                    className={inputClass}
+                    data-cursor="hover"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                    value={form.email}
+                    onChange={handleChange}
+                    className={inputClass}
+                    data-cursor="hover"
+                  />
+                  <input
+                    type="text"
+                    name="organization"
+                    placeholder="Organization"
+                    required
+                    value={form.organization}
+                    onChange={handleChange}
+                    className={inputClass}
+                    data-cursor="hover"
+                  />
 
-              <button
-                type="submit"
-                disabled={submitting}
-                data-cursor="hover"
-                className={`w-full rounded-full border py-3 font-mono text-sm tracking-[0.15em] transition-all duration-300 ${
-                  submitting
-                    ? "border-amber-500/20 bg-amber-500/5 text-amber-500/50 cursor-not-allowed"
-                    : "border-[#00c9a7]/40 bg-[#00c9a7]/10 text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60"
-                }`}
-              >
-                {submitting ? "SENDING REQUEST..." : "REQUEST ACCESS →"}
-              </button>
-            </form>
-          )}
-        </motion.div>
+                  <select
+                    name="infrastructure"
+                    required
+                    value={form.infrastructure}
+                    onChange={handleChange}
+                    className={`${inputClass} bg-[#0a0c12] appearance-none ${form.infrastructure === "" ? "text-white/25" : "text-white"}`}
+                    style={{ 
+                      colorScheme: 'dark',
+                      backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: 'right 1rem center',
+                      backgroundSize: '1.2em'
+                    }}
+                    data-cursor="hover"
+                  >
+                    <option value="" disabled className="text-white/30 bg-[#0a0c12]">Infrastructure Type</option>
+                    <option value="power" className="text-white bg-[#0a0c12]">Power Grid / Energy</option>
+                    <option value="water" className="text-white bg-[#0a0c12]">Water / Utilities</option>
+                    <option value="manufacturing" className="text-white bg-[#0a0c12]">Manufacturing / SCADA</option>
+                    <option value="transportation" className="text-white bg-[#0a0c12]">Transportation</option>
+                    <option value="defense" className="text-white bg-[#0a0c12]">Defense / Sovereign</option>
+                    <option value="other" className="text-white bg-[#0a0c12]">Other</option>
+                  </select>
+
+                  <textarea
+                    name="message"
+                    placeholder="Message"
+                    rows={4}
+                    value={form.message}
+                    onChange={handleChange}
+                    className={`${inputClass} resize-none`}
+                    data-cursor="hover"
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  {error && (
+                    <div className="text-xs font-mono text-[#ff4a5a] text-center bg-[#ff4a5a]/5 py-2 px-3 rounded-xl border border-[#ff4a5a]/15">
+                      ⚠ {error}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    data-cursor="hover"
+                    className={`w-full rounded-full border py-3 font-mono text-sm tracking-[0.15em] transition-all duration-300 ${
+                      submitting
+                        ? "border-amber-500/20 bg-amber-500/5 text-amber-500/50 cursor-not-allowed"
+                        : "border-[#00c9a7]/40 bg-[#00c9a7]/10 text-[#00c9a7] hover:bg-[#00c9a7]/20 hover:border-[#00c9a7]/60"
+                    }`}
+                  >
+                    {submitting ? "SENDING REQUEST..." : "REQUEST ACCESS →"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -834,52 +862,75 @@ function POCForm() {
    ═══════════════════════════════════════════════ */
 function Footer() {
   return (
-    <footer className="bg-[#030507] border-t border-white/5 py-20 px-6 md:px-12 lg:px-24">
-      <div className="flex flex-col gap-16">
-        {/* Big Typography Header */}
-        <div>
-          <h2 className="font-mono text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[0.25em] text-white select-none">
-            SILENTMESH
-          </h2>
-        </div>
+    <footer className="relative bg-[#030507] py-20 px-6 md:px-12 lg:px-24 overflow-hidden border-t border-white/5">
+      {/* Grid Mesh */}
+      <div className="grid-mesh absolute inset-0 opacity-[0.03] pointer-events-none" />
 
-        {/* Minimal Bottom Grid */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-t border-white/5 pt-12">
-          {/* Brand & Tagline */}
-          <div className="space-y-4 max-w-md">
-            <p className="text-sm text-white/40 leading-relaxed">
-              Runtime Orchestration for Critical Infrastructure
-            </p>
-            <p className="text-xs text-white/20 font-mono">
-              © 2026 SilentMesh Systems Private Limited
-            </p>
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#00c9a7]/35 via-cyan-500/15 to-transparent" />
+
+      {/* Top Center Glowing Blob */}
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-gradient-to-b from-[#00c9a7]/10 to-transparent blur-[80px] pointer-events-none" />
+
+      {/* Background glow shadow */}
+      <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-[#00c9a7]/5 blur-[120px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto w-full relative z-10">
+        <div className="flex flex-col gap-16">
+          {/* Big Typography Header */}
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#00c9a7] animate-pulse shadow-[0_0_8px_#00c9a7]" />
+              <span className="font-mono text-[9px] tracking-[0.35em] text-[#00c9a7]/80">SYSTEMS ACTIVE [PQC SECURED]</span>
+            </div>
+            <h2 
+              className="font-mono text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[0.25em] text-white select-none"
+              style={{
+                textShadow: "0 0 30px rgba(0, 201, 167, 0.35), 0 0 60px rgba(0, 240, 255, 0.15)"
+              }}
+            >
+              SILENTMESH
+            </h2>
           </div>
 
-          {/* Contact Details Only */}
-          <div className="space-y-3 font-mono text-xs md:text-sm">
-            <a
-              href="https://www.silentmesh.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
-              data-cursor="hover"
-            >
-              www.silentmesh.me
-            </a>
-            <a
-              href="mailto:founder@silentmesh.me"
-              className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
-              data-cursor="hover"
-            >
-              founder@silentmesh.me
-            </a>
-            <a
-              href="tel:+918088669439"
-              className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
-              data-cursor="hover"
-            >
-              +91 80886 69439
-            </a>
+          {/* Minimal Bottom Grid */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-t border-white/5 pt-12">
+            {/* Brand & Tagline */}
+            <div className="space-y-4 max-w-md">
+              <p className="text-sm text-white/40 leading-relaxed">
+                Runtime Orchestration for Critical Infrastructure
+              </p>
+              <p className="text-xs text-white/20 font-mono">
+                © 2026 SilentMesh Systems Private Limited
+              </p>
+            </div>
+
+            {/* Contact Details Only */}
+            <div className="space-y-3 font-mono text-xs md:text-sm">
+              <a
+                href="https://www.silentmesh.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
+                data-cursor="hover"
+              >
+                www.silentmesh.me
+              </a>
+              <a
+                href="mailto:founder@silentmesh.me"
+                className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
+                data-cursor="hover"
+              >
+                founder@silentmesh.me
+              </a>
+              <a
+                href="tel:+918088669439"
+                className="block text-white/40 hover:text-[#00c9a7] transition-all duration-300 tracking-wider"
+                data-cursor="hover"
+              >
+                +91 80886 69439
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,6 @@
 import RuntimeHeroTypography from "./RuntimeHeroTypography";
 import RuntimeNavigation from "./RuntimeNavigation";
 import RuntimeOverlayGrid from "./RuntimeOverlayGrid";
-import RuntimeCTAField from "./RuntimeCTAField";
 import RuntimeInterfaceFog from "./RuntimeInterfaceFog";
 
 import RuntimeContent from "./RuntimeContent";
@@ -14,7 +13,6 @@ export default function RuntimeInterfaceLayer() {
       <RuntimeNavigation />
       
       <RuntimeHeroTypography />
-      <RuntimeCTAField />
 
       <RuntimeContent />
     </div>

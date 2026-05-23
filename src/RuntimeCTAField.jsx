@@ -15,7 +15,7 @@ export default function RuntimeCTAField() {
       initial={false}
       animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 40 }}
       transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-      className={`pointer-events-auto absolute bottom-[8vh] left-6 flex flex-col items-start gap-4 md:bottom-[10vh] md:left-[8vw] md:flex-row md:items-center md:gap-6 ${!isVisible ? 'pointer-events-none' : ''}`}
+      className={`pointer-events-auto absolute bottom-[3.5vh] left-6 flex flex-col items-start gap-3 md:bottom-[5.5vh] md:left-[8vw] md:flex-row md:items-center md:gap-6 ${!isVisible ? 'pointer-events-none' : ''}`}
     >
       <button 
         data-cursor="hover"
