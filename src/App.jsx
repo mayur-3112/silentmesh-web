@@ -17,8 +17,8 @@ export default function App() {
 
   useEffect(() => {
     // Disable browser scroll restoration to prevent landing below the hero page
-    if (history.scrollRestoration) {
-      history.scrollRestoration = 'manual';
+    if (typeof window !== 'undefined' && window.history && 'scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
     }
     window.scrollTo(0, 0);
 
