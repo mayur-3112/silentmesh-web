@@ -11,7 +11,7 @@ export default function RuntimeNavigation() {
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 100);
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -24,18 +24,33 @@ export default function RuntimeNavigation() {
   ];
 
   return (
-    <div className={`pointer-events-auto absolute left-0 top-0 z-[60] flex w-full items-center justify-between px-6 py-6 transition-all duration-500 md:px-12 md:py-10 ${scrolled ? 'bg-[#05070b]/80 backdrop-blur-xl py-4 md:py-5' : ''}`}>
+    <header className={`pointer-events-auto fixed left-0 top-0 right-0 z-[60] flex w-full items-center justify-between transition-all duration-500 ${
+      scrolled 
+        ? 'bg-[#05070b]/80 backdrop-blur-xl border-b border-white/5 py-4 px-6 md:py-5 md:px-12 lg:px-24 shadow-[0_4px_30px_rgba(0,0,0,0.5)]' 
+        : 'py-8 px-6 md:py-10 md:px-12 lg:px-24'
+    }`}>
+      {/* Typographic Logo with Brand Mark */}
       <div
-        className="text-base font-semibold tracking-[0.25em] text-white/70 md:text-lg"
+        className="flex items-center gap-3 select-none group"
         data-cursor="hover"
         style={{ cursor: "pointer" }}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
-        SILENTMESH
+        {/* Gradient Square Icon Mark */}
+        <div className="relative flex h-5.5 w-5.5 items-center justify-center rounded bg-gradient-to-br from-[#00c9a7] to-cyan-500 p-[1.5px] shadow-[0_0_15px_rgba(0,201,167,0.3)] transition-transform duration-500 group-hover:rotate-[90deg]">
+          <div className="h-full w-full rounded-[2px] bg-[#05070b] flex items-center justify-center">
+            <div className="h-1.5 w-1.5 rounded-sm bg-[#00c9a7] animate-pulse" />
+          </div>
+        </div>
+
+        {/* Text Logo */}
+        <span className="font-mono text-base font-bold tracking-[0.3em] bg-gradient-to-r from-white via-white/95 to-white/70 bg-clip-text text-transparent uppercase transition-all duration-300 group-hover:tracking-[0.35em] md:text-lg">
+          SILENTMESH
+        </span>
       </div>
 
       {/* Desktop nav */}
-      <div className="hidden items-center gap-10 font-mono text-sm tracking-[0.2em] text-white/40 md:flex">
+      <div className="hidden items-center gap-10 font-mono text-xs tracking-[0.25em] text-white/50 md:flex">
         {navItems.map((item) => (
           <button
             key={item.target}
@@ -48,7 +63,7 @@ export default function RuntimeNavigation() {
         ))}
         <button
           data-cursor="hover"
-          className="rounded-full border border-white/10 bg-white/[0.02] px-5 py-2 text-xs tracking-[0.15em] text-[#00c9a7] transition hover:border-[#00c9a7]/40 hover:bg-[#00c9a7]/10"
+          className="rounded-full border border-[#00c9a7]/35 bg-[#00c9a7]/5 px-6 py-2.5 text-xs font-semibold tracking-[0.2em] text-[#00c9a7] transition-all duration-300 hover:border-[#00c9a7]/70 hover:bg-[#00c9a7]/15 hover:shadow-[0_0_15px_rgba(0,201,167,0.2)]"
           onClick={() => scrollTo("poc-form")}
         >
           GET ACCESS
@@ -84,6 +99,6 @@ export default function RuntimeNavigation() {
           GET ACCESS
         </button>
       </div>
-    </div>
+    </header>
   );
 }
