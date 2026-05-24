@@ -16,6 +16,12 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Disable browser scroll restoration to prevent landing below the hero page
+    if (history.scrollRestoration) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
 
@@ -46,7 +52,14 @@ export default function App() {
 
   return (
     <>
-      {!booted && <RuntimeBootLoader onComplete={() => setBooted(true)} />}
+      {!booted && (
+        <RuntimeBootLoader 
+          onComplete={() => {
+            setBooted(true);
+            window.scrollTo(0, 0);
+          }} 
+        />
+      )}
       <RuntimeCustomCursor />
       
       <main className="relative bg-[#05070b]">
