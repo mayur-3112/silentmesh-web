@@ -93,7 +93,7 @@ export default function RuntimeAtmosphere() {
       // During flash, contaminate fog with bright warning crimson!
       const flashColor = new THREE.Color("#ef4444");
       const currentFogColor = new THREE.Color();
-      currentFogColor.lerpVectors(targetFogColor, flashColor, flash);
+      currentFogColor.lerpColors(targetFogColor, flashColor, flash);
       scene.fog.color.lerp(currentFogColor, 0.03);
       
       // Dynamic compression: fog moves closer/further as core breathes + flash compression
