@@ -16,30 +16,20 @@ const TopologyShader = {
       float dist = length(pos);
       
       // 1. Gravity pull towards core (origin)
-      float pull = 0.18 * uCoreInfluence * (1.0 / (dist * 0.15 + 0.4));
-      pos = pos - normalize(pos) * clamp(pull, 0.0, dist * 0.6);
+      float pull = 0.15 * uCoreInfluence * (1.0 / (dist * 0.12 + 0.35));
+      pos = pos - normalize(pos) * clamp(pull, 0.0, dist * 0.5);
 
-      // 2. Zone-based Ecosystem Animations
-      if (abs(uZone - 0.0) < 0.1) {
-        // Surface: dormant
-        pos.y += sin(uTime * 0.5 + pos.x * 0.15) * 0.04;
-      } else if (abs(uZone - 1.0) < 0.1) {
-        // Observation: propagating waves
-        pos.y += sin(uTime * 1.2 + pos.x * 0.25) * 0.09;
-      } else if (abs(uZone - 2.0) < 0.1) {
-        // Orchestration: active flowing waves
-        pos.y += sin(uTime * 2.5 + pos.x * 0.4) * 0.2;
-        pos.z += cos(uTime * 2.0 + pos.y * 0.3) * 0.15;
-      } else if (abs(uZone - 3.0) < 0.1) {
-        // Containment: contaminated glitch state
-        float jitterX = sin(uTime * 45.0 + pos.y * 90.0) * 0.08;
-        float jitterY = cos(uTime * 40.0 + pos.z * 80.0) * 0.08;
-        pos.x += jitterX;
-        pos.y += jitterY;
-        pos = pos - normalize(pos) * (sin(uTime * 8.0) * 0.15);
-      } else if (abs(uZone - 4.0) < 0.1) {
-        // Deep-runtime: stabilized calm
-        pos.y += sin(uTime * 0.4 + pos.x * 0.08) * 0.05;
+      // 2. Wave propagation from the center
+      float wave = sin(uTime * 1.8 - dist * 0.45) * 0.18 * uCoreInfluence;
+      
+      // Containment zone: glitchy/jittery height + horizontal vibration
+      if (abs(uZone - 3.0) < 0.1) {
+        float jitter = sin(uTime * 40.0 + dist * 20.0) * 0.08;
+        pos.y += wave + jitter;
+        pos.x += sin(uTime * 50.0) * 0.03;
+      } else {
+        // Normal breathing wave
+        pos.y += wave;
       }
 
       vDistance = dist;
@@ -55,7 +45,7 @@ const TopologyShader = {
 
     void main() {
       // distance-based fade (fades out at edges)
-      float maxRadius = (abs(vZone - 3.0) < 0.1) ? 14.0 : 20.0;
+      float maxRadius = 16.5;
       float distanceFade = clamp(1.0 - (vDistance / maxRadius), 0.0, 1.0);
       distanceFade = distanceFade * distanceFade;
 
@@ -64,7 +54,7 @@ const TopologyShader = {
       vec3 finalColor = uColor;
       if (abs(vZone - 3.0) < 0.1) {
         // red warning glow mix
-        finalColor = mix(uColor, vec3(0.95, 0.25, 0.25), 0.7);
+        finalColor = mix(uColor, vec3(0.95, 0.2, 0.2), 0.75);
       }
 
       gl_FragColor = vec4(finalColor, alpha);
@@ -77,35 +67,44 @@ export default function RuntimeTopology() {
   const materialsRef = useRef([]);
   const zone = useRuntimeScroll((s) => s.zone);
 
+  const circles = [2.2, 4.5, 7.0, 10.0, 13.0, 16.0];
+  const radialAngles = [0, Math.PI / 4, Math.PI / 2, (3 * Math.PI) / 4, Math.PI, (5 * Math.PI) / 4, (3 * Math.PI) / 2, (7 * Math.PI) / 4];
+
   const lines = useMemo(() => {
     const arr = [];
-    for (let i = 0; i < 35; i++) {
+    
+    // 1. Generate concentric circles with tech-style gap sectors
+    circles.forEach((r) => {
       const points = [];
-      const isInner = Math.random() < 0.4;
-      const radius = isInner ? 7 : 20;
-      const segments = isInner ? 7 : 4;
-      
-      const angle = Math.random() * Math.PI * 2;
-      
-      // Giant darkness pockets / topology dead zones
-      const deadZone1 = angle > 0.8 && angle < 2.0;
-      const deadZone2 = angle > 3.6 && angle < 4.8;
-      if (deadZone1 || deadZone2) continue;
-
-      for (let j = 0; j < segments; j++) {
-        const spread = isInner ? 0.5 : 1.0;
-        points.push(
-          new THREE.Vector3(
-            (Math.random() - 0.5) * radius * spread,
-            (Math.random() - 0.5) * radius * 0.5,
-            (Math.random() - 0.5) * radius * 0.7
-          )
-        );
+      const segments = 64; // High resolution circle path
+      for (let j = 0; j <= segments; j++) {
+        const angle = (j / segments) * Math.PI * 2;
+        
+        // Skip sectors to create elegant scan gaps in the sonar grid
+        const gap1 = angle > 0.6 && angle < 1.4;
+        const gap2 = angle > 3.4 && angle < 4.2;
+        if (gap1 || gap2) continue;
+        
+        points.push(new THREE.Vector3(Math.cos(angle) * r, -1.0, Math.sin(angle) * r));
       }
+      if (points.length > 1) {
+        arr.push({ points, isCircle: true, centerDist: r });
+      }
+    });
 
-      const centerDist = points.reduce((sum, p) => sum + p.length(), 0) / points.length;
-      arr.push({ points, centerDist, isInner });
-    }
+    // 2. Generate radial radar gridlines extending outward
+    radialAngles.forEach((angle) => {
+      const points = [];
+      const segments = 16;
+      const startR = 1.0;
+      const endR = 17.0;
+      for (let j = 0; j <= segments; j++) {
+        const r = startR + (j / segments) * (endR - startR);
+        points.push(new THREE.Vector3(Math.cos(angle) * r, -1.0, Math.sin(angle) * r));
+      }
+      arr.push({ points, isCircle: false, centerDist: (startR + endR) / 2 });
+    });
+
     return arr;
   }, []);
 
@@ -113,7 +112,7 @@ export default function RuntimeTopology() {
     return lines.map((line) => {
       const curve = new THREE.CatmullRomCurve3(line.points);
       return new THREE.BufferGeometry().setFromPoints(
-        curve.getPoints(line.isInner ? 45 : 25)
+        curve.getPoints(line.isCircle ? 60 : 20)
       );
     });
   }, [lines]);
@@ -123,15 +122,19 @@ export default function RuntimeTopology() {
       uTime: { value: 0 },
       uZone: { value: 0 },
       uCoreInfluence: { value: 0.1 },
-      uColor: { value: new THREE.Color(line.isInner ? "#00c9a7" : "#145246") },
+      uColor: { value: new THREE.Color(line.isCircle ? "#00c9a7" : "#145246") },
       uOpacity: { value: 0 },
     }));
   }, [lines]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
-    group.current.rotation.y = t * 0.02;
-    group.current.rotation.x = Math.sin(t * 0.05) * 0.05;
+    
+    // Slow planetary tilt rotation
+    if (group.current) {
+      group.current.rotation.y = t * 0.015;
+      group.current.rotation.x = Math.sin(t * 0.03) * 0.03;
+    }
 
     let zoneVal = 0.0;
     let influenceVal = 0.1;
@@ -142,38 +145,38 @@ export default function RuntimeTopology() {
       case "surface":
         zoneVal = 0.0;
         influenceVal = 0.1;
-        baseOpacityInner = 0.2;
-        baseOpacityOuter = 0.06;
+        baseOpacityInner = 0.35;
+        baseOpacityOuter = 0.12;
         break;
       case "observation":
         zoneVal = 1.0;
-        influenceVal = 0.3;
-        baseOpacityInner = 0.3;
-        baseOpacityOuter = 0.1;
+        influenceVal = 0.4;
+        baseOpacityInner = 0.45;
+        baseOpacityOuter = 0.18;
         break;
       case "orchestration":
         zoneVal = 2.0;
         influenceVal = 0.9;
-        baseOpacityInner = 0.6;
-        baseOpacityOuter = 0.2;
+        baseOpacityInner = 0.7;
+        baseOpacityOuter = 0.25;
         break;
       case "containment":
         zoneVal = 3.0;
         influenceVal = 1.6;
-        baseOpacityInner = 0.75;
-        baseOpacityOuter = 0.25;
+        baseOpacityInner = 0.85;
+        baseOpacityOuter = 0.35;
         break;
       case "deep-runtime":
         zoneVal = 4.0;
         influenceVal = 0.4;
-        baseOpacityInner = 0.25;
-        baseOpacityOuter = 0.08;
+        baseOpacityInner = 0.4;
+        baseOpacityOuter = 0.15;
         break;
       default:
         zoneVal = 0.0;
         influenceVal = 0.1;
-        baseOpacityInner = 0.1;
-        baseOpacityOuter = 0.05;
+        baseOpacityInner = 0.3;
+        baseOpacityOuter = 0.1;
     }
 
     materialsRef.current.forEach((mat, i) => {
@@ -183,8 +186,8 @@ export default function RuntimeTopology() {
       mat.uniforms.uZone.value = zoneVal;
       mat.uniforms.uCoreInfluence.value = influenceVal;
       
-      const distanceFade = Math.max(0.1, 1 - (line.centerDist / 14));
-      const baseOpacity = line.isInner ? baseOpacityInner : baseOpacityOuter;
+      const distanceFade = Math.max(0.1, 1 - (line.centerDist / 17));
+      const baseOpacity = line.isCircle ? baseOpacityInner : baseOpacityOuter;
       mat.uniforms.uOpacity.value = baseOpacity * distanceFade;
     });
   });
