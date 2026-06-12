@@ -15,7 +15,7 @@ export default function RuntimeHeroTypography() {
       initial={false}
       animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : -40 }}
       transition={{ duration: 1.2, ease: "easeInOut" }}
-      className={`absolute left-6 top-[16vh] max-w-[900px] px-2 md:left-[8vw] md:top-[18vh] md:px-0 ${!isVisible ? 'pointer-events-none' : ''}`}
+      className="absolute left-6 top-[16vh] max-w-[900px] px-2 md:left-[8vw] md:top-[18vh] md:px-0 pointer-events-none"
     >
       <motion.p
         initial={{ opacity: 0, y: 20 }}

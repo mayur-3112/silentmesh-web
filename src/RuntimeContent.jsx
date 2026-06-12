@@ -12,7 +12,7 @@ export default function RuntimeContent() {
         initial={false}
         animate={{ opacity: zone === "observation" ? 1 : 0, x: zone === "observation" ? 0 : 40 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className={`absolute left-4 right-4 top-[20vh] mx-auto max-w-[550px] md:left-auto md:right-[8vw] md:top-[25vh] md:mx-0 ${zone !== "observation" ? "pointer-events-none" : "pointer-events-auto"}`}
+        className="absolute left-4 right-4 top-[20vh] mx-auto max-w-[550px] md:left-auto md:right-[8vw] md:top-[25vh] md:mx-0 pointer-events-none"
       >
         <div className="rounded-2xl border border-white/5 bg-[#05070b]/60 p-5 shadow-2xl backdrop-blur-xl md:bg-[#05070b]/40 md:p-8">
           <div className="mb-4 flex items-center justify-between border-b border-white/5 pb-3 md:mb-6 md:pb-4">
@@ -51,7 +51,7 @@ export default function RuntimeContent() {
         initial={false}
         animate={{ opacity: zone === "orchestration" ? 1 : 0, x: zone === "orchestration" ? 0 : -40 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className={`absolute left-4 right-4 top-[22vh] mx-auto max-w-[550px] md:left-[8vw] md:right-auto md:top-[30vh] md:mx-0 ${zone !== "orchestration" ? "pointer-events-none" : "pointer-events-auto"}`}
+        className="absolute left-4 right-4 top-[22vh] mx-auto max-w-[550px] md:left-[8vw] md:right-auto md:top-[30vh] md:mx-0 pointer-events-none"
       >
         <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-[#05070b]/60 p-5 shadow-2xl backdrop-blur-xl md:bg-[#05070b]/40 md:p-8">
           {/* Subtle accent glow */}
@@ -95,7 +95,7 @@ export default function RuntimeContent() {
         initial={false}
         animate={{ opacity: zone === "containment" ? 1 : 0, scale: zone === "containment" ? 1 : 0.95 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className={`absolute left-4 right-4 top-[50vh] mx-auto w-auto max-w-[700px] -translate-y-1/2 text-center md:left-1/2 md:right-auto md:w-full md:-translate-x-1/2 ${zone !== "containment" ? "pointer-events-none" : "pointer-events-auto"}`}
+        className="absolute left-4 right-4 top-[50vh] mx-auto w-auto max-w-[700px] -translate-y-1/2 text-center md:left-1/2 md:right-auto md:w-full md:-translate-x-1/2 pointer-events-none"
       >
         <div className="relative mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-red-500/30 bg-[#05070b]/60 backdrop-blur-xl md:mb-8 md:h-20 md:w-20">
           <div className="absolute inset-0 animate-ping rounded-full border border-red-500/20 opacity-75" />
@@ -129,7 +129,7 @@ export default function RuntimeContent() {
         initial={false}
         animate={{ opacity: zone === "deep-runtime" ? 1 : 0, y: zone === "deep-runtime" ? 0 : 40 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className={`absolute bottom-[12vh] w-full px-6 text-center md:bottom-[15vh] md:px-0 ${zone !== "deep-runtime" ? "pointer-events-none" : "pointer-events-auto"}`}
+        className="absolute left-0 right-0 bottom-[12vh] w-full px-6 text-center md:bottom-[15vh] md:px-0 pointer-events-none"
       >
         <p className="mb-3 font-mono text-[10px] tracking-[0.3em] text-[#00c9a7] md:mb-4 md:text-sm md:tracking-[0.4em]">
           [ CONTINUE BELOW ]
@@ -140,7 +140,7 @@ export default function RuntimeContent() {
         
         <button 
           data-cursor="hover"
-          className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/10 bg-white/[0.02] px-6 py-3 backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/[0.05] md:gap-4 md:px-8 md:py-4"
+          className="group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/10 bg-white/[0.02] px-6 py-3 backdrop-blur-xl transition-all hover:border-white/20 hover:bg-white/[0.05] md:gap-4 md:px-8 md:py-4 pointer-events-auto"
           onClick={() => { const el = document.getElementById("orchestration"); if (el) el.scrollIntoView({ behavior: "smooth" }); }}
         >
           <span className="font-mono text-xs tracking-[0.15em] text-white md:text-sm md:tracking-[0.2em]">DEPLOY SILENTMESH</span>

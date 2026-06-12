@@ -11,7 +11,7 @@ export default function RuntimeScrollDirector() {
   const setZone = useRuntimeScroll((s) => s.setZone);
 
   useFrame(() => {
-    const spacerHeight = window.innerHeight * 2;
+    const spacerHeight = window.innerHeight * 2.5;
     const offset = Math.min(0.999, window.scrollY / spacerHeight);
 
     for (const zone of scrollZones) {
