@@ -167,12 +167,29 @@ export default function App() {
           <div className="wrap">
             <SectionHeader index="02" label="measured against a real plc" />
             <p className="prose">
-              A timing probe is the cheapest way to unmask a fake. We sent identical
-              industrial-protocol requests to four targets — SilentMesh, a real
-              OpenPLC controller, the standard open-source honeypot, and a plain
-              software server — and measured how long each took to answer. A real
-              controller is slow in a very particular way. Median response, in
-              milliseconds:
+              A timing probe is the cheapest way to unmask a fake. Here is what
+              that looks like end to end:
+            </p>
+
+            <div className="demo-frame">
+              <video
+                className="demo-video"
+                controls
+                preload="metadata"
+                aria-label="SilentMesh demo: an attacker's scan reaching the decoy, and the timing probe that unmasks a fake."
+              >
+                <source src="/demo.mp4" type="video/mp4" />
+                Your browser does not support embedded video —
+                <a href="/demo.mp4">download the demo</a> instead.
+              </video>
+            </div>
+
+            <p className="prose demo-note">
+              Then the numbers behind it. We sent identical industrial-protocol
+              requests to four targets — SilentMesh, a real OpenPLC controller,
+              the standard open-source honeypot, and a plain software server —
+              and measured how long each took to answer. A real controller is
+              slow in a very particular way. Median response, in milliseconds:
             </p>
 
             <div className="bench">

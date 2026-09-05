@@ -146,6 +146,11 @@ svg.diagram .strong{fill:var(--text-primary);}
 .stat .n{font:400 1.7rem/1 var(--font-mono); color:var(--text-primary); font-variant-numeric:tabular-nums;}
 .stat .l{font-size:.74rem; color:var(--text-tertiary); margin-top:6px; line-height:1.4;}
 
+/* demo video */
+.demo-frame{margin-top:24px; border:var(--hair) solid var(--border-accent); border-radius:var(--radius-panel); overflow:hidden; background:var(--surface-terminal); box-shadow:var(--shadow-none);}
+.demo-video{display:block; width:100%; max-height:520px; background:var(--surface-terminal);}
+.demo-note{margin-top:28px;}
+
 /* validated */
 .valid-item{display:grid; grid-template-columns:24px 1fr; gap:16px; padding:18px 0; border-top:var(--hair) solid var(--border-hair);}
 .valid-item:last-child{border-bottom:var(--hair) solid var(--border-hair);}
