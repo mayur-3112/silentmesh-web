@@ -281,8 +281,7 @@ export default function App() {
         <section id="founder">
           <div className="wrap founder-block">
             <div className="founder-photo">
-              {/* Swap for <img src="/founder.jpg" alt="Mayur Agarwala" />. Mark is the placeholder until the photo lands. */}
-              <Mark size={40} />
+              <img src="/founder.jpg" alt="Mayur Agarwala, founder of SilentMesh" />
             </div>
             <div className="founder-text">
               <span className="kicker accent">who's behind this</span>

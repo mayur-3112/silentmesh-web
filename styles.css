@@ -164,7 +164,7 @@ svg.diagram .strong{fill:var(--text-primary);}
 /* founder */
 .founder-block{display:flex; align-items:center; gap:34px;}
 .founder-photo{flex:none; width:96px; height:96px; border-radius:var(--radius-panel); border:var(--hair) solid var(--border-accent); background:var(--surface-card); display:flex; align-items:center; justify-content:center; overflow:hidden;}
-.founder-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+.founder-photo img{width:100%; height:100%; object-fit:cover; object-position:center 26%; display:block;}
 .founder-name{font-family:var(--font-display); font-weight:400; letter-spacing:var(--track-display); font-size:1.6rem; color:var(--text-primary); margin:8px 0 0;}
 .founder-line{margin-top:8px;}
 .founder-contact{margin-top:16px; display:flex; align-items:center; gap:12px; font:400 11px/1 var(--font-mono); letter-spacing:.04em;}
