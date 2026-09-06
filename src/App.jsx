@@ -60,6 +60,7 @@ export default function App() {
             <a href="#proof">Proof</a>
             <a href="#vision">Vision</a>
             <a href="#pilot">Pilot</a>
+            <a href="/blog/tests-that-could-not-fail/">Log</a>
           </nav>
           <span className="badge">● decoys armed</span>
         </div>
@@ -209,6 +210,9 @@ export default function App() {
               SilentMesh lands within 5% of a real PLC's scan cycle. The honeypot
               and the bare software server are 20–100× faster — a single timing
               probe unmasks either of them in one pass. SilentMesh does not.
+              {" "}<a className="bench-link" href="/blog/tests-that-could-not-fail/">
+                How we test that our timing tests can actually fail →
+              </a>
             </p>
 
             <div className="stat-row">

@@ -145,6 +145,8 @@ svg.diagram .strong{fill:var(--text-primary);}
 .bench-val{font:400 12px/1 var(--font-mono); text-align:right; color:var(--text-secondary); font-variant-numeric:tabular-nums;}
 .bench-val.us{color:var(--text-primary);}
 .bench-note{margin-top:16px; font-size:.86rem; color:var(--text-tertiary); max-width:64ch;}
+.bench-link{color:var(--sm-signal); text-decoration:none; transition:opacity 120ms linear;}
+.bench-link:hover{opacity:.8;}
 
 .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border-hair); border:var(--hair) solid var(--border-hair); border-radius:var(--radius-panel); overflow:hidden; margin-top:30px;}
 .stat{background:var(--surface-raised); padding:22px 18px;}

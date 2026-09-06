@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>We built decoy fingerprint tests that could not fail — SilentMesh Systems</title>
+<meta name="description" content="We run eight adversarial probes against our OT decoys. All eight were green. Then we fed each probe a decoy broken in exactly the way it exists to catch, and three of the results turned out to be facts about the probe rather than facts about the decoy.">
+<meta name="theme-color" content="#0D0F0E">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.silentmesh.me/blog/tests-that-could-not-fail/">
+<meta property="og:title" content="We built decoy fingerprint tests that could not fail">
+<meta property="og:description" content="Eight green probes. Then we fed each one a decoy broken in exactly the way it exists to catch, and three results turned out to be facts about the probe, not the decoy.">
+<meta property="og:site_name" content="SilentMesh Systems">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="We built decoy fingerprint tests that could not fail">
+<meta name="twitter:description" content="Eight green probes. Then we fed each one a decoy broken in exactly the way it exists to catch.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --sm-black:#08090A; --sm-near-black:#0D0F0E; --sm-panel:#101312; --sm-terminal:#050606;
+  --sm-signal:#5FE07F; --sm-white:#F2F4F1;
+  --text-primary:var(--sm-white);
+  --text-secondary:rgba(242,244,241,.62);
+  --text-tertiary:rgba(242,244,241,.40);
+  --text-faint:rgba(242,244,241,.32);
+  --border-hair:rgba(255,255,255,.07);
+  --border-accent:rgba(95,224,127,.13);
+  --font-display:"Instrument Serif", Georgia, serif;
+  --font-ui:"Instrument Sans", system-ui, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, monospace;
+  --hair:1px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0; padding:0;}
+body{background:var(--sm-near-black); color:var(--text-primary);
+  font-family:var(--font-ui); font-size:16px; line-height:1.72;
+  -webkit-font-smoothing:antialiased;}
+::selection{background:var(--sm-signal); color:var(--sm-black);}
+a{color:inherit;}
+:focus-visible{outline:1.5px solid var(--sm-signal); outline-offset:2px;}
+.wrap{max-width:720px; margin:0 auto; padding:0 28px;}
+
+header{border-bottom:var(--hair) solid var(--border-hair);}
+.header-inner{display:flex; align-items:center; justify-content:space-between;
+  padding:20px 28px; max-width:1100px; margin:0 auto;}
+.lockup{display:flex; align-items:center; gap:12px; text-decoration:none;}
+.wordmark{font:400 20px/1 var(--font-display); letter-spacing:.14em;
+  color:var(--text-primary); text-transform:uppercase;}
+.back{font:500 11px/1 var(--font-ui); letter-spacing:.2em; text-transform:uppercase;
+  color:var(--text-secondary); text-decoration:none; transition:opacity 120ms linear;}
+.back:hover{opacity:.82; color:var(--text-primary);}
+
+article{padding:72px 0 96px;}
+.kicker{font:500 10px/1 var(--font-mono); letter-spacing:.30em;
+  color:var(--sm-signal); text-transform:uppercase;}
+h1{font-family:var(--font-display); font-weight:400; letter-spacing:.05em;
+  font-size:clamp(2.2rem,5.4vw,3.4rem); line-height:1.1; margin:20px 0 0;
+  text-wrap:balance;}
+.byline{margin-top:18px; font:400 12px/1.6 var(--font-mono); color:var(--text-tertiary);
+  letter-spacing:.04em;}
+.standfirst{margin-top:32px; font-size:1.16rem; line-height:1.66;
+  color:var(--text-secondary); text-wrap:pretty;}
+.standfirst b{color:var(--text-primary); font-weight:500;}
+
+h2{font-family:var(--font-display); font-weight:400; letter-spacing:.05em;
+  font-size:1.85rem; line-height:1.24; margin:56px 0 0; text-wrap:balance;}
+h3{font-family:var(--font-ui); font-weight:600; font-size:1.02rem;
+  letter-spacing:.01em; margin:36px 0 0; color:var(--text-primary);}
+p{margin:18px 0 0; color:var(--text-secondary); text-wrap:pretty;}
+p b, li b{color:var(--text-primary); font-weight:500;}
+em{color:var(--text-primary); font-style:italic;}
+ul{margin:18px 0 0; padding-left:20px; color:var(--text-secondary);}
+li{margin-top:9px;}
+code{font:400 .86em/1.5 var(--font-mono); background:var(--sm-terminal);
+  border:var(--hair) solid var(--border-hair); border-radius:3px;
+  padding:1.5px 5px; color:var(--text-primary);}
+pre{margin:22px 0 0; background:var(--sm-terminal);
+  border:var(--hair) solid var(--border-hair); border-radius:8px;
+  padding:18px 20px; overflow-x:auto;}
+pre code{background:none; border:none; padding:0; font-size:12.5px; line-height:1.7;
+  color:var(--text-secondary); white-space:pre;}
+pre code .hl{color:var(--sm-signal);}
+blockquote{margin:30px 0 0; padding:2px 0 2px 22px;
+  border-left:2px solid var(--border-accent);}
+blockquote p{margin:0; font-family:var(--font-display); font-size:1.3rem;
+  line-height:1.42; color:var(--text-primary); letter-spacing:.02em;}
+hr{margin:56px 0 0; border:none; border-top:var(--hair) solid var(--border-hair);}
+
+.pull{margin:44px 0 0; padding:26px 28px; background:var(--sm-black);
+  border:var(--hair) solid var(--border-accent); border-radius:8px;}
+.pull p{margin:0; color:var(--text-primary);}
+.pull .label{font:500 10px/1 var(--font-mono); letter-spacing:.22em;
+  text-transform:uppercase; color:var(--sm-signal); display:block; margin-bottom:12px;}
+
+footer{border-top:var(--hair) solid var(--border-hair); padding:36px 0 56px;}
+.foot-row{display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:14px;}
+.foot-note{font:300 11px/1.6 var(--font-mono); color:var(--text-tertiary);
+  letter-spacing:.05em;}
+.foot-note a{color:var(--sm-signal); text-decoration:none;}
+.foot-note a:hover{opacity:.82;}
+
+@media (max-width:700px){
+  article{padding:48px 0 64px;}
+  body{font-size:15.5px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="lockup" href="/">
+      <svg width="26" height="26" viewBox="0 0 80 80" fill="none" stroke="var(--sm-signal)"
+           stroke-width="2" stroke-linecap="square" role="img" aria-label="SilentMesh">
+        <path d="M40 6H74V74H6V6H63M63 17H17V63H63V28M52 28V52H28V17" opacity="0.55"/>
+        <path d="M40 6H74V74H6V6" opacity="0.9"/>
+        <rect x="36" y="36" width="8" height="8" fill="var(--sm-signal)" stroke="none"/>
+      </svg>
+      <span class="wordmark">Silentmesh</span>
+    </a>
+    <a class="back" href="/">← Back to site</a>
+  </div>
+</header>
+
+<article>
+<div class="wrap">
+
+  <span class="kicker">engineering log</span>
+  <h1>We built decoy fingerprint tests that could not fail</h1>
+  <div class="byline">6 September 2026 · SilentMesh Systems</div>
+
+  <p class="standfirst">
+    We run eight adversarial probes against our OT decoys. Every one of them
+    was green. Then we built a mode that feeds each probe a decoy broken in
+    exactly the way that probe exists to catch, and required it to fail.
+    <b>Three of the eight results turned out to be facts about the probe
+    rather than facts about the decoy.</b> Here is what was wrong, and what
+    we changed.
+  </p>
+
+  <h2>What counts as a probe</h2>
+
+  <p>
+    Decoy work has no natural stopping point. "Make it more realistic" is a
+    slope with no summit, so effort runs until someone gets bored, and gaps
+    get found by accident instead of by test.
+  </p>
+
+  <p>
+    Our answer was to define done externally. Each probe in the suite is a
+    real detection technique taken from the published honeypot fingerprinting
+    literature, reduced to a binary PASS or FAIL against our own decoys. The
+    rule the file states about itself:
+  </p>
+
+  <blockquote>
+    <p>A decoy is done when every applicable probe passes. If a probe passes,
+    do not gold-plate it. If a probe fails, that is the only work worth doing.</p>
+  </blockquote>
+
+  <p>
+    The list being finite and externally derived is what makes it useful. It
+    bounds the work in both directions. We cannot polish forever, and we
+    cannot quietly skip something an attacker actually checks.
+  </p>
+
+  <p>
+    There is one more constraint that matters for everything below. A probe
+    has to be something an attacker could run cheaply, without our source
+    code. Every probe states its cost to the attacker in its docstring. A
+    test that requires knowledge only we have is not a probe, it is a unit
+    test.
+  </p>
+
+  <h2>Green is a claim, not a result</h2>
+
+  <p>
+    Eight probes, all passing, across four decoys. The reasonable reading is
+    that the decoys survive the published fingerprinting techniques. The
+    other reading is that we wrote eight tests that cannot distinguish
+    anything, and got exactly the same output.
+  </p>
+
+  <p>
+    Nothing about a green result tells you which of those you are looking at.
+    You need a second experiment, and the second experiment is the one nobody
+    runs: prove the test can fail.
+  </p>
+
+  <h2>Self-check: hand each probe the bug it is supposed to catch</h2>
+
+  <p>
+    So we built <code>--self-check</code>. For each probe, it takes a real
+    decoy, applies a textual mutation to a staged copy that reintroduces
+    <em>exactly</em> the flaw that probe exists to detect, and runs the probe
+    against it. The probe must FAIL. If it passes a decoy we deliberately
+    broke, the probe is reported BROKEN, and its passes everywhere else are
+    discarded.
+  </p>
+
+  <pre><code>Self-check: each probe is run against a decoy deliberately broken
+in exactly the way that probe exists to detect. The probe must FAIL.
+
+  <span class="hl">[OK]</span>     P1_never_silent          correctly failed the broken decoy
+  <span class="hl">[OK]</span>     P2_old_protocol_greeting correctly failed the broken decoy
+  <span class="hl">[OK]</span>     P3_timing_shape          correctly failed the broken decoy
+  <span class="hl">[OK]</span>     P4_state_vs_time         correctly failed the broken decoy
+  ...</code></pre>
+
+  <p>
+    The real decoy files are never touched. Mutations apply to a staged copy,
+    following the pattern our decoy decomposition tooling already used.
+  </p>
+
+  <p>
+    One detail in the mutation helper is worth pulling out, because it is the
+    same class of bug one level up. A mutation that matched nothing would
+    produce an unmodified decoy. The probe would then correctly pass it, and
+    self-check would report the probe as BROKEN. That is a false accusation
+    caused by the checker, and it is the worst failure mode this file has. So
+    a zero-match substitution is a hard error, with a message telling you the
+    decoy changed shape and the mutation needs fixing rather than the probe.
+  </p>
+
+  <div class="pull">
+    <span class="label">The rule that came out of this</span>
+    <p>A test that has never been observed to fail is not evidence. It is a
+    claim that has not yet been tested.</p>
+  </div>
+
+  <h2>Two probes could not fail</h2>
+
+  <h3>P4, state vs time: both arms were making requests</h3>
+
+  <p>
+    This probe exists to catch a decoy whose process state advances per
+    request rather than per unit of wall-clock time. A real controller's
+    values move because time passes and the physical process evolves. A lazy
+    decoy increments a counter each time you poll it, and that is
+    fingerprintable: poll it faster, and its world moves faster.
+  </p>
+
+  <p>
+    The original design polled a "fast" arm and a "slow" arm and compared two
+    booleans. It was broken twice over.
+  </p>
+
+  <ul>
+    <li>The slow arm's own two reads are themselves two requests. A
+    per-request counter therefore advanced in <em>both</em> arms, so the two
+    booleans could never separate them.</li>
+    <li>The read path carries a 1.0 second drain deadline, which IEC-104
+    needs for its multi-frame interrogation. That meant the fast arm managed
+    exactly <em>one</em> request inside its two second window.</li>
+  </ul>
+
+  <p>
+    Staged against the precise per-request counter this probe exists to
+    catch, it passed.
+  </p>
+
+  <p>
+    The rebuild dropped the two-arm design entirely. If request-driven state
+    moves by exactly one increment, then a change between back-to-back reads
+    has only one available explanation: the request caused it. That is the
+    whole test. No rate arithmetic, no matched windows, no second arm.
+  </p>
+
+  <h3>P7, identity uniqueness: it was measuring a clock</h3>
+
+  <p>
+    This probe exists to catch two deployments that share an identity seed.
+    If every install of a decoy is byte-identical, one fingerprint of one
+    install burns them all.
+  </p>
+
+  <p>
+    Self-check staged two instances with the deployment seed pinned to a
+    single constant, making them genuinely the same identity. The probe
+    passed them as distinct. The raw byte comparison was dominated by a
+    counter that ticks once per second, which advances between reads no
+    matter what:
+  </p>
+
+  <pre><code>A  (t=0.00s)  ...0001 0027 0075 41b1 0000
+B  (t=1.03s)  ...0001 0027 0076 41b2 0000   <span class="hl">&lt;- "different deployment"</span>
+A  (t=2.06s)  ...0001 0027 0076 41b3 0000   <span class="hl">&lt;- same instance, same delta</span></code></pre>
+
+  <p>
+    B looks different from A. But the second read of A differs from the first
+    read of A by the same amount. The probe was not measuring identity, it
+    was measuring elapsed time.
+  </p>
+
+  <p>
+    The fix interleaves reads A, B, A so both gaps are equal and host load
+    hits them equally, then requires the cross-instance difference to exceed
+    the same-instance control. If the test difference is no larger than the
+    control, everything observed is explained by elapsed time and the two
+    deployments are indistinguishable, which is a FAIL.
+  </p>
+
+  <p>
+    The obvious alternative, pointing the probe at the handshake instead, is
+    also wrong, and it is worth saying why. Modbus register 0 is a hardcoded
+    constant, so two real PLCs of the same model are identical there too. A
+    probe aimed at the handshake would fail honest decoys for resembling
+    real hardware, which is precisely backwards.
+  </p>
+
+  <h2>The third one: when the statistic itself is lying</h2>
+
+  <p>
+    P3 checks the shape of the response time distribution. All four of our
+    decoys sleep on a uniform random delay, so this probe should always have
+    failed them, and it did not. Self-check was built to find out why.
+  </p>
+
+  <p>
+    The textbook path is a chi-square test against uniform, ten bins, nine
+    degrees of freedom, and a critical value from the table. The problem is
+    that the samples are <em>quantized</em>. Linux sleep granularity clusters
+    timings onto discrete values, and at roughly 1.9 ms bin width that comb
+    makes bin counts alternate. A genuinely uniform decoy produced:
+  </p>
+
+  <pre><code>bins  [35, 18, 49, 29, 53, 36, 35, 44, 38, 24]</code></pre>
+
+  <p>
+    That is a threefold spread from a source that really is uniform. It is a
+    scheduler artefact, not distribution shape, and it inflates chi-square
+    for uniform samples well past where the table says it should sit.
+    Self-check caught the probe waving such a decoy through twice.
+  </p>
+
+  <p>
+    We did not fix this by tightening the significance level. Moving from one
+    nominal alpha to a stricter one would have been a number chosen to make
+    the output look right, on a statistic whose assumptions the data violates.
+    Instead the chi-square value is now used as a <em>separator with a
+    measured cut</em> rather than as a significance test, and the constant
+    carries an instruction rather than a citation:
+  </p>
+
+  <pre><code>CRITICAL = 70.0
+<span class="hl"># Re-derive this number if the delay ranges or the host change;</span>
+<span class="hl"># do not copy it from a table.</span></code></pre>
+
+  <p>
+    A measured threshold that is honest about being measured is worth more
+    than a textbook threshold that is wrong for your data.
+  </p>
+
+  <h2>What this changes about our published numbers</h2>
+
+  <p>
+    We publish a Modbus timing comparison: our decoy answers in about 95.6 ms
+    median against a real OpenPLC controller's 100.9 ms, where the standard
+    open-source honeypot sits at 4.7 ms and a bare software server at 0.8 ms.
+    The argument is that a single timing probe unmasks the fast ones in one
+    pass and does not unmask ours.
+  </p>
+
+  <p>
+    That argument depends entirely on our timing tests being able to tell the
+    difference at all. Before self-check, we could not have told you that
+    with a straight face for three of the eight probes. Now we can, for the
+    ones that survived it, and we know exactly which results we had to throw
+    away to get there.
+  </p>
+
+  <p>
+    The caveat we attach to those numbers elsewhere still stands unchanged:
+    they come from a single environment across four trials, and they are not
+    a claim about every deployment. Finding this made the numbers more
+    trustworthy. It did not make them universal.
+  </p>
+
+  <h2>Why there is no public decoy here for you to attack</h2>
+
+  <p>
+    The natural response to a post like this is: put one on the internet and
+    let us try. We have thought about it, and the honest answer is no, for a
+    reason specific to this product rather than general caution.
+  </p>
+
+  <p>
+    Our claim is that a decoy is not distinguishable from real equipment by
+    these techniques. A permanently available public instance is a corpus for
+    learning the answer to exactly that question, ground down at leisure, by
+    anyone. The asymmetry does not favour us: we would be donating the
+    fingerprint surface that the product exists to protect.
+  </p>
+
+  <p>
+    What we can do instead is publish the probes' reasoning, the failures we
+    found in our own tests, and the numbers with their caveats attached, which
+    is what this post is. If you think a probe here is weak or a threshold is
+    wrong, that is a conversation we want to have, and the argument can be had
+    on the method without us handing over a grinding target.
+  </p>
+
+  <hr>
+
+  <p>
+    If you work on OT security or kernel-level networking and want to argue
+    with any of this, we would rather hear it now than after a deployment.
+    <a href="mailto:founder@silentmesh.me" style="color:var(--sm-signal);text-decoration:none">founder@silentmesh.me</a>.
+  </p>
+
+</div>
+</article>
+
+<footer>
+  <div class="wrap foot-row">
+    <span class="foot-note">SilentMesh Systems · kernel-level deception for OT/ICS</span>
+    <span class="foot-note"><a href="/">silentmesh.me</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
