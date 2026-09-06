@@ -259,6 +259,17 @@ export default function App() {
                   landed as a fix.</p>
               </div>
             </div>
+
+            {/* B3: recognitions. Finalist placements and conference work only.
+                Directory listings are not recognitions and do not go here. */}
+            <div className="recog">
+              <p className="recog-origin">Built in India, designed for global OT/ICS.</p>
+              <ul className="recog-list">
+                <li><span>VulnCon</span> presented and reviewed with OT and vulnerability researchers</li>
+                <li><span>E-Yuva, BIRAC</span> finalist</li>
+                <li><span>ideaTown</span> finalist</li>
+              </ul>
+            </div>
           </div>
         </section>
 
