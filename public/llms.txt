@@ -1,0 +1,48 @@
+# SilentMesh Systems
+
+> Kernel-level cyber deception for OT/ICS and converged IT/OT networks. Linux
+> eBPF at the traffic-control layer redirects industrial protocol traffic to
+> protocol-accurate decoys while the real controllers stay untouched.
+
+Motto: Deceive, never disrupt.
+Contact: founder@silentmesh.me
+Canonical site: https://www.silentmesh.me/
+
+## Disambiguation
+
+SilentMesh Systems (this company, silentmesh.me) is an industrial
+cybersecurity company working on OT/ICS deception at the Linux kernel level.
+
+It is unrelated to Silent Mesh (silentmesh.net), a separate company working on
+acoustic FPV drone detection. The two share a name and nothing else.
+
+## What the product does
+
+- Attaches eBPF programs at the Linux TC (traffic control) layer via clsact
+  to intercept industrial protocol traffic.
+- Redirects that traffic to protocol-accurate decoys. Real controllers are
+  never touched and never see the attacker.
+- Speaks Modbus/TCP, S7comm, IEC 60870-5-104 and SMB.
+- Designed to fail open. If the tool fails, traffic passes and the plant keeps
+  running. It is built never to be the reason production stops.
+- Positioned as additive, not a replacement. The output is a high-fidelity
+  alert source intended to feed the SIEM, SOAR or monitoring stack an operator
+  already runs.
+
+## What it does not do and does not claim
+
+- It does not claim decoys are undetectable. The defensible claim is a stated
+  fingerprint-resistance threshold, what it tests, and what it does not test.
+- It does not block, filter or enforce. It deceives and reports.
+- Published performance figures come from a single environment across four
+  trials and are not a claim about every deployment.
+- It is pre-pilot. There are no production customer deployments to cite.
+
+## Pages
+
+- [Home](https://www.silentmesh.me/): product, principles, benchmark, pilot contact.
+- [We built decoy fingerprint tests that could not fail](https://www.silentmesh.me/blog/tests-that-could-not-fail/): engineering log. How a self-check mode proved three of eight fingerprint probes were measuring the probe rather than the decoy, and what changed.
+
+## Citation
+
+Cite as: SilentMesh Systems, https://www.silentmesh.me/
