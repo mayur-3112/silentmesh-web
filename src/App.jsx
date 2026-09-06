@@ -343,6 +343,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="panel raised mail-panel">
+                  <div className="mail-watermark"><Mark size={180} /></div>
                   <span className="kicker">start a conversation</span>
                   <a className="addr" href="mailto:pilots@silentmesh.me">pilots@silentmesh.me</a>
                   <span className="kicker faint">no obligation · no sales call</span>

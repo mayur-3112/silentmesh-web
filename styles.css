@@ -182,9 +182,12 @@ svg.diagram .strong{fill:var(--text-primary);}
 .cta-grid h2{font-size:clamp(1.7rem, 3vw, 2.3rem); margin-top:16px;}
 .cta-grid .prose{margin-top:16px;}
 .cta-list{margin-top:20px; display:flex; flex-direction:column; gap:9px;}
-.mail-panel{display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:10px; padding:32px;}
+.mail-panel{position:relative; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:10px; padding:32px; overflow:hidden;}
 .mail-panel .addr{font:400 1.05rem/1 var(--font-mono); color:var(--text-primary); word-break:break-all; text-decoration:none;}
 .mail-panel .addr:hover{opacity:.82;}
+.mail-panel .mail-watermark{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); opacity:.05; pointer-events:none; animation:watermark-in 1.4s ease-out both;}
+.mail-panel > *:not(.mail-watermark){position:relative; z-index:1;}
+@keyframes watermark-in{from{opacity:0;} to{opacity:.05;}}
 
 /* motto beat */
 #motto-beat{text-align:center; padding:180px 26px; display:flex; flex-direction:column; align-items:center; gap:40px; background:var(--sm-black);}
