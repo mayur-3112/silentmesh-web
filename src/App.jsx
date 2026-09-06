@@ -311,7 +311,8 @@ export default function App() {
               <p className="founder-name">Mayur Agarwala</p>
               <p className="prose founder-line">
                 Founder of SilentMesh. Building kernel-level deception for the
-                industrial systems that quietly keep factories and grids running.
+                seam between plant floor and office network — the path most
+                real intrusions actually take.
               </p>
               <div className="founder-contact">
                 <a href="mailto:founder@silentmesh.me">founder@silentmesh.me</a>
@@ -361,12 +362,24 @@ export default function App() {
       </main>
 
       <footer>
-        <div className="wrap foot-row">
-          <div className="lockup">
-            <Mark size={18} />
-            <span className="wordmark foot-word">Silentmesh</span>
+        <div className="wrap">
+          <div className="foot-row">
+            <div className="lockup">
+              <Mark size={18} />
+              <span className="wordmark foot-word">Silentmesh</span>
+            </div>
+            <nav className="foot-nav">
+              <a href="#stakes">Why</a>
+              <a href="#principle">How</a>
+              <a href="#proof">Proof</a>
+              <a href="#vision">Vision</a>
+              <a href="#pilot">Pilot</a>
+            </nav>
           </div>
-          <span className="terminal-line">industrial control protocols · it lateral movement · spoken natively</span>
+          <div className="foot-bottom">
+            <span className="terminal-line">industrial control protocols · it lateral movement · spoken natively</span>
+            <span className="kicker faint">© 2026 SilentMesh</span>
+          </div>
         </div>
       </footer>
     </>
