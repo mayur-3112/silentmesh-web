@@ -47,6 +47,7 @@ const STATS = [
 export default function App() {
   return (
     <>
+      <div className="bg-watermark" aria-hidden="true"><Mark size={640} /></div>
       <header>
         <div className="wrap header-inner">
           <div className="lockup">
