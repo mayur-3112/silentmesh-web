@@ -262,22 +262,27 @@ export default function App() {
           <div className="wrap">
             <SectionHeader index="04" label="the company we're building" />
             <p className="vision-line">
-              A plant should never have to choose between
-              <br /><span className="accent">staying safe and staying protected.</span>
+              The floor and the office were never
+              <br />two networks. <span className="accent">Attackers already know that.</span>
             </p>
             <p className="prose vision-prose">
-              For years, industrial operators have lived with a quiet trade-off:
-              the tools meant to protect a plant add just enough delay and risk
-              that many teams turn them off to keep the line running. SilentMesh
-              exists to end that trade-off. We are an Indian deep-tech company
-              building deception into the kernel itself — so protection becomes
-              something a plant never has to feel, and never has to switch off.
+              A ransomware crew doesn't need to speak Modbus to shut down a
+              line — a phished laptop on the office network, one hop to an
+              engineering workstation, and they're inside the same segment as
+              the PLC. Most plants defend the OT side and the IT side with two
+              different teams and two different tools, and the seam between
+              them is where nearly every real incident starts. SilentMesh
+              exists to cover that seam: kernel-level deception that speaks
+              both worlds — industrial protocols like Modbus, S7comm and
+              IEC-104 on one side, Windows lateral movement and SMB on the
+              other — so an attacker can't find a safe side to land on.
             </p>
             <div className="goals">
               <div className="goal">
                 <span className="kicker accent">where we're headed</span>
-                <p>Make kernel-level deception the default first layer on every
-                  industrial network, not a specialist add-on.</p>
+                <p>Make kernel-level deception the default first layer across
+                  the whole plant network — controllers and engineering
+                  workstations alike, not a specialist add-on to either.</p>
               </div>
               <div className="goal">
                 <span className="kicker accent">how we get there</span>
@@ -288,7 +293,8 @@ export default function App() {
               <div className="goal">
                 <span className="kicker accent">what we add</span>
                 <p>Feed the monitoring tools a plant already runs with
-                  higher-fidelity signal than any off-the-shelf honeypot can.</p>
+                  higher-fidelity signal than any off-the-shelf honeypot can,
+                  on both the OT and IT side of the same network.</p>
               </div>
             </div>
           </div>
