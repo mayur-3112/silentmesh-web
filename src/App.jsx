@@ -379,7 +379,7 @@ export default function App() {
           </div>
           <div className="foot-bottom">
             <span className="terminal-line">industrial control protocols · it lateral movement · spoken natively</span>
-            <span className="kicker faint">© 2026 SilentMesh</span>
+            <span className="kicker faint">© 2026 SilentMesh Systems</span>
           </div>
         </div>
       </footer>
