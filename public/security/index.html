@@ -189,6 +189,8 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
       <tr><td>never initiates</td><td>Decoys only answer connections addressed to them.</td><td>A pilot pass criterion, checked against the plant's own switch log</td></tr>
       <tr><td>can always be disarmed</td><td>The daemon refuses to arm if the console, which carries the kill switch, cannot start.</td><td>Startup tests</td></tr>
       <tr><td>does not steal a real port</td><td>In a redirecting mode it refuses to arm if a decoy port is already in use, and re-checks about once a minute.</td><td>Startup tests</td></tr>
+      <tr><td>contains a decoy bug</td><td>Decoys run as an unprivileged user with no capabilities, never see the daemon's secrets, and report only through a validated pipe; only the daemon writes evidence, and the store is owner-only.</td><td>TestChaosDecoysRunUnprivileged and TestChaosDecoysNeverSeeDaemonSecrets on every kernel</td></tr>
+      <tr><td>isolates a flood</td><td>Each decoy has its own 24 connection slots and idle timeouts, so a flood on one port cannot silence the others.</td><td>Slot and concurrency tests</td></tr>
       <tr><td>survives hostile input</td><td>Every parser an attacker can reach is fuzzed.</td><td>5,937 structured fuzz cases across seven decoys, zero crashes; 11 Go fuzz targets; the fuzz step fails if no target ran</td></tr>
       <tr><td>keeps data on site</td><td>Every alert destination is off until configured. The console listens on 127.0.0.1 by default.</td><td>Configuration tests</td></tr>
     </tbody>
@@ -216,7 +218,6 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
 
   <h2>Not done yet</h2>
   <ul>
-    <li>Decoys run as separate supervised processes but do not yet drop root privileges. This is the next hardening step.</li>
     <li>The console serves plain HTTP unless TLS is configured. Keep it on a management network or enable TLS.</li>
     <li>Incident records carry a SHA-256 to detect edits after export; the event store itself is not append-only and nothing is signed.</li>
     <li>IPv4 only. IPv6 passes through untouched and is not intercepted.</li>

@@ -56,7 +56,7 @@ const NEVER = [
   ["Outlives its daemon", "Exit, crash or freeze: the kernel lets go."],
   ["Starts a conversation", "Decoys only answer. Nothing connects out."],
   ["Arms without a kill switch", "No console, no arming."],
-  ["Takes a real port", "Refuses to arm if a decoy port is in use."],
+  ["Hands a decoy the host", "Decoys run unprivileged, with no capabilities."],
   ["Lets a model decide", "Fixed rules, with the reasons shown."],
   ["Sends data off site", "Every destination is off until configured."],
 ];
