@@ -70,10 +70,43 @@ const NOT_YET = [
   "No plant runs it yet. Every figure on this page comes from CI, a lab range and a penetration test; the first pilot turns them into field evidence.",
   "Decoys run as separate processes on the host but do not yet drop root privileges. That is the next hardening step.",
   "IPv4 only. IPv6 passes through untouched and is not intercepted.",
-  "Response timing matches a real PLC at the median; the spread is still wider.",
+  "Response timing matches a real PLC at the median; the spread is still wider (32.3 ms against 1.8 ms).",
   "Multi-node forwarding is verified across network namespaces on one machine, not yet across separate hosts.",
   "No third-party security audit or safety certification.",
   "Linux 6.6 or newer, as a Debian package or container image. No RPM yet.",
+];
+
+const STRENGTHS = [
+  { n: "0", l: "plant packets dropped across 20,000 random packets per kernel, every run" },
+  { n: "5", l: "Linux kernels, 6.6 to 7.2, in the fail-open suite on every change" },
+  { n: "0", l: "crashes in 5,937 structured fuzz cases across seven decoys" },
+  { n: "95.6 ms", l: "Modbus decoy median against 100.9 ms on a real PLC" },
+];
+
+const MODES = [
+  ["MONITOR", "Observe and log. Nothing is redirected. Safe on any host, and where every pilot starts."],
+  ["ALERT", "Monitor, plus notifications on contact."],
+  ["REDIRECT", "Decoy-bound connections are handed to the decoys. Normal operation."],
+];
+
+const FLEX = [
+  ["Per protocol", "Each decoy arms and disarms on its own. If one fails, only its protocol stops redirecting; the rest keep working."],
+  ["Your tools", "Slack, Teams, email, a signed webhook, or CEF syslog into the SIEM you already run. Your own scanners can be listed so they are tagged, not paged."],
+  ["Your packaging", "Debian package, container image or apt repository. Runs on a stock Ubuntu 24.04 kernel and a stock AWS kernel, tested on fresh machines."],
+  ["Your access model", "One shared token, or named accounts with viewer and admin roles. Console local-only by default, TLS when exposed."],
+  ["Your retention", "Events stay on site. Retention window, exports to CSV or XLSX, and a pilot report generated from the stored record."],
+];
+
+const NEW_HERE = [
+  ["The kernel is the safety switch", "Fail-open is not code we wrote and hope runs. The program lives only as long as the daemon's kernel link, and a lease covers the frozen case. If our software dies, the kernel undoes it."],
+  ["Decoys timed like the real thing", "Most decoys answer instantly, which a single timing probe exposes. Ours answer in a real controller's scan-cycle band, measured side by side against one."],
+  ["Tests that must be able to fail", "Every probe is fed a deliberately broken decoy and must catch it. Every published figure lives in one ledger with its date and source, and CI blocks banned overclaims before a change can merge."],
+];
+
+const RETRACTED = [
+  ["0.52 ms interception, ±2 ns jitter, under 4.2 MB memory", "retracted 9 August 2026 after our own audit: could not be verified"],
+  ["55 ms decoy round trip", "superseded 4 September 2026 by the side-by-side 95.6 ms against a real PLC"],
+  ["kernel 5.15 or newer", "corrected: the floor is 6.6, where TCX exists"],
 ];
 
 const LOG = [
@@ -121,6 +154,12 @@ export default function App() {
             <Shot src="/img/console_01_incident_queue.webp"
                   alt="SilentMesh console: incident queue with an incident selected, showing why it was flagged and its plant impact."
                   caption="The console: each incident with the reasons behind its verdict and its plant impact. Demo data, labelled as simulated in the product." />
+            <div className="stat-row">
+              {STRENGTHS.map((x) => (
+                <div className="stat" key={x.l}><div className="n">{x.n}</div><div className="l">{x.l}</div></div>
+              ))}
+            </div>
+            <p className="stat-src">Sources and test names in <a href="#evidence">evidence</a>.</p>
           </div>
         </section>
 
@@ -199,9 +238,42 @@ CONSOLE · alerts · CEF syslog · pilot report`}</pre>
           </div>
         </section>
 
+        <section id="flex">
+          <div className="wrap">
+            <SectionHeader index="04" label="fits the plant, not the other way round" />
+            <div className="two">
+              <div>
+                <h3 className="sub first">Three ways to run it</h3>
+                <div className="table modes">
+                  {MODES.map(([m, d]) => (
+                    <div className="table-row" key={m}><span className="t-mode">{m}</span><span className="t-val">{d}</span></div>
+                  ))}
+                </div>
+                <p className="prose small-note">Moving between modes is a setting, not a reinstall. A plant can stay in MONITOR as long as it likes.</p>
+              </div>
+              <div className="table">
+                {FLEX.map(([k, v]) => (
+                  <div className="table-row stacked" key={k}><span className="t-key">{k}</span><span className="t-val">{v}</span></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="new">
+          <div className="wrap">
+            <SectionHeader index="05" label="what is new here" />
+            <div className="three-up">
+              {NEW_HERE.map(([h, p]) => (
+                <div key={h}><h3>{h}</h3><p>{p}</p></div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section id="evidence">
           <div className="wrap">
-            <SectionHeader index="04" label="evidence" />
+            <SectionHeader index="06" label="evidence" />
             <p className="prose">Each figure names the test or dated measurement behind it.</p>
             <div className="table three-col">
               <div className="table-row head"><span>claim</span><span>measured</span><span>proven by</span></div>
@@ -233,9 +305,10 @@ CONSOLE · alerts · CEF syslog · pilot report`}</pre>
             </div>
             <p className="bench-note">
               The median sits within about 5% of a real PLC. The open-source
-              honeypot and a plain server answer 20 to 100 times faster, which a
-              single probe exposes. Our spread is still wider than a real PLC's;
-              that is the next tuning target.
+              honeypot and a plain server answer 21 and 126 times faster, which a
+              single probe exposes. Our spread is still wider than a real PLC's
+              (32.3 ms interquartile range against 1.8 ms); that is the next
+              tuning target.
             </p>
 
             <div className="demo-frame">
@@ -258,7 +331,7 @@ CONSOLE · alerts · CEF syslog · pilot report`}</pre>
 
         <section id="console">
           <div className="wrap">
-            <SectionHeader index="05" label="the console" />
+            <SectionHeader index="07" label="the console" />
             <div className="two shots">
               <Shot src="/img/console_02_incident_report.webp"
                     alt="Incident report with description, timeline, decoy ports and ATT&CK for ICS techniques."
@@ -270,9 +343,64 @@ CONSOLE · alerts · CEF syslog · pilot report`}</pre>
           </div>
         </section>
 
+        <section id="challenge">
+          <div className="wrap">
+            <SectionHeader index="08" label="challenge it" />
+            <div className="two">
+              <div>
+                <h3 className="sub first">Break it, and we will say so</h3>
+                <p className="prose">
+                  The product rests on three claims: an attacker cannot tell a
+                  decoy from a real controller, cannot get past the kernel hook to
+                  a real device, and cannot switch it off without authorisation.
+                  An eight-week program with a cohort of eight researchers,
+                  working black-box with no source, is attacking exactly those
+                  three claims on an isolated range now.
+                </p>
+                <p className="prose">
+                  If you find a way, write to <a className="inline" href="mailto:founder@silentmesh.me">founder@silentmesh.me</a>.
+                  Confirmed findings are credited, fixed, and written up in the
+                  engineering log, including the ones that are embarrassing.
+                </p>
+              </div>
+              <div>
+                <h3 className="sub first">Numbers we have taken back</h3>
+                <div className="table">
+                  {RETRACTED.map(([n, why]) => (
+                    <div className="table-row stacked" key={n}><span className="t-key struck">{n}</span><span className="t-val">{why}</span></div>
+                  ))}
+                </div>
+                <p className="prose small-note">We publish what was wrong next to what is right, so a reviewer can tell which way our errors run.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="fit">
+          <div className="wrap">
+            <SectionHeader index="09" label="where it fits" />
+            <div className="two">
+              <p className="prose">
+                Most industrial controllers cannot run an agent, and most plants
+                will not put a blocking device inline with production. Decoys need
+                neither: one declared host per zone, beside the monitoring already
+                in place. Modbus, S7comm, IEC 60870-5-104, DNP3 and OPC UA are
+                spoken in plants, utilities and water systems worldwide, and an
+                intruder crossing from the office network over SMB looks the same
+                everywhere.
+              </p>
+              <p className="prose">
+                Built in Bengaluru, for industrial networks anywhere. The first
+                pilots turn lab evidence into field evidence; the list below is
+                what comes next, in public.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section id="not-yet">
           <div className="wrap">
-            <SectionHeader index="06" label="not done yet" />
+            <SectionHeader index="10" label="not done yet" />
             <ul className="plain-list">
               {NOT_YET.map((t) => <li key={t}>{t}</li>)}
             </ul>
@@ -281,7 +409,7 @@ CONSOLE · alerts · CEF syslog · pilot report`}</pre>
 
         <section id="log">
           <div className="wrap">
-            <SectionHeader index="07" label="engineering log" />
+            <SectionHeader index="11" label="engineering log" />
             <ul className="log-list">
               {LOG.map((p) => (
                 <li key={p.href}><span className="log-date">{p.date}</span><a href={p.href}>{p.title}</a></li>

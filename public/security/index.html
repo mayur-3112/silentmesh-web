@@ -180,7 +180,7 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
 
   <h2>How changes ship</h2>
   <ul>
-    <li>Nothing reaches the main branch without passing the full gate: build, vet, race detector, decoy tests, the kernel chaos suite on five kernels, fuzzing, a quality ratchet that forbids any metric from getting worse, and a check that published claims match measured numbers.</li>
+    <li>Nothing reaches the main branch without passing the full gate: build, vet, race detector, decoy tests, the kernel chaos suite on five kernels, fuzzing, a quality ratchet that forbids any metric from getting worse, and a check that blocks banned overclaims in shipped text.</li>
     <li>A nightly run repeats the fuzzing for longer, plus soak and longevity tests.</li>
     <li>An independent penetration test against a live deployment found no remote code execution, no authentication bypass and no unauthorised change to process state. Its two findings were fixed during the engagement.</li>
   </ul>
