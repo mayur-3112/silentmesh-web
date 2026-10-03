@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SilentMesh Systems — kernel-level deception for OT/ICS and converged IT/OT networks</title>
-  <meta name="description" content="SilentMesh Systems builds kernel-level deception for industrial networks: Linux eBPF at the TC layer redirects industrial protocol traffic to protocol-accurate decoys while the real controllers stay untouched. Deceive, never disrupt.">
+  <title>SilentMesh Systems · kernel-level deception for OT/ICS and converged IT/OT networks</title>
+  <meta name="description" content="SilentMesh Systems builds kernel-level deception for industrial networks: Decoy industrial controllers on the plant network, redirected to by a small Linux eBPF program that never blocks, never sits in the control path, and fails open. Deceive, never disrupt.">
   <meta name="theme-color" content="#0D0F0E">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
   <!-- Open Graph / Social -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.silentmesh.me">
-  <meta property="og:title" content="SilentMesh Systems — kernel-level deception for OT/ICS">
+  <meta property="og:title" content="SilentMesh Systems · kernel-level deception for OT/ICS">
   <meta property="og:description" content="Kernel-level deception for OT/ICS and converged IT/OT networks. A convincing fake of your machinery for the attacker; your real plant, untouched.">
   <meta property="og:site_name" content="SilentMesh Systems">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SilentMesh Systems — kernel-level deception for OT/ICS">
+  <meta name="twitter:title" content="SilentMesh Systems · kernel-level deception for OT/ICS">
   <meta name="twitter:description" content="Kernel-level deception for OT/ICS and converged IT/OT networks. A convincing fake of your machinery for the attacker; your real plant, untouched.">
 
   <link rel="canonical" href="https://www.silentmesh.me/">
@@ -59,7 +59,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <!-- Plain-HTML summary for crawlers and link previews; React replaces it on load. -->
+    <main>
+      <h1>SilentMesh: kernel-level deception for industrial networks</h1>
+      <p>Deceive, never disrupt. SilentMesh places decoy industrial controllers (Modbus/TCP, S7comm, IEC 60870-5-104, DNP3, OPC UA) and a decoy Windows file share on the plant network. Nothing legitimate talks to them, so any contact is a real signal, recorded with source, protocol and commands.</p>
+      <h2>What it never does</h2>
+      <ul>
+        <li>It never blocks, drops or delays plant traffic: the kernel program can only pass a packet or hand it to a decoy.</li>
+        <li>It never sits between an HMI and a controller.</li>
+        <li>It fails open: if the software stops, the kernel releases its hook; if it freezes, a kernel lease lapses within about 9 seconds.</li>
+      </ul>
+      <h2>Evidence</h2>
+      <ul>
+        <li>Fail-open tested on every code change on Linux kernels 6.6 to 7.2.</li>
+        <li>20,000 random plant packets per kernel returned byte for byte, none dropped.</li>
+        <li>5,937 structured fuzz cases across seven decoys, zero crashes.</li>
+        <li>Modbus decoy median response 95.6 ms against 100.9 ms on a real OpenPLC.</li>
+        <li>External penetration test: two findings, both fixed during the engagement.</li>
+      </ul>
+      <p>Pilots: 30 days on one plant segment, monitor-only first, pass criteria agreed in writing. Contact founder@silentmesh.me.</p>
+    </main>
+  </div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

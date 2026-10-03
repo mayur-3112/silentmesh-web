@@ -18,16 +18,20 @@ acoustic FPV drone detection. The two share a name and nothing else.
 
 ## What the product does
 
-- Attaches eBPF programs at the Linux TC (traffic control) layer via clsact
-  to intercept industrial protocol traffic.
-- Redirects that traffic to protocol-accurate decoys. Real controllers are
-  never touched and never see the attacker.
-- Speaks Modbus/TCP, S7comm, IEC 60870-5-104 and SMB.
-- Designed to fail open. If the tool fails, traffic passes and the plant keeps
-  running. It is built never to be the reason production stops.
-- Positioned as additive, not a replacement. The output is a high-fidelity
-  alert source intended to feed the SIEM, SOAR or monitoring stack an operator
-  already runs.
+- Places decoy industrial controllers on a plant network: Modbus/TCP, S7comm,
+  IEC 60870-5-104, DNP3 and OPC UA, plus a decoy Windows file share (SMB) and a
+  read-only SNMP responder.
+- A small eBPF program attached with TCX (Linux 6.6 and later) hands
+  connections aimed at the decoy host's industrial ports to the decoys. Traffic
+  to any other address or port is passed untouched; it never sits between an
+  HMI and a controller.
+- Fails open. If the software stops for any reason the kernel releases the
+  hook; if it freezes, a kernel lease lapses within about 9 seconds. Tested on
+  every code change on kernels 6.6 to 7.2.
+- Non-interference: 20,000 random plant packets per kernel come back byte for
+  byte, none dropped, on every code change.
+- Positioned as additive, not a replacement: a high-fidelity alert source for
+  the SIEM, SOAR or monitoring stack an operator already runs.
 
 ## What it does not do and does not claim
 
