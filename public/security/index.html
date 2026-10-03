@@ -200,8 +200,8 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
   <table>
     <thead><tr><th>Figure</th><th>What it measures</th><th>Source</th></tr></thead>
     <tbody>
-      <tr><td>95.6 ms</td><td>Modbus decoy median response, against 100.9 ms on a real OpenPLC; Conpot 4.7 ms, a plain server 0.8 ms</td><td>Side-by-side differential, 4 September 2026, one environment</td></tr>
-      <tr><td>32.3 ms</td><td>Interquartile range of our decoy's timing, against 1.8 ms for the idle PLC: the median matches, the spread does not yet</td><td>Same differential</td></tr>
+      <tr><td>101.3 ms</td><td>Modbus decoy median response, against 100.9 ms on a real OpenPLC; Conpot 4.7 ms, a plain server 0.8 ms</td><td>Decoy 3 October 2026, the others 4 September 2026, same harness; held by test_modbus_timing</td></tr>
+      <tr><td>3.0 ms</td><td>Interquartile range of our decoy's timing, against 1.8 ms for the idle PLC (was 32.3 ms). Measured on different days; a side-by-side rerun is next</td><td>Same harness</td></tr>
       <tr><td>+0.5 µs</td><td>Median added latency from interception</td><td>Paired benchmark, single environment, four trials</td></tr>
       <tr><td>17 to 45 ns</td><td>Program time per packet, not end-to-end latency</td><td>BPF_PROG_TEST_RUN on five kernels</td></tr>
       <tr><td>5 s</td><td>From a write to a decoy to a page; honest traffic raises no high-priority alert</td><td>Detection-quality test on every kernel, synthetic traffic</td></tr>

@@ -38,7 +38,7 @@ const STRENGTHS = [
   { n: "0", l: "plant packets dropped, 20,000 random packets per kernel, every run" },
   { n: "5", l: "Linux kernels, 6.6 to 7.2, in the fail-open suite on every change" },
   { n: "0", l: "crashes in 5,937 structured fuzz cases across seven decoys" },
-  { n: "95.6 ms", l: "Modbus decoy median, against 100.9 ms on a real PLC" },
+  { n: "101.3 ms", l: "Modbus decoy median, against 100.9 ms on a real PLC" },
 ];
 
 const HOW = [
@@ -62,9 +62,9 @@ const NEVER = [
 ];
 
 const BENCH = [
-  { name: "silentmesh", val: "95.6", w: 94.7, us: true },
-  { name: "real openplc", val: "100.9", w: 100, us: false },
-  { name: "conpot honeypot", val: "4.7", w: 4.7, us: false },
+  { name: "silentmesh", val: "101.3", w: 100, us: true },
+  { name: "real openplc", val: "100.9", w: 99.6, us: false },
+  { name: "conpot honeypot", val: "4.7", w: 4.6, us: false },
   { name: "software ref.", val: "0.8", w: 0.8, us: false },
 ];
 
@@ -77,15 +77,16 @@ const FIGURES = [
 
 const RETRACTED = [
   ["0.52 ms interception, ±2 ns jitter, under 4.2 MB memory", "retracted 9 August 2026 after our own audit: could not be verified"],
-  ["55 ms decoy round trip", "superseded 4 September 2026 by 95.6 ms, measured beside a real PLC"],
+  ["95.6 ms Modbus median", "superseded 3 October 2026: it was mostly a database write, and a safety change had quietly made the decoy answer in 24 ms"],
+  ["55 ms decoy round trip", "superseded 4 September 2026 by a measurement beside a real PLC"],
   ["kernel 5.15 or newer", "corrected: the floor is 6.6, where TCX exists"],
 ];
 
 const POSTS = [
+  { href: "/blog/faster-when-we-made-it-safer/", date: "3 October 2026", title: "Our decoy got faster when we made it safer",
+    ex: "Our published PLC-like timing was mostly a database write. A security fix removed the write, and the decoy quietly started answering four times faster than a real PLC." },
   { href: "/blog/fuzzing-that-ran-nothing/", date: "3 October 2026", title: "Our Go fuzzing ran nothing, and every check was green",
     ex: "For three days the fuzz step passed in 0.6 seconds having fuzzed nothing. A failing command inside a shell for-list is not caught by set -e." },
-  { href: "/blog/tests-that-could-not-fail/", date: "6 September 2026", title: "We built decoy fingerprint tests that could not fail",
-    ex: "Eight green probes. Then we fed each one a decoy broken in exactly the way it exists to catch, and three results turned out to be facts about the probe." },
 ];
 
 const LINKEDIN = "https://www.linkedin.com/in/mayur-agarwala-42603a21a/";
@@ -202,7 +203,8 @@ export default function App() {
                 <p className="body">
                   A timing probe is the cheapest way to unmask a fake. Identical
                   Modbus requests to four targets; median response in
-                  milliseconds, 4 September 2026.
+                  milliseconds. Decoy measured 3 October 2026, the others
+                  4 September 2026, same harness.
                 </p>
                 <div className="bench">
                   {BENCH.map((b) => (
@@ -217,9 +219,9 @@ export default function App() {
                 </div>
                 <p className="note">
                   The honeypot and a plain server answer 21 and 126 times faster.
-                  Our spread is still wider than a real PLC's (32.3 ms
-                  interquartile range against 1.8 ms); that is the next tuning
-                  target.
+                  Spread: 3.0 ms interquartile range against the real PLC's
+                  1.8 ms, down from 32.3 ms. A side-by-side rerun is next.{" "}
+                  <a className="inline" href="/blog/faster-when-we-made-it-safer/">What went wrong →</a>
                 </p>
               </div>
               <div className="figures">

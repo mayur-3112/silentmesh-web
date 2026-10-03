@@ -46,6 +46,7 @@ acoustic FPV drone detection. The two share a name and nothing else.
 
 - [Home](https://www.silentmesh.me/): what the product is, how it works, what it never does, evidence with the test behind each figure, what is not done yet.
 - [Blog](https://www.silentmesh.me/blog/): engineering log index.
+- [Our decoy got faster when we made it safer](https://www.silentmesh.me/blog/faster-when-we-made-it-safer/): engineering log. The published Modbus timing was mostly a database write; a security fix removed it; the reply is now a deadline from arrival.
 - [Pilot](https://www.silentmesh.me/pilot/): one segment, monitor-only first, 30 days, seven pass criteria agreed in writing before anything connects.
 - [Security](https://www.silentmesh.me/security/): guarantees and how each is tested, release gate, known gaps, vulnerability reporting.
 - [Our Go fuzzing ran nothing, and every check was green](https://www.silentmesh.me/blog/fuzzing-that-ran-nothing/): engineering log. A failing command substitution in a shell for-list is not caught by set -e; the fuzz step now fails if zero targets ran.

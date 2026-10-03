@@ -3,26 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog · SilentMesh Systems</title>
-<meta name="description" content="The SilentMesh engineering blog: what we got wrong, how we found it, and what we changed.">
+<title>Our decoy got faster when we made it safer · SilentMesh Systems</title>
+<meta name="description" content="Our published Modbus timing was mostly a database write. A security fix removed the write, and the decoy started answering four times faster than a real PLC. Here is how we found it and what holds it now.">
 <meta name="theme-color" content="#0D0F0E">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.silentmesh.me/blog/">
-<meta property="og:title" content="What we got wrong, and what we changed">
-<meta property="og:description" content="The SilentMesh engineering blog: what we got wrong, how we found it, and what we changed.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.silentmesh.me/blog/faster-when-we-made-it-safer/">
+<meta property="og:title" content="Our decoy got faster when we made it safer">
+<meta property="og:description" content="Our published Modbus timing was mostly a database write. A security fix removed the write, and the decoy started answering four times faster than a real PLC. Here is how we found it and what holds it now.">
 <meta property="og:site_name" content="SilentMesh Systems">
-<link rel="canonical" href="https://www.silentmesh.me/blog/">
+<link rel="canonical" href="https://www.silentmesh.me/blog/faster-when-we-made-it-safer/">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "What we got wrong, and what we changed",
-  "url": "https://www.silentmesh.me/blog/",
+  "@type": "TechArticle",
+  "headline": "Our decoy got faster when we made it safer",
+  "url": "https://www.silentmesh.me/blog/faster-when-we-made-it-safer/",
   "publisher": {
     "@id": "https://www.silentmesh.me/#organization"
   },
-  "description": "The SilentMesh engineering blog: what we got wrong, how we found it, and what we changed."
+  "description": "Our published Modbus timing was mostly a database write. A security fix removed the write, and the decoy started answering four times faster than a real PLC. Here is how we found it and what holds it now.",
+  "datePublished": "2026-10-03",
+  "author": {
+    "@type": "Organization",
+    "name": "SilentMesh Systems",
+    "url": "https://www.silentmesh.me/"
+  }
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -164,15 +170,71 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
 <div class="wrap">
 
   <span class="kicker">blog</span>
-  <h1>What we got wrong, and what we changed</h1>
-  <div class="byline">engineering notes from SilentMesh</div>
+  <h1>Our decoy got faster when we made it safer</h1>
+  <div class="byline">3 October 2026 · SilentMesh Systems</div>
 
-  <p class="standfirst">Every figure on this site names the test behind it. These posts are about the times a test, a number or an assumption turned out to be wrong, and <b>what we changed so it cannot happen quietly again.</b></p>
-  <ul class="posts">
-    <li><span class="d">3 October 2026</span><a href="/blog/faster-when-we-made-it-safer/">Our decoy got faster when we made it safer</a><p>Our published PLC-like timing was mostly a database write. A security fix removed the write, and the decoy quietly started answering four times faster than a real PLC.</p></li>
-    <li><span class="d">3 October 2026</span><a href="/blog/fuzzing-that-ran-nothing/">Our Go fuzzing ran nothing, and every check was green</a><p>For three days the fuzz step passed in 0.6 seconds having fuzzed nothing. A failing command inside a shell for-list is not caught by set -e.</p></li>
-    <li><span class="d">6 September 2026</span><a href="/blog/tests-that-could-not-fail/">We built decoy fingerprint tests that could not fail</a><p>Eight green probes. Then we fed each one a decoy broken in exactly the way it exists to catch, and three results turned out to be facts about the probe.</p></li>
+  <p class="standfirst">
+    We published that our Modbus decoy answers in 95.6 ms, beside 100.9 ms on a
+    real PLC. On 3 October we measured it again. <b>The decoy we ship was
+    answering in 24 ms, four times faster than the PLC it imitates.</b> A
+    single timing probe would have told them apart. Nobody had noticed, us
+    included.
+  </p>
+
+  <h2>Where the 95.6 ms came from</h2>
+  <p>A real PLC answers Modbus once per scan cycle, so its replies sit in a
+  tight band about one cycle wide. Our decoy imitated that with a short sleep:
+  10 ms plus part of a 20 ms window. That was never enough to reach 100 ms. <b>Most
+  of the 95.6 ms was the decoy writing each request to its evidence database
+  before it replied.</b> The number was real, but the reason was an accident.</p>
+
+  <h2>How a safety fix broke it</h2>
+  <p>On 30 September we closed the most serious row in our threat model: decoys
+  ran as root and wrote evidence directly. Now they run as an unprivileged user
+  with no capabilities and hand each event to the daemon over a validated pipe.
+  Writing to a pipe takes microseconds. The database write disappeared from
+  the reply path, and the decoy's timing collapsed with it.</p>
+<pre><code>Modbus decoy, same harness, 200 requests     median    spread (IQR)
+before the safety fix (database write)       72.0 ms   38.2 ms
+after the safety fix (event pipe)            24.4 ms   13.1 ms
+real OpenPLC, 4 September                   100.9 ms    1.8 ms</code></pre>
+  <p>Every functional test still passed, because none of them measured time.
+  Our fingerprint probe checks the <em>shape</em> of the timing, that it is
+  not flat, and a fast distribution can still have the right shape.</p>
+
+  <h2>The fix</h2>
+  <p>The reply now waits until a deadline counted from the moment the request
+  arrived. Whatever logging costs, a pipe or a database or a slow disk, the
+  reply leaves on the modelled schedule: a floor near 94 ms, a per-deployment
+  offset so two installs do not share a signature, part of a short scan window,
+  and the occasional busy cycle.</p>
+<pre><code>after the deadline fix (event pipe)         101.3 ms    3.0 ms
+after the deadline fix (database write)     101.3 ms    2.9 ms</code></pre>
+  <p>Same result either way, which is the point. A new test pins the profile and
+  the deadline. We ran it against the old code to make sure it can fail, and it
+  does: <code>a 40 ms log write moved the median from 20.6 to 64.0 ms</code>.</p>
+
+  <h2>A second check that could not fail</h2>
+  <p>While we were there, we re-ran our probe self-check, which feeds each
+  fingerprint probe a decoy broken on purpose. One probe, the one that checks
+  the decoy rejects addresses outside its map, passed the broken decoy. An
+  earlier change had moved the bounds check, and the mutation that removes it
+  was still matching a different line. It is fixed; all seven scored probes
+  now fail their broken decoys.</p>
+
+  <h2>What is still open</h2>
+  <ul>
+    <li>The decoy and the PLC figures were measured on different days. A side-by-side rerun comes next.</li>
+    <li>The spread is 3.0 ms against 1.8 ms: close, not matched.</li>
+    <li>The other decoys have no real device to compare against yet, so their timing is modelled, not measured against hardware.</li>
   </ul>
+
+  <div class="pull">
+    <span class="label">the rule</span>
+    <p>A fix for one property can quietly break another. We now treat timing as
+    a tested property, not a side effect, and we publish the number we had to
+    take back next to the one that replaced it.</p>
+  </div>
 
 </div>
 </article>
