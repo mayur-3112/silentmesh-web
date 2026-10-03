@@ -44,7 +44,10 @@ acoustic FPV drone detection. The two share a name and nothing else.
 
 ## Pages
 
-- [Home](https://www.silentmesh.me/): product, principles, benchmark, pilot contact.
+- [Home](https://www.silentmesh.me/): what the product is, how it works, what it never does, evidence with the test behind each figure, what is not done yet.
+- [Pilot](https://www.silentmesh.me/pilot/): one segment, monitor-only first, 30 days, seven pass criteria agreed in writing before anything connects.
+- [Security](https://www.silentmesh.me/security/): guarantees and how each is tested, release gate, known gaps, vulnerability reporting.
+- [Our Go fuzzing ran nothing, and every check was green](https://www.silentmesh.me/blog/fuzzing-that-ran-nothing/): engineering log. A failing command substitution in a shell for-list is not caught by set -e; the fuzz step now fails if zero targets ran.
 - [We built decoy fingerprint tests that could not fail](https://www.silentmesh.me/blog/tests-that-could-not-fail/): engineering log. How a self-check mode proved three of eight fingerprint probes were measuring the probe rather than the decoy, and what changed.
 
 ## Citation

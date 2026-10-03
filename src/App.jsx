@@ -1,9 +1,9 @@
-// SilentMesh homepage. Built on the locked brand system (green signal on
-// near-black, Instrument Serif / Instrument Sans / IBM Plex Mono, corridor
-// mark, "Deceive, never disrupt."). Kit-strict: no motion beyond the CSS
-// opacity states the tokens allow. The "aha" is carried by copy + composition,
-// layered public-first (a plant owner feels the stakes in five seconds) then
-// technical proof deeper down. All numbers are the real measured figures.
+// SilentMesh homepage, engineering-first (2026-10-03). Product before
+// promise: what it is, a real console screenshot, how it works, what it never
+// does, the evidence with the test behind each number, and what is not done
+// yet. Brand system unchanged (corridor mark, Instrument Serif / Sans, IBM
+// Plex Mono, one green signal). Every number here must match CLAIMS.md in the
+// company repo, and every "never" must be true of the code on main.
 
 const MARK_FULL = "M40 6H74V74H6V6H63M63 17H17V63H63V28M52 28V52H28V17";
 const MARK_OUTER = "M40 6H74V74H6V6";
@@ -30,6 +30,15 @@ function SectionHeader({ index, label }) {
   );
 }
 
+function Shot({ src, alt, caption }) {
+  return (
+    <figure className="shot">
+      <img src={src} alt={alt} loading="lazy" />
+      <figcaption>{caption}</figcaption>
+    </figure>
+  );
+}
+
 const BENCH = [
   { name: "silentmesh", val: "95.6", w: 94.7, us: true },
   { name: "real openplc", val: "100.9", w: 100, us: false },
@@ -37,237 +46,207 @@ const BENCH = [
   { name: "software ref.", val: "0.8", w: 0.8, us: false },
 ];
 
-const STATS = [
-  { n: "5 kernels", l: "fail-open tested on every change · 6.6 to 7.2" },
-  { n: "20,000", l: "random plant packets per kernel · back byte for byte · none dropped" },
-  { n: "5,937", l: "structured fuzz cases across 7 decoys · 0 crashes" },
-  { n: "+0.5µs", l: "median added latency · single env., 4 trials" },
+const NEVER = [
+  ["Block, drop or delay plant traffic", "The kernel program has two outcomes: pass the packet, or hand it to a decoy. There is no drop path."],
+  ["Sit in the control path", "One host, one IP. It sees only traffic addressed to its own decoy ports, never traffic between an HMI and a controller."],
+  ["Keep redirecting after it stops", "Exit, crash or out of memory: the kernel releases the program with the daemon's last file descriptor. Frozen: a kernel lease lapses within about 9 seconds."],
+  ["Open a connection into the plant", "Decoys only answer. Nothing starts a conversation with a plant device."],
+  ["Arm without a way to disarm", "If the console, which carries the kill switch, cannot start, the daemon refuses to arm."],
+  ["Take over a port a real service uses", "In a redirecting mode it refuses to arm if a decoy port is already in use, and re-checks about once a minute."],
+  ["Let a model decide", "Fixed rules. Every verdict lists the reasons that produced it."],
+  ["Send data off site by default", "Every alert destination is off until the plant configures it."],
+];
+
+const EVIDENCE = [
+  ["Fails open, however it dies", "Kill, terminate, freeze, a hung decoy, every decoy dead, the kill switch: plant traffic carries on", "Chaos tests on every code change: kernels 6.6, 6.8, 6.12, 6.16 and 7.2 under emulation, plus real hardware on one"],
+  ["Never touches plant traffic", "20,000 random packets per kernel returned byte for byte; none dropped", "Property test, new random seed every run"],
+  ["Costs almost nothing", "+0.5 µs median added latency; 17 to 45 ns of program time per packet", "Paired benchmark, single environment, four trials; BPF_PROG_TEST_RUN on five kernels"],
+  ["Survives hostile input", "5,937 structured fuzz cases across seven decoys, zero crashes; 11 Go fuzz targets", "Decoy fuzz sweep; Go fuzzing nightly"],
+  ["Alerts fast", "A write to a decoy pages within 5 s; honest traffic raises no high-priority alert", "Detection-quality test on every kernel, synthetic traffic, limit enforced in CI"],
+  ["Holds up to people trying to break it", "No remote code execution, no authentication bypass, no unauthorised change to process state; two findings, both fixed", "Independent penetration test against a live deployment"],
+];
+
+const NOT_YET = [
+  "No plant runs it yet. Every figure on this page comes from CI, a lab range and a penetration test; the first pilot turns them into field evidence.",
+  "Decoys run as separate processes on the host but do not yet drop root privileges. That is the next hardening step.",
+  "IPv4 only. IPv6 passes through untouched and is not intercepted.",
+  "Response timing matches a real PLC at the median; the spread is still wider.",
+  "Multi-node forwarding is verified across network namespaces on one machine, not yet across separate hosts.",
+  "No third-party security audit or safety certification.",
+  "Linux 6.6 or newer, as a Debian package or container image. No RPM yet.",
+];
+
+const LOG = [
+  { href: "/blog/fuzzing-that-ran-nothing/", date: "2026-10-03", title: "Our Go fuzzing ran nothing, and every check was green" },
+  { href: "/blog/tests-that-could-not-fail/", date: "2026-09-06", title: "We built decoy fingerprint tests that could not fail" },
 ];
 
 export default function App() {
   return (
     <>
-      <div className="bg-watermark" aria-hidden="true"><Mark size={640} /></div>
       <header>
         <div className="wrap header-inner">
-          <div className="lockup">
-            <Mark size={28} />
+          <a className="lockup" href="/">
+            <Mark size={26} />
             <span className="wordmark">Silentmesh</span>
-          </div>
+          </a>
           <nav>
-            <a href="#stakes">Why</a>
-            <a href="#principle">How</a>
-            <a href="#proof">Proof</a>
-            <a href="#vision">Vision</a>
-            <a href="#pilot">Pilot</a>
-            <a href="/blog/tests-that-could-not-fail/">Log</a>
+            <a href="#product">Product</a>
+            <a href="#how">How it works</a>
+            <a href="#evidence">Evidence</a>
+            <a className="m" href="/pilot/">Pilot</a>
+            <a className="m" href="/security/">Security</a>
+            <a href="#log">Log</a>
           </nav>
-          <span className="badge">● decoys armed</span>
         </div>
       </header>
 
       <main>
-        {/* HERO: public-first, no jargon. The one idea, plainly. */}
         <section className="hero-section">
-          <div className="wrap hero-grid">
-            <div className="hero">
-              <span className="kicker accent">kernel-level cyber deception</span>
-              <h1>Give the attacker a plant that isn't there.</h1>
-              <p className="prose lede">
-                SilentMesh shows an intruder a convincing fake of your machinery
-                and quietly records every move they make. Your real equipment is
-                never touched, and SilentMesh can never be the reason it stops.
-              </p>
-              <div className="hero-ctas">
-                <a className="btn btn-primary" href="#pilot">Run a pilot</a>
-                <a className="btn btn-outline" href="#proof">See the proof</a>
-              </div>
-            </div>
-
-            <div className="panel">
-              <div className="pad">
-                <div className="kicker panel-title">
-                  <span>what the attacker sees</span><span className="accent">● live</span>
-                </div>
-                <svg className="diagram" viewBox="0 0 380 236" width="100%" role="img"
-                     aria-label="An attacker's scan reaches a decoy controller; the real controller sits on a private branch and is never touched.">
-                  <line x1="26" y1="48" x2="330" y2="48" stroke="var(--border-hair)" strokeWidth="1.4" />
-                  <text x="26" y="38" fontSize="9.5">attacker scan</text>
-                  <circle cx="26" cy="48" r="3.5" fill="var(--text-tertiary)" />
-
-                  <path d="M 26 48 H 150 Q 168 48 168 66 V 112 Q 168 130 186 130 H 296"
-                        fill="none" stroke="var(--sm-signal)" strokeWidth="1.4" opacity="0.5" />
-                  <circle cx="296" cy="130" r="3" fill="var(--sm-signal)" />
-                  <rect x="296" y="114" width="64" height="32" rx="1" className="node-box node-decoy" />
-                  <text x="328" y="127" textAnchor="middle" fontSize="9" className="strong">decoy</text>
-                  <text x="328" y="139" textAnchor="middle" fontSize="8">controller</text>
-
-                  <path d="M 26 48 V 188 H 296" fill="none" stroke="var(--border-hair)"
-                        strokeWidth="1.2" strokeDasharray="2 4" />
-                  <rect x="296" y="172" width="64" height="32" rx="1" className="node-box node-real" />
-                  <text x="328" y="185" textAnchor="middle" fontSize="9">real plc</text>
-                  <text x="328" y="197" textAnchor="middle" fontSize="8">untouched</text>
-
-                  <text x="26" y="220" fontSize="9">plant traffic: 0 packets</text>
-                  <text x="26" y="232" fontSize="9">altered, delayed or dropped.</text>
-                </svg>
-              </div>
-              <div className="foot">decoy engaged · plant traffic untouched</div>
-            </div>
-          </div>
-        </section>
-
-        {/* STAKES: the emotional aha for anyone, technical or not. */}
-        <section id="stakes" className="stakes-section">
           <div className="wrap">
-            <p className="stakes-line">
-              A factory is built brick by brick, over years.
-              <br /><span className="accent">An attacker can undo it in a single afternoon.</span>
+            <span className="kicker accent">kernel-level deception for industrial networks</span>
+            <h1 className="hero-h1">Decoy controllers that catch intruders inside a plant network, built so they cannot stop the plant.</h1>
+            <p className="prose lede">
+              SilentMesh places decoy PLCs and a decoy Windows file share on the
+              plant network. Nothing legitimate talks to them, so any contact is
+              a real signal, recorded with the source, the protocol and every
+              command sent. A small eBPF program in the Linux kernel hands only
+              decoy-bound connections to the decoys, and if our software stops,
+              the kernel lets go on its own.
             </p>
-            <p className="prose stakes-prose">
-              Plants run on controllers that were never designed to be online, and
-              the tools sold to protect them were built for office computers: they
-              add delay, they block real signals, and a plant owner's worst fear is
-              that the security tool is what stops the line. SilentMesh is built the
-              other way around: it protects by deceiving, and it can never be the
-              reason production halts.
-            </p>
+            <div className="hero-ctas">
+              <a className="btn btn-primary" href="/pilot/">Pilot details</a>
+              <a className="btn btn-outline" href="#evidence">Evidence</a>
+            </div>
+            <Shot src="/img/console_01_incident_queue.webp"
+                  alt="SilentMesh console: incident queue with an incident selected, showing why it was flagged and its plant impact."
+                  caption="The console: each incident with the reasons behind its verdict and its plant impact. Demo data, labelled as simulated in the product." />
           </div>
         </section>
 
-        {/* PRINCIPLE: three rules, plain-language headings, technical detail under. */}
-        <section id="principle">
+        <section id="product">
           <div className="wrap">
-            <SectionHeader index="01" label="the three rules that never bend" />
-            <div className="three">
+            <SectionHeader index="01" label="what it is" />
+            <div className="two">
               <div>
-                <span className="kicker accent">rule 1</span>
-                <h3>Out of the control path</h3>
-                <p>It runs in the Linux kernel on its own host, answers only
-                  traffic sent to its decoys, and never sits between an HMI and a
-                  controller. Random plant traffic comes back byte for byte,
-                  tested on every change.</p>
+                <p className="prose">
+                  Industrial protocols trust anyone who can reach them. Intruders
+                  usually land on the office side, cross over, and scan for
+                  controllers. The common defences carry their own risk: inline
+                  blocking can stop a line on a false alarm, and agents cannot be
+                  installed on most controllers.
+                </p>
+                <p className="prose">
+                  SilentMesh adds a detector built on decoys that no one has a
+                  reason to touch. It sits beside the monitoring a plant already
+                  runs and feeds it alerts that passive monitoring cannot produce
+                  on its own.
+                </p>
               </div>
-              <div>
-                <span className="kicker accent">rule 2</span>
-                <h3>Deception, never disruption</h3>
-                <p>It has no way to block: the kernel program can only pass a
-                  packet or hand it to a decoy. It is built to look like a target,
-                  not to police the network.</p>
-              </div>
-              <div>
-                <span className="kicker accent">rule 3</span>
-                <h3>Absolute operator trust</h3>
-                <p>If it ever fails, it fails open and vanishes. The kernel detaches
-                  the hook on its own; no code of ours has to run for the plant to
-                  keep running. If it freezes instead, a kernel lease lapses
-                  within about 9 seconds.</p>
+              <div className="spec">
+                <div className="spec-row"><span>decoys</span><span>Modbus/TCP · S7comm · IEC 60870-5-104 · DNP3 · OPC UA · SMB, plus read-only SNMP</span></div>
+                <div className="spec-row"><span>host</span><span>one Linux host per zone, kernel 6.6 or newer</span></div>
+                <div className="spec-row"><span>footprint</span><span>one IP, one MAC, declared on the asset register</span></div>
+                <div className="spec-row"><span>first mode</span><span>MONITOR: observes and logs, changes nothing</span></div>
+                <div className="spec-row"><span>alerts</span><span>Slack · Teams · email · signed webhook · CEF syslog</span></div>
+                <div className="spec-row"><span>reports</span><span>incidents mapped to ATT&amp;CK for ICS, pilot report, CSV and XLSX export</span></div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* PROOF: this is where the technical audience gets the real numbers. */}
-        <section id="proof">
+        <section id="how">
           <div className="wrap">
-            <SectionHeader index="02" label="measured against a real plc" />
+            <SectionHeader index="02" label="how it works" />
+<pre className="diagram-pre" aria-label="Packet path: decoy-bound traffic goes to a decoy, everything else passes, and everything passes if the daemon is gone.">{`intruder on the plant network
+  │  to this host only: 502 · 102 · 2404 · 445 · 20000 · 4840
+  ▼
+LINUX KERNEL · TCX · eBPF PROGRAM
+  decoy port on this host   →  hand to the decoy
+  any other packet          →  pass, byte for byte
+  daemon gone or frozen     →  pass everything
+  │
+  ▼
+DECOYS · supervised, restarted on failure
+  │  validated event pipe
+  ▼
+DAEMON · evidence store · verdicts with reasons
+  │
+  ▼
+CONSOLE · alerts · CEF syslog · pilot report`}</pre>
             <p className="prose">
-              A timing probe is the cheapest way to unmask a fake. Here is what
-              that looks like end to end:
+              Traffic between HMIs, SCADA and controllers is never addressed to
+              this host, so the program never sees it. The kernel holds the
+              program through a link owned by the daemon: when the daemon exits
+              for any reason, the kernel releases it. A frozen daemon stops
+              renewing a kernel lease, and within about 9 seconds the program
+              passes everything.
             </p>
+          </div>
+        </section>
 
-            <div className="demo-frame">
-              <video
-                className="demo-video"
-                controls
-                preload="metadata"
-                aria-label="SilentMesh demo: an attacker's scan reaching the decoy, and the timing probe that unmasks a fake."
-              >
-                <source src="/demo.mp4" type="video/mp4" />
-                Your browser does not support embedded video.
-                <a href="/demo.mp4">Download the demo</a> instead.
-              </video>
+        <section id="never">
+          <div className="wrap">
+            <SectionHeader index="03" label="what it never does" />
+            <div className="table">
+              {NEVER.map(([never, how]) => (
+                <div className="table-row" key={never}>
+                  <span className="t-key">{never}</span>
+                  <span className="t-val">{how}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="evidence">
+          <div className="wrap">
+            <SectionHeader index="04" label="evidence" />
+            <p className="prose">Each figure names the test or dated measurement behind it.</p>
+            <div className="table three-col">
+              <div className="table-row head"><span>claim</span><span>measured</span><span>proven by</span></div>
+              {EVIDENCE.map(([c, m, p]) => (
+                <div className="table-row" key={c}>
+                  <span className="t-key">{c}</span>
+                  <span className="t-val">{m}</span>
+                  <span className="t-src">{p}</span>
+                </div>
+              ))}
             </div>
 
-            <p className="prose demo-note">
-              Then the numbers behind it. We sent identical industrial-protocol
-              requests to four targets (SilentMesh, a real OpenPLC controller,
-              the standard open-source honeypot, and a plain software server)
-              and measured how long each took to answer. A real controller is
-              slow in a very particular way. Median response, in milliseconds:
+            <h3 className="sub">Looking like the real thing</h3>
+            <p className="prose">
+              A timing probe is the cheapest way to unmask a fake. We sent
+              identical Modbus requests to four targets and measured the median
+              response in milliseconds (4 September 2026).
             </p>
-
             <div className="bench">
               {BENCH.map((b) => (
                 <div className="bench-row" key={b.name}>
                   <span className={"bench-name" + (b.us ? " us" : "")}>{b.name}</span>
                   <div className="bench-track">
-                    <div className={"bench-fill" + (b.us ? " us" : "")}
-                         style={{ width: b.w + "%" }} />
+                    <div className={"bench-fill" + (b.us ? " us" : "")} style={{ width: b.w + "%" }} />
                   </div>
                   <span className={"bench-val" + (b.us ? " us" : "")}>{b.val}</span>
                 </div>
               ))}
             </div>
             <p className="bench-note">
-              SilentMesh's median lands within about 5% of a real PLC's. The
-              honeypot and the bare software server are 20 to 100 times faster,
-              so a single timing probe unmasks either of them. Our timing jitter
-              is still wider than a real PLC's; that is the next tuning target.
-              {" "}<a className="bench-link" href="/blog/tests-that-could-not-fail/">
-                How we test that our timing tests can actually fail →
-              </a>
+              The median sits within about 5% of a real PLC. The open-source
+              honeypot and a plain server answer 20 to 100 times faster, which a
+              single probe exposes. Our spread is still wider than a real PLC's;
+              that is the next tuning target.
             </p>
 
-            <div className="stat-row">
-              {STATS.map((s) => (
-                <div className="stat" key={s.l}>
-                  <div className="n">{s.n}</div>
-                  <div className="l">{s.l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* VALIDATED */}
-        <section id="validated">
-          <div className="wrap">
-            <SectionHeader index="03" label="tested by people trying to break it" />
-            <div className="valid-item">
-              <span className="valid-mark">01</span>
-              <div>
-                <h4>Independent penetration test</h4>
-                <p>Against a live deployment, under written rules of engagement:
-                  no remote code execution, no authentication bypass, no
-                  unauthorised change to process state. Two genuine findings, both
-                  fixed within the engagement.</p>
-              </div>
-            </div>
-            <div className="valid-item">
-              <span className="valid-mark">02</span>
-              <div>
-                <h4>An eight-week external adversarial program</h4>
-                <p>A black-box research cohort probing a live, isolated range for
-                  the three failure modes that matter: fingerprinting the decoy,
-                  slipping past the kernel hook, and forcing a shutdown they were
-                  not authorised to trigger.</p>
-              </div>
-            </div>
-            <div className="valid-item">
-              <span className="valid-mark">03</span>
-              <div>
-                <h4>Findings get shipped, not filed</h4>
-                <p>Every confirmed finding so far (a dashboard identity leak, a
-                  repeated device fingerprint, a logging bottleneck) has already
-                  landed as a fix.</p>
-              </div>
+            <div className="demo-frame">
+              <video className="demo-video" controls preload="metadata"
+                     aria-label="SilentMesh demo: a scan reaching the decoy, and the timing probe.">
+                <source src="/demo.mp4" type="video/mp4" />
+                <a href="/demo.mp4">Download the demo</a>.
+              </video>
             </div>
 
-            {/* B3: recognitions. Finalist placements and conference work only.
-                Directory listings are not recognitions and do not go here. */}
             <div className="recog">
-              <p className="recog-origin">Built in India, designed for global OT/ICS.</p>
               <ul className="recog-list">
                 <li><span>VulnCon</span> presented and reviewed with OT and vulnerability researchers</li>
                 <li><span>E-Yuva, BIRAC</span> finalist</li>
@@ -277,62 +256,75 @@ export default function App() {
           </div>
         </section>
 
-        {/* VISION: where this is going. Aspirational, but on-voice: no hype. */}
-        <section id="vision">
+        <section id="console">
           <div className="wrap">
-            <SectionHeader index="04" label="the company we're building" />
-            <p className="vision-line">
-              The floor and the office were never
-              <br />two networks. <span className="accent">Attackers already know that.</span>
-            </p>
-            <p className="prose vision-prose">
-              A ransomware crew doesn't need to speak Modbus to shut down a
-              line: a phished laptop on the office network, one hop to an
-              engineering workstation, and they're inside the same segment as
-              the PLC. Most plants defend the OT side and the IT side with two
-              different teams and two different tools, and the seam between
-              them is where nearly every real incident starts. SilentMesh
-              exists to cover that seam: kernel-level deception that speaks
-              both worlds, industrial protocols (Modbus/TCP, S7comm,
-              IEC 60870-5-104, DNP3 and OPC UA) on one side and Windows file
-              sharing (SMB) on the other, so an attacker can't find a safe side to land on.
-            </p>
-            <div className="goals">
-              <div className="goal">
-                <span className="kicker accent">where we're headed</span>
-                <p>Make kernel-level deception the default first layer across
-                  the whole plant network: controllers and engineering
-                  workstations alike, not a specialist add-on to either.</p>
-              </div>
-              <div className="goal">
-                <span className="kicker accent">how we get there</span>
-                <p>Earn operator trust the hard way: shadow mode first,
-                  verifiable safety, one-command rollback, before anything ever
-                  runs active.</p>
-              </div>
-              <div className="goal">
-                <span className="kicker accent">what we add</span>
-                <p>Feed the monitoring tools a plant already runs with
-                  higher-fidelity signal than any off-the-shelf honeypot can,
-                  on both the OT and IT side of the same network.</p>
+            <SectionHeader index="05" label="the console" />
+            <div className="two shots">
+              <Shot src="/img/console_02_incident_report.webp"
+                    alt="Incident report with description, timeline, decoy ports and ATT&CK for ICS techniques."
+                    caption="Incident report: what happened in order, which decoys answered, the ATT&CK for ICS techniques, and what the record cannot tell you." />
+              <Shot src="/img/console_04_assurance.webp"
+                    alt="Assurance view: hooks attached, coverage, fail-open events, decoy failures and store size."
+                    caption="Assurance: hook coverage, fail-open events and decoy failures, each figure with its limits stated." />
+            </div>
+          </div>
+        </section>
+
+        <section id="not-yet">
+          <div className="wrap">
+            <SectionHeader index="06" label="not done yet" />
+            <ul className="plain-list">
+              {NOT_YET.map((t) => <li key={t}>{t}</li>)}
+            </ul>
+          </div>
+        </section>
+
+        <section id="log">
+          <div className="wrap">
+            <SectionHeader index="07" label="engineering log" />
+            <ul className="log-list">
+              {LOG.map((p) => (
+                <li key={p.href}><span className="log-date">{p.date}</span><a href={p.href}>{p.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section id="pilot">
+          <div className="wrap">
+            <div className="panel">
+              <div className="pad cta-grid">
+                <div>
+                  <span className="kicker accent">pilot</span>
+                  <h2>30 days on one segment you choose.</h2>
+                  <p className="prose">
+                    Monitor-only first, then the decoys on, against pass criteria
+                    agreed in writing before anything is connected. The plant can
+                    unplug the host at any time and production is unaffected.
+                  </p>
+                  <a className="btn btn-outline" href="/pilot/">What a pilot involves</a>
+                </div>
+                <div className="panel raised mail-panel">
+                  <span className="kicker">contact</span>
+                  <a className="addr" href="mailto:founder@silentmesh.me">founder@silentmesh.me</a>
+                  <span className="kicker faint">no obligation · no sales call</span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* FOUNDER: a quiet signature, not a numbered section. */}
         <section id="founder">
           <div className="wrap founder-block">
             <div className="founder-photo">
               <img src="/founder.jpg" alt="Mayur Agarwala, founder of SilentMesh" />
             </div>
             <div className="founder-text">
-              <span className="kicker accent">who's behind this</span>
+              <span className="kicker accent">founder</span>
               <p className="founder-name">Mayur Agarwala</p>
               <p className="prose founder-line">
-                Founder of SilentMesh. Building kernel-level deception for the
-                seam between plant floor and office network, the path most
-                real intrusions actually take.
+                Builds the kernel program, the decoys and the test harness.
+                Questions about how any of it works reach the person who wrote it.
               </p>
               <div className="founder-contact">
                 <a href="mailto:founder@silentmesh.me">founder@silentmesh.me</a>
@@ -343,41 +335,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* PILOT */}
-        <section id="pilot">
-          <div className="wrap">
-            <div className="panel">
-              <div className="pad cta-grid">
-                <div>
-                  <span className="kicker accent">05 · the ask</span>
-                  <h2>Run it on a real floor. With no disruption.</h2>
-                  <p className="prose">
-                    SilentMesh is opening a small first group of pilots with plants
-                    running industrial controllers or a Windows engineering
-                    workstation, which is nearly all of them.
-                  </p>
-                  <div className="cta-list">
-                    <span className="terminal-line"><span className="dot">●</span> 30 days on one segment you choose</span>
-                    <span className="terminal-line"><span className="dot">●</span> monitor-only first: it observes and changes nothing</span>
-                    <span className="terminal-line"><span className="dot">●</span> works alongside what you already run</span>
-                    <span className="terminal-line"><span className="dot">●</span> pass criteria agreed in writing before anything connects</span>
-                  </div>
-                </div>
-                <div className="panel raised mail-panel">
-                  <div className="mail-watermark"><Mark size={180} /></div>
-                  <span className="kicker">start a conversation</span>
-                  <a className="addr" href="mailto:founder@silentmesh.me">founder@silentmesh.me</a>
-                  <span className="kicker faint">no obligation · no sales call</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* MOTTO BEAT: the pause. Nothing else in view. */}
         <section id="motto-beat">
-          <Mark size={44} />
-          <p className="motto">Deceive,<br /><span className="accent">never disrupt.</span></p>
+          <Mark size={36} />
+          <p className="motto">Deceive, <span className="accent">never disrupt.</span></p>
         </section>
       </main>
 
@@ -389,15 +349,14 @@ export default function App() {
               <span className="wordmark foot-word">Silentmesh</span>
             </div>
             <nav className="foot-nav">
-              <a href="#stakes">Why</a>
-              <a href="#principle">How</a>
-              <a href="#proof">Proof</a>
-              <a href="#vision">Vision</a>
-              <a href="#pilot">Pilot</a>
+              <a href="/pilot/">Pilot</a>
+              <a href="/security/">Security</a>
+              <a href="#log">Log</a>
+              <a href="https://www.linkedin.com/in/mayur-agarwala-42603a21a/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             </nav>
           </div>
           <div className="foot-bottom">
-            <span className="terminal-line">industrial control protocols · it lateral movement · spoken natively</span>
+            <span className="terminal-line">SilentMesh Systems · Bengaluru, India · built for industrial networks worldwide</span>
             <span className="kicker faint">© 2026 SilentMesh Systems</span>
           </div>
         </div>
