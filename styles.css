@@ -1,4 +1,4 @@
-/* SilentMesh — brand system stylesheet.
+/* SilentMesh: brand system stylesheet.
    Tokens taken verbatim from the design kit (colors.css, typography.css,
    spacing.css, shape.css). Single dark world by design: no light mode, no
    second accent, no red, no gradients, no shadows. Kit-strict motion: the
@@ -121,7 +121,7 @@ svg.diagram .strong{fill:var(--text-primary);}
 .node-decoy{stroke:var(--border-accent-strong);}
 .node-real{stroke:var(--border-hair);}
 
-/* stakes — the emotional beat, generous and quiet */
+/* stakes: the emotional beat, generous and quiet */
 .stakes-section{padding:140px 0;}
 .stakes-line{font-family:var(--font-display); font-weight:400; letter-spacing:var(--track-display); font-size:clamp(2rem, 4.6vw, 3.4rem); line-height:1.2; color:var(--text-primary); margin:0; max-width:20ch; text-wrap:balance;}
 .stakes-line .accent{color:var(--sm-signal);}
