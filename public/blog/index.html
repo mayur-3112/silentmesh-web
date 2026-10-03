@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pilot · SilentMesh Systems</title>
-<meta name="description" content="What a SilentMesh pilot involves: one Linux host on one segment, monitor-only first, 30 days with decoys on, against pass criteria agreed in writing before anything is connected.">
+<title>Blog · SilentMesh Systems</title>
+<meta name="description" content="The SilentMesh engineering blog: what we got wrong, how we found it, and what we changed.">
 <meta name="theme-color" content="#0D0F0E">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://www.silentmesh.me/pilot/">
-<meta property="og:title" content="What a pilot involves">
-<meta property="og:description" content="What a SilentMesh pilot involves: one Linux host on one segment, monitor-only first, 30 days with decoys on, against pass criteria agreed in writing before anything is connected.">
+<meta property="og:url" content="https://www.silentmesh.me/blog/">
+<meta property="og:title" content="What we got wrong, and what we changed">
+<meta property="og:description" content="The SilentMesh engineering blog: what we got wrong, how we found it, and what we changed.">
 <meta property="og:site_name" content="SilentMesh Systems">
-<link rel="canonical" href="https://www.silentmesh.me/pilot/">
+<link rel="canonical" href="https://www.silentmesh.me/blog/">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "What a pilot involves",
-  "url": "https://www.silentmesh.me/pilot/",
+  "name": "What we got wrong, and what we changed",
+  "url": "https://www.silentmesh.me/blog/",
   "publisher": {
     "@id": "https://www.silentmesh.me/#organization"
   },
-  "description": "What a SilentMesh pilot involves: one Linux host on one segment, monitor-only first, 30 days with decoys on, against pass criteria agreed in writing before anything is connected."
+  "description": "The SilentMesh engineering blog: what we got wrong, how we found it, and what we changed."
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -163,81 +163,15 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
 <article>
 <div class="wrap">
 
-  <span class="kicker">pilot</span>
-  <h1>What a pilot involves</h1>
-  <div class="byline">30 days · one segment · criteria agreed first</div>
+  <span class="kicker">blog</span>
+  <h1>What we got wrong, and what we changed</h1>
+  <div class="byline">engineering notes from SilentMesh</div>
 
-  <p class="standfirst">
-    One Linux host on one network segment the plant chooses. Two weeks in
-    MONITOR mode, ideally during commissioning or site acceptance testing: it
-    observes and logs, and changes nothing. Then 30 days with the decoys on.
-    <b>The plant can unplug the host at any time, for any reason. Nothing else
-    on the network depends on it.</b>
-  </p>
-
-  <h2>Pass criteria</h2>
-  <p>Agreed in writing before anything is connected. Each line can be checked by
-  the plant itself, without relying on our console.</p>
-  <table>
-    <thead><tr><th>#</th><th>Pass line</th><th>How the plant checks it</th></tr></thead>
-    <tbody>
-      <tr><td>1 no impact</td><td>Zero production stops, alarms or SCADA communication faults caused by SilentMesh</td><td>The plant's own alarm log and communication counters, compared with the monitor-only fortnight</td></tr>
-      <tr><td>2 never initiates</td><td>The host opens zero connections to any PLC, HMI or SCADA machine</td><td>The switch or firewall log for the host's IP address</td></tr>
-      <tr><td>3 fails open, live</td><td>Host unplugged and software stopped with the integrator present: SCADA traffic carries on with no fault</td><td>Watched in the room and written into the acceptance record</td></tr>
-      <tr><td>4 catches a scan</td><td>A test scan, on a date the plant picks without telling us, raises a high-priority alert within 60 seconds</td><td>The plant's clock against our alert time</td></tr>
-      <tr><td>5 few false alarms</td><td>No more than one high-priority false alert per week, averaged over 30 days</td><td>Every high alert is listed weekly; the plant marks each one real or false</td></tr>
-      <tr><td>6 stays up</td><td>Decoys answer at least 99% of the built-in liveness checks</td><td>Uptime table in the weekly summary</td></tr>
-      <tr><td>7 leaves no trace</td><td>Full removal in under 30 minutes on request</td><td>Done in front of the plant</td></tr>
-    </tbody>
-  </table>
-  <p>Criteria 1 to 3 are the safety gate. If any of them fails, the pilot stops,
-  whatever the others show. Criteria 4 to 7 are the value test. A plant can
-  tighten any line before the start.</p>
-
-  <h2>What the plant gets</h2>
-  <ul>
-    <li>A weekly one-page summary: what reached the decoys, each high alert with the plant's real or false marking, and uptime.</li>
-    <li>A pilot report at day 30 and a review meeting.</li>
-    <li>All recorded events stay on site and belong to the plant. Nothing leaves the site unless the plant says so.</li>
-    <li>The pilot fee is credited in full against the first year if the plant continues. A pass does not oblige the plant to buy.</li>
+  <p class="standfirst">Every figure on this site names the test behind it. These posts are about the times a test, a number or an assumption turned out to be wrong, and <b>what we changed so it cannot happen quietly again.</b></p>
+  <ul class="posts">
+    <li><span class="d">3 October 2026</span><a href="/blog/fuzzing-that-ran-nothing/">Our Go fuzzing ran nothing, and every check was green</a><p>For three days the fuzz step passed in 0.6 seconds having fuzzed nothing. A failing command inside a shell for-list is not caught by set -e.</p></li>
+    <li><span class="d">6 September 2026</span><a href="/blog/tests-that-could-not-fail/">We built decoy fingerprint tests that could not fail</a><p>Eight green probes. Then we fed each one a decoy broken in exactly the way it exists to catch, and three results turned out to be facts about the probe.</p></li>
   </ul>
-
-  <h2>Fits the plant, not the other way round</h2>
-  <table>
-    <thead><tr><th>Mode</th><th>What it does</th></tr></thead>
-    <tbody>
-      <tr><td>MONITOR</td><td>Observe and log. Nothing is redirected. Safe on any host, and where every pilot starts.</td></tr>
-      <tr><td>ALERT</td><td>Monitor, plus notifications on contact.</td></tr>
-      <tr><td>REDIRECT</td><td>Decoy-bound connections are handed to the decoys. Normal operation.</td></tr>
-    </tbody>
-  </table>
-  <p>Moving between modes is a setting, not a reinstall. A plant can stay in MONITOR as long as it likes.</p>
-  <ul>
-    <li><b>Per protocol.</b> Each decoy arms and disarms on its own. If one fails, only its protocol stops redirecting.</li>
-    <li><b>Your tools.</b> Slack, Teams, email, a signed webhook, or CEF syslog into the SIEM you already run. Your own scanners can be listed so they are tagged, not paged.</li>
-    <li><b>Your packaging.</b> Debian package, container image or apt repository. Runs on a stock Ubuntu 24.04 kernel and a stock AWS kernel, tested on fresh machines.</li>
-    <li><b>Your access model.</b> One shared token, or named accounts with viewer and admin roles. Console local-only by default, TLS when exposed.</li>
-    <li><b>Your retention.</b> Events stay on site, with a retention window, CSV and XLSX export, and a pilot report built from the stored record.</li>
-  </ul>
-
-  <h2>What we need to start</h2>
-  <ul>
-    <li><b>Commissioning or acceptance dates.</b> Connecting before go-live makes the host part of the accepted baseline from day one.</li>
-    <li><b>The integrator's contact.</b> They receive a one-page install note before anything is connected.</li>
-    <li><b>One segment, one switch port, one IP address.</b> The host is one declared device on the asset register.</li>
-    <li><b>Alert recipients</b>, and whether anything may leave the site.</li>
-    <li><b>A named plant contact</b> for the weekly summary.</li>
-  </ul>
-
-  <h2>Host requirements</h2>
-  <p>Linux with kernel 6.6 or newer (Ubuntu 24.04 works as shipped), installed
-  from a Debian package or a container image. No agent on any plant device, no
-  change to any controller, no inline appliance.</p>
-
-  <div class="pull">
-    <span class="label">start</span>
-    <p>Write to <a href="mailto:founder@silentmesh.me" style="color:var(--sm-signal);text-decoration:none">founder@silentmesh.me</a> with the segment you have in mind. No obligation, no sales call. <a href="/security/" style="color:var(--sm-signal);text-decoration:none">Security details</a> are public.</p>
-  </div>
 
 </div>
 </article>

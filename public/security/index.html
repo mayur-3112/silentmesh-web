@@ -120,6 +120,22 @@ footer{border-top:var(--hair) solid var(--border-hair); padding:36px 0 56px;}
 }
 </style>
 <style>
+.watermark{position:fixed; top:50%; right:-180px; transform:translateY(-50%); opacity:.035; pointer-events:none; z-index:0;}
+header, article, footer{position:relative; z-index:1;}
+header{position:sticky; top:0; z-index:10; background:rgba(13,15,14,.92); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);}
+.site-nav{display:flex; align-items:center; gap:26px;}
+.site-nav a{font:500 11px/1 var(--font-ui); letter-spacing:.2em; text-transform:uppercase; color:var(--text-secondary); text-decoration:none; transition:opacity 120ms linear;}
+.site-nav a:hover{color:var(--text-primary);}
+.site-nav a.nav-cta{color:var(--sm-signal); border:1px solid rgba(95,224,127,.45); padding:9px 14px; border-radius:3px;}
+.posts{list-style:none; padding:0; margin:36px 0 0;}
+.posts li{margin:0; padding:26px 0; border-top:1px solid var(--border-hair);}
+.posts li:last-child{border-bottom:1px solid var(--border-hair);}
+.posts .d{font:400 11px/1.6 var(--font-mono); color:var(--text-tertiary); letter-spacing:.04em;}
+.posts a{display:block; margin-top:8px; font:400 1.7rem/1.2 var(--font-display); letter-spacing:.04em; color:var(--text-primary); text-decoration:none; transition:opacity 120ms linear;}
+.posts a:hover{opacity:.8;}
+.posts p{margin-top:10px;}
+@media (max-width:700px){.watermark{right:-260px;} .watermark svg{width:520px;height:520px;} .site-nav{gap:14px;} .site-nav a{font-size:10px; letter-spacing:.14em;} .header-inner{padding:16px !important;} .wordmark{font-size:16px !important;} .wrap{padding:0 16px !important;}}
+@media (max-width:400px){.site-nav a[href="/security/"]{display:none;}}
 table{width:100%; border-collapse:collapse; margin-top:22px; font-size:.92rem;}
 th{text-align:left; font:500 10px/1.4 var(--font-mono); letter-spacing:.2em; text-transform:uppercase; color:var(--text-tertiary); padding:10px 12px 10px 0; border-bottom:var(--hair) solid var(--border-hair);}
 td{vertical-align:top; padding:12px 12px 12px 0; border-bottom:var(--hair) solid var(--border-hair); color:var(--text-secondary);}
@@ -129,18 +145,18 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
 </head>
 <body>
 
+<div class="watermark" aria-hidden="true"><svg width="760" height="760" viewBox="0 0 80 80" fill="none" stroke="var(--sm-signal)" stroke-width="2" stroke-linecap="square"><path d="M40 6H74V74H6V6H63M63 17H17V63H63V28M52 28V52H28V17" opacity="0.55"/><path d="M40 6H74V74H6V6" opacity="0.9"/><rect x="36" y="36" width="8" height="8" fill="var(--sm-signal)" stroke="none"/></svg></div>
 <header>
   <div class="header-inner">
     <a class="lockup" href="/">
-      <svg width="26" height="26" viewBox="0 0 80 80" fill="none" stroke="var(--sm-signal)"
-           stroke-width="2" stroke-linecap="square" role="img" aria-label="SilentMesh">
-        <path d="M40 6H74V74H6V6H63M63 17H17V63H63V28M52 28V52H28V17" opacity="0.55"/>
-        <path d="M40 6H74V74H6V6" opacity="0.9"/>
-        <rect x="36" y="36" width="8" height="8" fill="var(--sm-signal)" stroke="none"/>
-      </svg>
+      <svg width="26" height="26" viewBox="0 0 80 80" fill="none" stroke="var(--sm-signal)" stroke-width="2" stroke-linecap="square" role="img" aria-label="SilentMesh"><path d="M40 6H74V74H6V6H63M63 17H17V63H63V28M52 28V52H28V17" opacity="0.55"/><path d="M40 6H74V74H6V6" opacity="0.9"/><rect x="36" y="36" width="8" height="8" fill="var(--sm-signal)" stroke="none"/></svg>
       <span class="wordmark">Silentmesh</span>
     </a>
-    <a class="back" href="/">← Back to site</a>
+    <nav class="site-nav">
+      <a href="/blog/">Blog</a>
+      <a href="/security/">Security</a>
+      <a class="nav-cta" href="/pilot/">Pilot</a>
+    </nav>
   </div>
 </header>
 
@@ -159,8 +175,8 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
 
   <h2>Report a vulnerability</h2>
   <p>Email <a href="mailto:founder@silentmesh.me" style="color:var(--sm-signal);text-decoration:none">founder@silentmesh.me</a>
-  with "security" in the subject. We will confirm receipt, keep you informed
-  until it is fixed, and credit you if you want. Please give us a
+  with "security" in the subject. We reply within two working days, keep you
+  informed until it is fixed, and credit you if you want. Please give us a
   reasonable time to fix before publishing. Machine-readable contact:
   <code>/.well-known/security.txt</code>.</p>
 
@@ -171,16 +187,29 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
       <tr><td>never blocks</td><td>The kernel program has two outcomes, pass or hand to a decoy. No drop path exists in the code.</td><td>20,000 random packets per kernel returned byte for byte, new seed each run</td></tr>
       <tr><td>fails open</td><td>The kernel releases the program when the daemon exits for any reason; a frozen daemon loses a kernel lease within about 9 seconds.</td><td>Chaos tests on kernels 6.6 to 7.2 on every change: kill, terminate, freeze, hung and dead decoys, kill switch</td></tr>
       <tr><td>never initiates</td><td>Decoys only answer connections addressed to them.</td><td>A pilot pass criterion, checked against the plant's own switch log</td></tr>
-      <tr><td>can always be disarmed</td><td>The daemon refuses to arm if the console, which carries the kill switch, cannot start.</td><td>Enforced in the startup path; the kill switch itself is exercised by the chaos suite</td></tr>
-      <tr><td>does not steal a real port</td><td>In a redirecting mode it refuses to arm if a decoy port is already in use, and re-checks about once a minute.</td><td>Preflight tests</td></tr>
+      <tr><td>can always be disarmed</td><td>The daemon refuses to arm if the console, which carries the kill switch, cannot start.</td><td>Startup tests</td></tr>
+      <tr><td>does not steal a real port</td><td>In a redirecting mode it refuses to arm if a decoy port is already in use, and re-checks about once a minute.</td><td>Startup tests</td></tr>
       <tr><td>survives hostile input</td><td>Every parser an attacker can reach is fuzzed.</td><td>5,937 structured fuzz cases across seven decoys, zero crashes; 11 Go fuzz targets; the fuzz step fails if no target ran</td></tr>
-      <tr><td>keeps data on site</td><td>Every alert destination is off until configured. The console listens on 127.0.0.1 by default.</td><td>Shipped defaults, documented in the configuration reference</td></tr>
+      <tr><td>keeps data on site</td><td>Every alert destination is off until configured. The console listens on 127.0.0.1 by default.</td><td>Configuration tests</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Measured figures</h2>
+  <table>
+    <thead><tr><th>Figure</th><th>What it measures</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>95.6 ms</td><td>Modbus decoy median response, against 100.9 ms on a real OpenPLC; Conpot 4.7 ms, a plain server 0.8 ms</td><td>Side-by-side differential, 4 September 2026, one environment</td></tr>
+      <tr><td>32.3 ms</td><td>Interquartile range of our decoy's timing, against 1.8 ms for the idle PLC: the median matches, the spread does not yet</td><td>Same differential</td></tr>
+      <tr><td>+0.5 µs</td><td>Median added latency from interception</td><td>Paired benchmark, single environment, four trials</td></tr>
+      <tr><td>17 to 45 ns</td><td>Program time per packet, not end-to-end latency</td><td>BPF_PROG_TEST_RUN on five kernels</td></tr>
+      <tr><td>5 s</td><td>From a write to a decoy to a page; honest traffic raises no high-priority alert</td><td>Detection-quality test on every kernel, synthetic traffic</td></tr>
+      <tr><td>5 kernels</td><td>6.6, 6.8, 6.12, 6.16 and 7.2 under emulation, plus real hardware on one; stock Ubuntu 24.04 and AWS kernels run once on fresh machines</td><td>Kernel matrix on every change</td></tr>
     </tbody>
   </table>
 
   <h2>How changes ship</h2>
   <ul>
-    <li>Nothing reaches the main branch without passing the full gate: build, vet, race detector, decoy tests, the kernel chaos suite on five kernels, fuzzing, a quality ratchet that forbids any metric from getting worse, and a check that blocks banned overclaims in shipped text.</li>
+    <li>Nothing reaches the main branch without passing the full gate: build, vet, race detector, decoy tests, the kernel chaos suite on five kernels, fuzzing, a quality ratchet that forbids any metric from getting worse, and a check that published claims match measured numbers.</li>
     <li>A nightly run repeats the fuzzing for longer, plus soak and longevity tests.</li>
     <li>An independent penetration test against a live deployment found no remote code execution, no authentication bypass and no unauthorised change to process state. Its two findings were fixed during the engagement.</li>
   </ul>
@@ -192,6 +221,9 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
     <li>Incident records carry a SHA-256 to detect edits after export; the event store itself is not append-only and nothing is signed.</li>
     <li>IPv4 only. IPv6 passes through untouched and is not intercepted.</li>
     <li>No third-party security audit or safety certification.</li>
+    <li>No plant runs it yet. Every figure here comes from CI, a lab range and a penetration test; the first pilot turns them into field evidence.</li>
+    <li>Multi-node forwarding is verified across network namespaces on one machine, not yet across separate hosts.</li>
+    <li>Linux 6.6 or newer only, as a Debian package or container image. No RPM yet.</li>
   </ul>
 
 </div>
