@@ -120,11 +120,17 @@ export default function App() {
             <h1>They think they found your PLC.<br /><span className="h1-quiet">You know they are here.</span></h1>
             <p className="lede">
               Decoy controllers that nothing legitimate ever touches, so any
-              contact is a real signal. Watch the same minute from both sides.
+              contact is a real signal. Watch how it works inside a plant.
             </p>
 
-            <Scene />
-            <p className="scene-note">Illustration of tested behaviour with demo addresses. The page time and fail-open are measured on every code change; see <a className="inline" href="#evidence">evidence</a>.</p>
+            <div className="film-frame">
+              <video className="film-video" controls muted autoPlay loop playsInline preload="auto"
+                     poster="/how-it-works/poster.jpg"
+                     aria-label="Film: the plant is the fortress, SilentMesh is the tripwire inside it.">
+                <source src="/how-it-works/silentmesh-film.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <p className="scene-note">150 second film with illustrative addresses. <a className="inline" href="/how-it-works/">Open the interactive version with technical x-ray</a>.</p>
 
             <div className="hero-ctas">
               <a className="btn btn-primary" href="/pilot/">Run a pilot</a>
@@ -147,6 +153,8 @@ export default function App() {
           <div className="wrap">
             <SectionHeader index="01" label="how it works" />
             <h2 className="section-title">Three parts. Each one built to be checked.</h2>
+            <Scene />
+            <p className="scene-note">Illustration of tested behaviour with demo addresses. The page time and fail-open are measured on every code change; see <a className="inline" href="#evidence">evidence</a>.</p>
             <figure className="console">
               <div className="console-bar">
                 <span className="dots"><i /><i /><i /></span>

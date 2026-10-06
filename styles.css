@@ -200,6 +200,8 @@ section{padding:112px 0; position:relative;}
 .figure .l{margin-top:8px; font-size:.92rem; color:var(--text-secondary);}
 .figure .s{margin-top:4px; font:300 11px/1.5 var(--font-mono); color:var(--text-tertiary);}
 .figures .more{margin-top:22px;}
+.film-frame{margin-top:40px; border:var(--hair) solid var(--border-hair); border-radius:var(--radius-card); overflow:hidden; background:var(--surface-terminal);}
+.film-video{display:block; width:100%; aspect-ratio:16/9; background:var(--surface-terminal);}
 .demo-frame{margin-top:64px; border:var(--hair) solid var(--border-hair); border-radius:var(--radius-card);
   overflow:hidden; background:var(--surface-terminal);}
 .demo-video{display:block; width:100%; max-height:560px; background:var(--surface-terminal);}
