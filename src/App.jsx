@@ -105,6 +105,7 @@ export default function App() {
           <nav>
             <a href="#how">How it works</a>
             <a href="#evidence">Evidence</a>
+            <a className="m" href="/how-it-works/">Film</a>
             <a className="m" href="/blog/">Blog</a>
             <a className="m" href="/security/">Security</a>
             <a className="m nav-cta" href="/pilot/">Pilot</a>
@@ -128,6 +129,7 @@ export default function App() {
             <div className="hero-ctas">
               <a className="btn btn-primary" href="/pilot/">Run a pilot</a>
               <a className="btn btn-outline" href="#how">How it works</a>
+              <a className="btn btn-outline" href="/how-it-works/">Watch the film</a>
             </div>
 
             <div className="strengths">
@@ -350,6 +352,7 @@ export default function App() {
               <span className="wordmark foot-word">Silentmesh</span>
             </a>
             <nav className="foot-nav">
+              <a href="/how-it-works/">Film</a>
               <a href="/pilot/">Pilot</a>
               <a href="/security/">Security</a>
               <a href="/blog/">Blog</a>

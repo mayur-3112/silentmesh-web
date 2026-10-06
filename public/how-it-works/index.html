@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How SilentMesh works · SilentMesh Systems</title>
+<meta name="description" content="A 150 second film: the plant is the fortress, SilentMesh is one appliance inside it. Mitigation by diversion, from the plant floor down to the Linux kernel.">
+<meta name="theme-color" content="#08090A">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://www.silentmesh.me/how-it-works/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.silentmesh.me/how-it-works/">
+<meta property="og:title" content="How SilentMesh works">
+<meta property="og:description" content="The plant is the fortress. SilentMesh is the tripwire. A 150 second film, with a technical x-ray mode.">
+<meta property="og:site_name" content="SilentMesh Systems">
+</head>
+<body>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Instrument+Sans:wght@500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--ink:#08090A;--green:#5FE07F;--warm:#F2F4F1;color-scheme:dark}
+html,body{margin:0;background:var(--ink);color:var(--warm)}
+body{padding-inline:16px;padding-block:16px;font-family:'Instrument Sans',system-ui,sans-serif}
+#wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+#stagebox{overflow-x:auto}
+svg{display:block;width:100%;min-width:760px;height:auto;background:var(--ink)}
+.o{stroke:#F2F4F1;stroke-opacity:.42;stroke-width:1.2}
+.thin{stroke-opacity:.2;stroke-width:1}
+.f0{fill:none}.f1{fill:#0B0D0E}.f2{fill:#121516}.f3{fill:#1A1F21}.f4{fill:#262D30}
+.xr .f1{fill-opacity:.12}.xr .f2{fill-opacity:.12}.xr .f3{fill-opacity:.16}.xr .f4{fill-opacity:.2}
+.tx{fill:#F2F4F1;font-family:'IBM Plex Mono',monospace;font-size:13px}
+.lb{fill:#F2F4F1;font-family:'Instrument Sans',sans-serif;font-weight:500;font-size:14px;letter-spacing:.2em;text-transform:uppercase}
+.sf{fill:#F2F4F1;font-family:'Instrument Serif',serif;text-transform:uppercase;letter-spacing:.05em}
+.pk{fill:#F2F4F1}.led{fill:#F2F4F1;fill-opacity:.55}
+.dim{opacity:.4}
+.g .o,.o.g{stroke:#5FE07F;stroke-opacity:1}
+.g .tx,.tx.g,.g .lb,.lb.g,.g .sf,.sf.g{fill:#5FE07F}
+.g .pk,.pk.g,.g .led,.led.g{fill:#5FE07F;fill-opacity:1}
+#ctl,#xray{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+button{background:#0F1112;color:var(--warm);border:1px solid rgba(242,244,241,.3);border-radius:3px;padding:8px 12px;font:500 12px 'Instrument Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}
+button.on{border-color:var(--green);color:var(--green)}
+#clock,#explain{font:400 13px 'IBM Plex Mono',monospace;opacity:.75}
+#xray{display:none}#xray.show{display:flex}
+#explain{min-height:20px}
+.top{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;align-items:center;font:500 12px 'Instrument Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase}
+.top a{color:#F2F4F1;text-decoration:none;opacity:.75}.top a:hover{opacity:1}
+.note{font:400 13px 'IBM Plex Mono',monospace;opacity:.6;max-width:70ch;line-height:1.6;margin:0}
+</style>
+<div id="wrap">
+<div class="top"><a href="/">&larr; silentmesh.me</a><a href="/how-it-works/silentmesh-film.mp4">watch as video, mp4</a><a href="/pilot/">run a pilot</a></div>
+<div id="stagebox"><svg id="svg" viewBox="0 0 1280 720" role="img" aria-label="animated film: a plant is the fortress, SilentMesh is the tripwire">
+<defs><clipPath id="vp"><rect width="1280" height="610"/></clipPath></defs>
+<rect width="1280" height="720" fill="#08090A"/>
+<g clip-path="url(#vp)">
+<g id="cam"><g id="world"></g></g>
+<g id="ov"></g>
+</g>
+<g id="hud"></g>
+</svg></div>
+<div id="ctl"><button id="play">pause</button><button id="restart">restart</button><button id="xb">technical x-ray</button><span id="clock">0.0 s</span></div>
+<div id="xray"></div><div id="explain"></div>
+<p class="note">Illustrative plant and example addresses. Tested on synthetic traffic in virtual machines; no live plant yet. A decoy interaction is not proof of intent.</p>
+</div>
+<script>
+const NS='http://www.w3.org/2000/svg';
+const $=i=>document.getElementById(i);
+const E=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const Gp=(p,id,a)=>E('g',Object.assign(id?{id}:{},a||{}),p);
+const Rc=(p,x,y,w,h,c='o f2',rx=2)=>E('rect',{x,y,width:w,height:h,rx,class:c},p);
+const Tx=(p,x,y,s,c='tx',an='start',sz)=>{const e=E('text',{x,y,class:c,'text-anchor':an},p);if(sz)e.setAttribute('font-size',sz);e.textContent=s;return e};
+const Ln=(p,x1,y1,x2,y2,c='o')=>E('line',{x1,y1,x2,y2,class:c},p);
+const Pl=(p,pts,c='o')=>E('polyline',{points:pts.map(q=>q.join(',')).join(' '),class:c+' f0'},p);
+const Ci=(p,cx,cy,r,c='o f2')=>E('circle',{cx,cy,r,class:c},p);
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const sm=v=>{v=clamp(v);return v*v*(3-2*v)};
+const win=(t,a,b)=>sm((t-a)/(b-a));
+const pulse=(t,a,b,f=.6)=>win(t,a,a+f)*(1-win(t,b-f,b));
+const lerp=(a,b,k)=>a+(b-a)*k;
+function along(pts,p){let L=[],tot=0;for(let i=1;i<pts.length;i++){const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);L.push(d);tot+=d}
+ let d=clamp(p)*tot;for(let i=0;i<L.length;i++){if(d<=L[i]||i==L.length-1){const k=L[i]?d/L[i]:0;return[lerp(pts[i][0],pts[i+1][0],k),lerp(pts[i][1],pts[i+1][1],k)]}d-=L[i]}}
+const elbow=(a,b)=>{const m=(a[1]+b[1])/2;return[a,[a[0],m],[b[0],m],b]};
+const rev=a=>a.slice().reverse();
+
+const W=$('world'),REG={};
+const reg=(id,e)=>{REG[id]=e;return e};
+
+function zone(x,y,w,h,label){const g=Gp(W);E('rect',{x,y,width:w,height:h,rx:14,class:'o thin f0','stroke-dasharray':'3 9'},g);Tx(g,x+24,y+44,label,'lb','start',24);return g}
+function wall(x,y1,y2,label,id){const g=Gp(W,id);Rc(g,x,y1,26,y2-y1,'o f3',2);for(let y=y1+18;y<y2;y+=18)Ln(g,x,y,x+26,y,'o thin');
+ for(let y=y1;y<y2;y+=36)Ln(g,x+(y/36%2?9:17),y,x+(y/36%2?9:17),y+18,'o thin');
+ [y1-34,y2].forEach(yy=>{Rc(g,x-10,yy,46,34,'o f2',2);for(let i=0;i<3;i++)Rc(g,x-10+i*17,yy-8,12,8,'o f2',1)});
+ Rc(g,x-30,568,86,104,'o f1',4);Rc(g,x-8,590,42,60,'o f2',2);Ln(g,x+13,590,x+13,650,'o thin');
+ Tx(g,x+13,y1-50,label,'lb','middle',17);return g}
+function pc(x,y,label,id){const g=Gp(W,id);Rc(g,x,y,90,58,'o f3',3);Rc(g,x+6,y+6,78,42,'o f1',2);Pl(g,[[x+14,y+38],[x+34,y+24],[x+52,y+32],[x+76,y+14]],'o thin');Rc(g,x+36,y+58,18,10,'o f3',0);Rc(g,x+18,y+68,54,8,'o f3',2);Tx(g,x+45,y+(id=='maint'?120:100),label,'lb','middle',12);return g}
+function rack(x,y,label,id,n=6){const g=Gp(W,id);Rc(g,x,y,90,150,'o f2',3);for(let i=0;i<n;i++){Rc(g,x+6,y+8+i*23,78,18,'o f3',1);Ci(g,x+16,y+17+i*23,2.2,'led');Ln(g,x+30,y+17+i*23,x+72,y+17+i*23,'o thin')}Tx(g,x+45,y+176,label,'lb','middle',12);return g}
+function swt(x,y,w,label,id){const g=Gp(W,id);Rc(g,x,y,w,34,'o f3',3);for(let i=0;i<Math.floor((w-16)/14);i++){Rc(g,x+8+i*14,y+8,9,10,'o f1',1);Ci(g,x+12.5+i*14,y+26,1.6,'led')}if(label)Tx(g,x+w/2,y+58,label,'lb','middle',12);return g}
+function plc(x,y,label,id){const g=Gp(W,id);Rc(g,x,y,120,170,'o f2',3);Rc(g,x+8,y+8,104,22,'o f3',1);Tx(g,x+14,y+24,'CPU','tx','start',11);for(let i=0;i<5;i++){Rc(g,x+10+i*20,y+40,16,92,'o f3',1);Ci(g,x+18+i*20,y+50,2,'led');Ln(g,x+18+i*20,y+62,x+18+i*20,y+120,'o thin')}Ln(g,x+8,y+142,x+112,y+142,'o thin');Tx(g,x+60,y+196,label,'lb','middle',12);return g}
+function hmi(x,y,id){const g=Gp(W,id);Rc(g,x,y,130,96,'o f3',4);Rc(g,x+8,y+8,114,66,'o f1',2);for(let i=0;i<5;i++)Rc(g,x+18+i*20,y+66-(10+i*8),12,10+i*8,'o f4',1);Ci(g,x+65,y+86,3,'led');Tx(g,x+65,y+128,'HMI','lb','middle',12);return g}
+function rtu(x,y,id){const g=Gp(W,id);Rc(g,x,y,110,80,'o f2',3);for(let i=0;i<4;i++){Rc(g,x+10+i*24,y+12,18,36,'o f3',1);Ci(g,x+19+i*24,y+60,2,'led')}Tx(g,x+55,y+112,'RTU','lb','middle',12);return g}
+function room(x,y,w,h){const g=Gp(W,'room');Rc(g,x,y,w,h,'o f1',6);Tx(g,x+20,y+30,'CONTROL ROOM','lb','start',14);
+ for(let i=0;i<3;i++){Rc(g,x+30+i*92,y+42,78,40,'o f3',2);Pl(g,[[x+38+i*92,y+74],[x+58+i*92,y+58],[x+76+i*92,y+66],[x+98+i*92,y+50]],'o thin')}
+ for(let i=0;i<3;i++){Rc(g,x+24+i*92,y+104,90,18,'o f3',2);Ci(g,x+69+i*92,y+96,7,'o f3')}
+ Rc(g,x+w-210,y+42,190,70,'o f2',3);Rc(g,x+w-196,y+54,100,34,'o f1',2);Ci(g,x+w-70,y+66,9,'o f3');Rc(g,x+w-84,y+78,28,22,'o f3',4);Tx(g,x+w-115,y+130,'SECURITY ANALYST','lb','middle',11);return g}
+function cloud(x,y){const g=Gp(W,'inet');[[0,0,52],[70,-18,60],[142,0,52],[40,26,46],[104,28,46]].forEach(a=>Ci(g,x+a[0],y+a[1],a[2],'o f2'));Tx(g,x+70,y+130,'INTERNET','lb','middle',20);return g}
+function conveyor(x,y,w){const g=Gp(W,'conv');Rc(g,x,y,w,26,'o f3',13);for(let i=0;i<w/30;i++)Ci(g,x+14+i*30,y+13,5,'o f1');
+ Rc(g,x+w-70,y-120,70,140,'o f2',8);Ln(g,x+w-70,y-70,x+w,y-70,'o thin');Ln(g,x+w-70,y-40,x+w,y-40,'o thin');Pl(g,[[x+w-35,y-120],[x+w-35,y-150],[x+w-140,y-150]],'o');Tx(g,x+w/2-40,y+66,'PRODUCTION LINE','lb','middle',12);
+ REG.boxes=[];for(let i=0;i<5;i++)REG.boxes.push(Rc(g,0,y-26,26,26,'o f4',2));REG.convx=[x,w-90,y];return g}
+function sma(x,y,id){const g=Gp(W,id);Rc(g,x,y,120,54,'o f3',4);Rc(g,x+10,y+12,20,30,'o f1',1);Rc(g,x+38,y+12,72,8,'o f1',1);Rc(g,x+38,y+28,72,8,'o f1',1);reg('smled',Ci(g,x+104,y+46,3,'led'));Tx(g,x+60,y+86,'SILENTMESH','lb','middle',13);return g}
+function pcbg(){E('rect',{x:0,y:0,width:2600,height:1300,fill:'#08090A'},W);for(let x=0;x<=2600;x+=100)Ln(W,x,0,x,1300,'o thin');for(let y=0;y<=1300;y+=100)Ln(W,0,y,2600,y,'o thin');W.lastChild.previousSibling}
+
+// ground grid kept very faint
+const grid=Gp(W,'grid',{opacity:.35});for(let x=0;x<=2600;x+=100)Ln(grid,x,100,x,1200,'o thin');for(let y=100;y<=1200;y+=100)Ln(grid,0,y,2600,y,'o thin');
+zone(400,160,500,940,'IT NETWORK');zone(1000,160,700,940,'OT NETWORK');zone(1800,160,760,940,'CONTROL NETWORK');
+cloud(110,560);
+wall(330,300,920,'PERIMETER FIREWALL','fw1');wall(940,300,920,'IT / OT FIREWALL','fw2');wall(1740,300,920,'SEGMENTATION','fw3');
+// IT
+pc(440,300,'OFFICE PC');pc(570,300,'OFFICE PC');pc(700,300,'OFFICE PC');rack(450,820,'FILE / MAIL',null,5);rack(760,780,'SIEM (existing)','siem',6);swt(560,640,120,'IT SWITCH','itsw');
+// OT
+rack(1060,260,'SCADA SERVER','scada');rack(1200,260,'HISTORIAN','hist',5);rack(1560,260,'OT MONITOR (existing)','mon',4);
+swt(1290,600,120,'OT CORE SWITCH','core');pc(1060,880,'ENGINEERING WS','ews');pc(1230,880,'MAINTENANCE WS','maint');sma(1470,880,'sm');
+// control
+room(1840,235,680,150);swt(1880,640,100,'CONTROL SWITCH','csw');plc(2050,430,'PLC 1','plc1');plc(2200,430,'PLC 2','plc2');plc(2350,430,'S7 PLC','plc3');rtu(2060,760,'rtu');hmi(2230,760,'hmi');conveyor(1990,1040,500);
+
+// cables (device end first, hub end last)
+const CAB={};
+const cab=(n,a,b)=>{CAB[n]=elbow(a,b);Pl(W,CAB[n],'o')};
+CAB.fw=[[260,620],[345,620]];Pl(W,CAB.fw,'o');
+CAB.itfw=[[680,657],[800,657],[800,620],[945,620]];Pl(W,CAB.itfw,'o');
+CAB.otin=[[965,620],[1000,620],[1000,617],[1290,617]];Pl(W,CAB.otin,'o');
+CAB.pcs=[[485,388],[485,520],[620,520],[620,640]];Pl(W,CAB.pcs,'o');
+cab('scada',[1105,410],[1310,600]);cab('hist',[1245,410],[1350,600]);cab('mon',[1605,410],[1390,600]);
+cab('ews',[1105,880],[1310,634]);cab('maint',[1275,880],[1350,634]);cab('smc',[1530,880],[1390,634]);
+CAB.seg=[[1410,617],[1740,617],[1750,617],[1760,617],[1790,617],[1790,657],[1880,657]];Pl(W,CAB.seg,'o');
+cab('plc1',[2110,600],[1910,640]);cab('plc2',[2260,600],[1930,640]);cab('plc3',[2410,600],[1950,640]);
+cab('rtuc',[2115,760],[1915,674]);cab('hmic',[2295,760],[1935,674]);
+CAB.roomc=[[1900,385],[1900,640]];Pl(W,CAB.roomc,'o');
+E('polyline',{points:'1605,410 1605,500 1400,500 1400,600',class:'o thin f0','stroke-dasharray':'4 6'},W);Tx(W,1500,488,'mirror port','tx','middle',11);
+const route=(...a)=>[].concat(...a);
+const RT={
+ hmiplc:route(CAB.hmic,rev(CAB.plc3)),scadaplc:route(CAB.scada,rev(CAB.otin),CAB.seg,rev(CAB.plc1)),
+ histplc:route(CAB.hist,rev(CAB.otin),CAB.seg,rev(CAB.plc2)),
+ attplc:route(CAB.maint,CAB.seg,rev(CAB.plc1)),attscada:route(CAB.maint,rev(CAB.scada)),attsm:route(CAB.maint,rev(CAB.smc)),
+ atthist:route(CAB.maint,rev(CAB.hist)),attews:route(CAB.maint,rev(CAB.ews)),attmon:route(CAB.maint,rev(CAB.mon))
+};
+// trim fixed duplicates so scada/hist routes start at device and cross the core cleanly
+RT.scadaplc=route(CAB.scada,[[1330,617]],CAB.seg.slice(0),rev(CAB.plc1));
+RT.histplc=route(CAB.hist,[[1350,617]],CAB.seg.slice(0),rev(CAB.plc2));
+RT.attplc=route(CAB.maint,[[1350,617]],CAB.seg.slice(0),rev(CAB.plc1));
+const OV=$('ov'),HUD=$('hud');
+const ink=(p,o)=>E('rect',{x:0,y:0,width:1280,height:610,fill:'#08090A','fill-opacity':o},p);
+const arrow=(p,pts,c='o')=>{Pl(p,pts,c);const a=pts[pts.length-2],b=pts[pts.length-1],d=Math.atan2(b[1]-a[1],b[0]-a[0]);const s=8;
+ E('polygon',{points:[[b[0],b[1]],[b[0]-s*Math.cos(d-.45),b[1]-s*Math.sin(d-.45)],[b[0]-s*Math.cos(d+.45),b[1]-s*Math.sin(d+.45)]].map(q=>q.join(',')).join(' '),class:'pk',opacity:.6},p)};
+const blk=(p,id,x,y,w,h,title,sub,c='o f2')=>{const g=Gp(p,id);Rc(g,x,y,w,h,c,6);Tx(g,x+14,y+26,title,'lb','start',13);if(sub)Tx(g,x+14,y+46,sub,'tx','start',12);reg(id,g);return g};
+
+// INSIDE
+const IN=reg('inside',Gp(OV));ink(IN,.9);
+Tx(IN,40,52,'inside the appliance','lb','start',16);
+blk(IN,'i_nic',60,230,130,150,'NIC','port, eth0');Rc(IN,80,300,90,50,'o f3',3);for(let i=0;i<4;i++)Rc(IN,88+i*20,310,14,16,'o f1',1);
+const K=Gp(IN);Rc(K,250,120,600,300,'o f1',8);Tx(K,270,148,'LINUX KERNEL','lb','start',15);reg('i_kern',K);
+blk(IN,'i_ebpf',290,200,210,150,'eBPF','tcx ingress hook');
+Tx(IN,304,262,'reads: dest address','tx','start',12);Tx(IN,304,282,'in local_addrs ?','tx','start',12);Tx(IN,304,302,'proto_armed ?','tx','start',12);Tx(IN,304,330,'a decision, not a brain','tx','start',12);
+blk(IN,'i_red',570,200,250,150,'REDIRECT','to the decoy path');Tx(IN,584,262,'only traffic addressed','tx','start',12);Tx(IN,584,282,'to this host','tx','start',12);Tx(IN,584,310,'all else: untouched','tx','start',12);
+const DC=blk(IN,'i_decoy',910,120,320,300,'PROTOCOL DECOYS','user space');
+['S7comm   102','Modbus    502','IEC-104   2404','DNP3      20000','OPC UA    4840','SMB       445'].forEach((s,i)=>{Rc(DC,930,176+i*38,280,28,'o f3',3);Tx(DC,944,195+i*38,s,'tx','start',12)});
+blk(IN,'i_evt',560,470,200,80,'EVENTS','perf map');blk(IN,'i_daemon',820,470,160,80,'DAEMON','user space');blk(IN,'i_alert',1040,470,190,80,'ALERT','email, syslog, webhook');
+arrow(IN,[[190,305],[290,305]]);arrow(IN,[[500,275],[570,275]]);arrow(IN,[[820,275],[910,275]]);
+arrow(IN,[[395,350],[395,510],[560,510]]);arrow(IN,[[1070,420],[1070,445],[900,445],[900,470]]);arrow(IN,[[760,510],[820,510]]);arrow(IN,[[980,510],[1040,510]]);
+const IC=reg('inspect',Gp(IN));Rc(IC,60,420,300,170,'o f2',6);
+[['DESTINATION','10.20.10.50'],['PROTOCOL','S7'],['PORT','102'],['POLICY','DECOY'],['DECISION','REDIRECT']].forEach((r,i)=>{Tx(IC,76,448+i*28,r[0],'lb','start',11);Tx(IC,230,448+i*28,r[1],'tx','start',13)});
+const PIN=[[40,305],[395,305]],PRED=[[395,305],[395,215],[695,215],[695,305],[910,305]];
+
+// DECOY VIEW
+const DV=reg('decoyv',Gp(OV));ink(DV,.93);
+const cab1=Gp(DV);Rc(cab1,150,100,250,400,'o f2',6);Rc(cab1,170,120,210,50,'o f3',3);Tx(cab1,184,152,'CPU','tx','start',13);
+for(let i=0;i<5;i++){Rc(cab1,172+i*40,190,32,200,'o f3',2);Ci(cab1,188+i*40,206,3,'led')}Tx(cab1,275,540,'S7 PLC  10.20.10.50','lb','middle',14);
+const fr=reg('decframe',Gp(DV));E('rect',{x:120,y:70,width:310,height:480,rx:10,class:'o f0','stroke-dasharray':'8 8'},fr);Tx(fr,275,62,'DECOY','lb','middle',16);
+const prot=reg('decprots',Gp(DV));['MODBUS','S7','IEC-104','DNP3','OPC UA','SNMP','SMB'].forEach((s,i)=>{Rc(prot,470+(i%4)*190,70+Math.floor(i/4)*52,170,38,'o f3',4);Tx(prot,555+(i%4)*190,94+Math.floor(i/4)*52,s,'lb','middle',12)});
+const dlg=reg('dialog',Gp(DV));
+[['request','S7 setup communication, port 102'],['reply','accepted, pdu size negotiated'],['request','read CPU identity'],['reply','identity of an S7 CPU model']].forEach((r,i)=>{Rc(dlg,470,200+i*64,720,48,'o f2',4);Tx(dlg,486,230+i*64,r[0],'lb','start',12);Tx(dlg,600,230+i*64,r[1],'tx','start',13)});
+Tx(dlg,470,480,'protocol-correct answers. no real process, no real equipment behind them.','tx','start',13);
+const evd=reg('evid',Gp(DV));['READ','WRITE','ENUMERATION'].forEach((s,i)=>{Rc(evd,470+i*180,100,160,40,'o f3',4);Tx(evd,550+i*180,125,s,'lb','middle',12);evd.lastChild.id='st'+i});
+Rc(evd,470,170,420,230,'o f2',6);[['SOURCE','10.20.4.17'],['TARGET','S7 DECOY'],['ACTION','WRITE REQUEST'],['PROTOCOL','S7'],['TIME','14:32:17']].forEach((r,i)=>{Tx(evd,490,206+i*40,r[0],'lb','start',12);Tx(evd,640,206+i*40,r[1],'tx','start',13)});
+Tx(evd,490,432,'example record, not live data','tx','start',12);
+arrow(evd,[[890,285],[960,285]]);Rc(evd,960,235,230,100,'o f3',6);Tx(evd,975,268,'TO THE OPERATOR','lb','start',12);Tx(evd,975,292,'evidence travels with','tx','start',12);Tx(evd,975,310,'the alert','tx','start',12);
+
+// SPLIT
+const SP=reg('split',Gp(OV));ink(SP,.94);Ln(SP,640,70,640,560,'o thin');
+Tx(SP,40,60,'NORMAL PLANT TRAFFIC','lb','start',15);Tx(SP,680,60,'A SUSPICIOUS INTERACTION','lb','start',15);
+const lanes=[['HMI','PLC'],['SCADA','PLC'],['HISTORIAN','PLC'],['ENGINEERING','PLC']];
+lanes.forEach((l,i)=>{const y=130+i*100;Rc(SP,40,y-24,150,48,'o f3',4);Tx(SP,115,y+5,l[0],'lb','middle',11);Rc(SP,450,y-24,150,48,'o f3',4);Tx(SP,525,y+5,l[1],'lb','middle',11);Ln(SP,190,y,450,y,'o')});
+Tx(SP,40,540,'everything continues, nothing waits','tx','start',13);
+const chain=['ATTACKER','SILENTMESH','DECOY','INTERACTION','ALERT'];chain.forEach((s,i)=>{const y=100+i*86;const g=reg('ch'+i,Gp(SP));Rc(g,760,y,260,52,'o f3',5);Tx(g,890,y+31,s,'lb','middle',13);if(i)arrow(SP,[[890,y-34],[890,y]])});
+Tx(SP,680,560,'diverted, not blocked','tx','start',13);
+
+// STATE CARD (alert, failure, rearm)
+const AC=reg('alertc',Gp(OV));Rc(AC,760,30,500,320,'o f1',8);reg('acr',AC.lastChild);Tx(AC,784,70,'HIGH-CONFIDENCE OT INTERACTION','lb','start',14);
+[['SOURCE','10.20.4.17'],['TARGET','S7 decoy'],['PROTOCOL','S7'],['ACTION','WRITE REQUEST'],['EVIDENCE','decoy interaction']].forEach((r,i)=>{Tx(AC,784,112+i*38,r[0],'lb','start',12);Tx(AC,930,112+i*38,r[1],'tx','start',13)});
+Tx(AC,784,322,'a decoy interaction is not proof of intent','tx','start',12);
+const ST=reg('statec',Gp(OV));Rc(ST,780,30,480,330,'o f1',8);Tx(ST,804,68,'SILENTMESH STATE','lb','start',14);reg('stbig',Tx(ST,804,320,'','sf','start',44));
+const rows=[];for(let i=0;i<5;i++){const a=Tx(ST,804,112+i*38,'','lb','start',12),b=Tx(ST,1000,112+i*38,'','tx','start',13);rows.push([a,b])}
+const lease=Gp(ST);Rc(lease,804,300-8,400,10,'o f2',2);reg('leasebar',Rc(lease,804,292,0,10,'o f4',2));reg('leasetx',Tx(lease,804,284,'','tx','start',12));
+const EN=reg('endc',Gp(OV));ink(EN,.95);Tx(EN,640,170,'SILENTMESH','sf','middle',60);Tx(EN,640,214,'Deceive, never disrupt.','sf','middle',26);
+['five linux kernel versions, in virtual machines','20,000 packets per kernel came back byte-identical','17 to 45 ns per packet inside the kernel program','steps aside in about 9 s worst case, if the software freezes','tested on synthetic traffic. no live plant yet.'].forEach((s,i)=>Tx(EN,640,290+i*40,s,'tx','middle',13));
+reg('endlive',Ci(EN,640,520,5,'pk'));
+
+// world extras: tags + evidence flows
+const TG=reg('tags',Gp(W));[['fw1',345,270,'firewall'],['fw2',955,270,'firewall'],['fw3',1755,270,'segmentation'],['siem',805,740,'siem'],['mon',1605,230,'monitoring'],['sm',1530,820,'decoys + evidence']].forEach(a=>{const w=a[3].length*9+24;Rc(TG,a[1]-w/2,a[2]-20,w,28,'o f2',14);Tx(TG,a[1],a[2]-2,a[3],'lb','middle',11)});
+RT.evroom=route(CAB.smc,[[1350,617]],CAB.seg,[[1900,657]],rev(CAB.roomc));RT.evsiem=route(CAB.smc,[[1350,617]],rev(CAB.otin),rev(CAB.itfw),[[805,657],[805,780]]);
+const TW=reg('wire',Gp(W));E('line',{x1:1470,y1:800,x2:1620,y2:800,class:'o f0','stroke-dasharray':'2 10'},TW);[1470,1620].forEach(x=>{Rc(TW,x-5,788,10,26,'o f3',2)});Tx(TW,1545,780,'tripwire: a decoy address nobody should touch','tx','middle',12);
+// chips + caption
+const LV=['PLANT','NETWORK','APPLIANCE','KERNEL','PACKET','DECOY','EVENT'];let lx=24;const lvEls=LV.map(s=>{const e=Tx(HUD,lx,28,s,'lb','start',11);lx+=s.length*13+34;return e});
+Rc(HUD,0,610,1280,110,'o f1',0);
+const C1=Tx(HUD,640,650,'','sf','middle',32),C2=Tx(HUD,640,688,'','sf','middle',32),C3=Tx(HUD,640,706,'','tx','middle',13);
+const TOTAL=150;let T=0,playing=true,XR=false,XSEL=null;
+const KF=[[0,1300,640,.48],[5,1300,640,.48],[8,200,640,.8],[10,640,640,.8],[12,1000,640,.8],[14,1400,640,.8],[16,1900,640,.8],[18,1300,760,.75],[21,1350,700,.6],[24,1400,780,.9],[27,1480,860,1.5],[28,1500,900,2.0],[32,1520,930,2.0],[36,1480,820,1],[44,1450,780,.9],[46.5,1500,880,3.2],[56,1500,880,3.2],[57.5,1250,880,1.6],[60,1330,720,1.2],[62.5,1500,860,2.4],[68,1500,860,2.4],[86,1500,860,2.4],[88,2000,430,.95],[102,2000,430,.95],[104,1300,640,.5],[110,1300,640,.5],[110.5,1450,780,1.1],[113,1900,740,.72],[120,1900,740,.72],[120.5,1500,860,1.9],[126,1500,860,1.9],[128,1300,640,.48],[150,1300,640,.48]];
+function camAt(t){let i=0;while(i<KF.length-2&&t>KF[i+1][0])i++;const a=KF[i],b=KF[i+1],k=sm((t-a[0])/(b[0]-a[0]));return[lerp(a[1],b[1],k),lerp(a[2],b[2],k),lerp(a[3],b[3],k)]}
+const CAP=[[0,5,'YOUR PLANT IS ALREADY A FORTRESS.','firewalls, segmented networks, monitoring, and people who know every machine'],[5,8,"BUT ATTACKERS DON'T ALWAYS BREAK THE GATES.",'the next one may already be inside, on a machine you trust'],
+[8,15,'EVERY LAYER DOES ITS JOB.','internet > perimeter firewall > it network > it/ot firewall > ot network > control network > plc, hmi, scada'],[15,18,'SILENTMESH DOES NOT REPLACE ANY OF IT.','firewalls, segmentation, monitoring and siem stay exactly where they are. it adds the one thing they do not: something false for an intruder to touch'],
+[18,24,'THEN ONE TRUSTED MACHINE TURNS.','the maintenance workstation, 10.20.4.17, is compromised and starts looking for plcs. some probes are blocked, some ignored, some look normal'],[24,28,'NOW IT FINDS SOMETHING THAT LOOKS LIKE A PLC.','from the network, it has no way to tell which machine is real'],
+[28,36,'MEET SILENTMESH.','mitigation by diversion. one small box on the ot network: linux, ebpf, protocol decoys, event detection, alerting'],
+[36,42,'IT SITS BESIDE THE TRAFFIC, NOT IN FRONT OF IT.','it blocks nothing. plc, scada, hmi and engineering traffic continue as before'],[42,46,"THE TRIPWIRE DOESN'T BLOCK THEM.|IT DIVERTS THEM AWAY FROM THE REAL PLC.",'the decoy address is one nobody should use, so contact lands on a decoy, not on equipment, and becomes a signal'],
+[46,56,'HOW? FOLLOW IT INSIDE THE BOX.','nic > linux kernel > ebpf > redirect > protocol decoy'],[56,63,'FOLLOW ONE PACKET.','from the maintenance workstation, across the switch and cable, to the nic of the appliance'],[63,68.5,'ONE SMALL DECISION.','ebpf compares the destination with its list of host addresses and the policy, then redirects. only traffic addressed to the host.'],
+[68.5,75,'AND THE ATTACKER GETS AN ANSWER.','the decoy replies the way a controller would. no real equipment, no real process behind it'],[75,78.5,'IT IS A DECOY, AND IT SPEAKS THE PROTOCOL.','modbus, s7, iec-104, dnp3, opc ua, snmp, smb'],
+[78.5,86.5,'THEY TOUCHED SOMETHING THEY SHOULD NOT HAVE.','the decoy absorbs it and records who, what, which protocol, and when. the real plc never sees it'],
+[86.5,94.5,'THE ATTEMPT WAS ABSORBED. THE OPERATOR HAS TIME TO ACT.','the attacker is spending effort on a decoy while the evidence reaches the people who can respond'],[94.5,102.5,'NORMAL OPERATIONS CONTINUE.|SUSPICIOUS INTERACTIONS BECOME VISIBLE.','left: nothing changes for the plant. right: one chain of evidence'],
+[102.5,110.5,'NOT A REPLACEMENT. A MISSING LAYER.','it sits beside firewalls, segmentation, monitoring and siem, and gives them something to react to'],
+[110.5,120.5,'IF SILENTMESH FAILS, IT GETS OUT OF THE WAY.','process killed: the kernel removes the hook. frozen: the lease timer releases it, about 9 s worst case. plant traffic is never held'],
+[120.5,126,'THE TRIPWIRE COMES BACK.','daemon restarted, hook attached, decoys listening, lease renewed'],[126,134,'THE PLANT IS THE FORTRESS.|SILENTMESH IS THE TRIPWIRE.','mitigation by diversion: effort that would reach a real plc goes to a decoy instead'],[134,142.5,"DON'T WAIT FOR THE ATTACKER TO REACH THE REAL PLC.|GIVE THEM SOMETHING ELSE TO TOUCH.",'']];
+const LVL=[[0,18,0],[18,46,1],[46,48.5,2],[48.5,56,3],[56,68.5,4],[68.5,78.5,5],[78.5,86.5,6],[86.5,94.5,0],[94.5,102.5,1],[102.5,150,0]];
+const XL=[['physical plant','world','The real fortress: PLCs, HMIs, SCADA, switches, firewalls and people. SilentMesh adds one appliance to it.'],['network','core','OT switches and cables. SilentMesh sits on a switch port and is not in the traffic path.'],['appliance','sm','One Linux box or VM that presents decoy industrial devices on its own address.'],['nic','i_nic','Packets addressed to the host arrive here first.'],['linux kernel','i_kern','Linux 6.6 or newer. The kernel networking path is where the hook runs.'],['ebpf','i_ebpf','Kernel-level program used to process network events and perform the configured redirect.'],['redirect','i_red','Only traffic addressed to the host is redirected to the decoy path. Other traffic is untouched.'],['decoy','i_decoy','User-space services that speak Modbus, S7, IEC-104, DNP3, OPC UA, SMB, plus SNMP. No real equipment behind them.'],['telemetry','i_evt','Each decoy contact becomes an event: source, target, protocol, action and time.'],['alert','i_alert','The alert goes to the people and tools the plant chooses, with the evidence attached.']];
+
+// dynamic world pieces
+const DOTS={};
+function dot(id,pts,p,r=6,op=1,parent=W,cls='pk'){let e=DOTS[id];if(!e){e=DOTS[id]=E('circle',{r,class:cls},parent);REG[id]=e}
+ if(p<0||p>1||op<=0){e.setAttribute('opacity',0);return}const q=along(pts,p);e.setAttribute('cx',q[0]);e.setAttribute('cy',q[1]);e.setAttribute('r',r);e.setAttribute('opacity',op)}
+const fracAt=(pts,f)=>{for(let i=0;i<=400;i++)if(f(along(pts,i/400)))return i/400;return 1};
+const opx=(id,v)=>{const e=REG[id];if(e)e.setAttribute('opacity',v)};
+const ring=E('rect',{x:1212,y:858,width:126,height:170,rx:8,class:'o f0','stroke-dasharray':'6 6'},W);const ringT=Tx(W,1275,1052,'compromised  10.20.4.17','tx','middle',12);
+const xm=[];for(let i=0;i<3;i++){const g=Gp(W);Ln(g,-9,-9,9,9,'o');Ln(g,-9,9,9,-9,'o');xm.push(g)}
+const smc=Gp(W);['OT DECEPTION APPLIANCE'].forEach(s=>Tx(smc,1530,1010,s,'lb','middle',13));
+const smchips=['linux','ebpf','protocol decoys','event detection','alerting'].map((s,i)=>Tx(W,1625,892+i*24,s,'tx','start',13));
+const plab=Tx(W,0,0,'','tx','start',13);const hmiTx=Tx(W,2295,900,'HMI to PLC: unchanged','tx','middle',12);
+const PRB=[[19,RT.attscada,'ok'],[20.6,RT.attplc,'block'],[22.2,RT.atthist,'ignore'],[23.6,RT.attews,'ok'],[24.6,RT.attsm,'hit']];
+const blockP=fracAt(RT.attplc,q=>q[0]>=1735),crossP=fracAt(RT.attsm,q=>q[0]>1500&&q[1]>=800);
+RT.legit=route(CAB.fw,[[600,620],[600,657]],CAB.itfw,CAB.otin,[[1350,617]],CAB.seg,rev(CAB.plc3));
+const NR=[RT.hmiplc,RT.scadaplc,RT.histplc];
+const chipsP=['ATTACKER','PLANT','SILENTMESH','DECOY','INTERACTION','EVIDENCE','ALERT','OPERATOR'];const PC=reg('pchips',Gp(OV));
+chipsP.forEach((s,i)=>{const g=reg('pc'+i,Gp(PC));Rc(g,28+i*155,548,140,36,'o f3',4);Tx(g,98+i*155,571,s,'lb','middle',11);if(i)arrow(PC,[[170+(i-1)*155,566],[28+i*155,566]],'o thin')});
+const lvEl=lvEls;let curF=[];
+function setFocus(a){curF.forEach(i=>REG[i]&&REG[i].classList.remove('g'));a.forEach(i=>REG[i]&&REG[i].classList.add('g'));curF=a}
+const at=(t,a,b)=>t>=a&&t<b;
+function setCap(m,s){const L=m.split('|');C1.textContent=L[0];C2.textContent=L[1]||'';C1.setAttribute('y',L[1]?644:658);C2.setAttribute('y',678);C3.textContent=s;C3.setAttribute('y',L[1]?704:692)}
+function rowsSet(a){rows.forEach((r,i)=>{r[0].textContent=a[i]?a[i][0]:'';r[1].textContent=a[i]?a[i][1]:''})}
+
+const SPD=E('defs',{},W),SPM=E('mask',{id:'spm',maskUnits:'userSpaceOnUse',x:0,y:0,width:2600,height:1300},SPD);E('rect',{x:0,y:0,width:2600,height:1300,fill:'#fff'},SPM);const SPH=E('circle',{cx:1470,cy:880,r:200,fill:'#000'},SPM);
+const SPG=Gp(W);const SPR=E('rect',{x:0,y:0,width:2600,height:1300,fill:'#08090A',mask:'url(#spm)',opacity:0},SPG);const SPC=E('circle',{cx:1470,cy:880,r:200,fill:'none',class:'o','stroke-dasharray':'3 9',opacity:0},SPG);
+const SPS=[[28,36,.78,215],[36,46,.6,300],[102.5,110.5,.7,230],[126,134,.65,230]];
+function spot(t){let op=0,r=200;for(const x of SPS){const v=pulse(t,x[0],x[1],1)*x[2];if(v>op){op=v;r=x[3]}}if(XR)op=0;SPH.setAttribute('r',r);SPC.setAttribute('r',r);SPR.setAttribute('opacity',op);SPC.setAttribute('opacity',op?Math.min(1,op*1.4):0);W.appendChild(SPG)}
+function setTime(t){T=t;spot(t);$('clock').textContent=t.toFixed(1)+' s';
+ const c=camAt(t);$('cam').setAttribute('transform',`translate(${640-c[0]*c[2]},${305-c[1]*c[2]}) scale(${c[2]})`);
+ // captions + levels
+ let cp=null;for(const x of CAP)if(t>=x[0]&&t<x[1])cp=x;setCap(cp?cp[2]:'',cp?cp[3]:'');const ca=cp?Math.min(win(t,cp[0],cp[0]+.5),1-win(t,cp[1]-.3,cp[1])):0;[C1,C2,C3].forEach(e=>e.setAttribute('opacity',ca));
+ let lv=0;for(const x of LVL)if(t>=x[0]&&t<x[1])lv=x[2];lvEl.forEach((e,i)=>{e.setAttribute('opacity',i==lv?1:.3);e.setAttribute('text-decoration',i==lv?'underline':'none')});
+ // overlays
+ const inV=Math.max(pulse(t,46.5,56),pulse(t,62.8,68.6)),dv=pulse(t,68.4,86.6),spv=pulse(t,94.4,102.6),acv=pulse(t,86.6,94.6),stv=Math.max(pulse(t,110.8,126.2),0),en=win(t,142.6,143.8);
+ opx('inside',XR?1:inV);opx('decoyv',dv);opx('split',spv);opx('alertc',acv);opx('statec',stv);opx('endc',en);opx('pchips',pulse(t,127,142.8));
+ $('world').classList.toggle('xr',XR);
+ // plant life
+ const live=win(t,5.5,7);NR.forEach((r,i)=>{[0,.5].forEach((ph,j)=>{dot('n'+i+j,r,(t*.1+ph+i*.17)%1,5,live*.9)});dot('r'+i,rev(r),(t*.09+.25+i*.21)%1,4,live*.6)});
+ REG.boxes.forEach((b,i)=>{const a=REG.convx;b.setAttribute('x',a[0]+((t*34+i*100)%(a[1])));b.setAttribute('y',a[2]-26)});
+ // legit packet (S1)
+ dot('legit',RT.legit,(t-8.2)/8.6,8,at(t,8.2,17)?1:0);
+ // probes (S2)
+ ring.setAttribute('opacity',pulse(t,18,36));ringT.setAttribute('opacity',pulse(t,18.5,28));
+ PRB.forEach((pb,i)=>{const [t0,r,f]=pb,d=3,k=(t-t0)/d;let p=-1,o=1;
+  if(f=='block'){p=clamp(k*1.6)*blockP;if(k>.6)o=1-win(k,.6,.9)}else if(f=='ignore'){p=clamp(k*1.6);o=k>.7?1-win(k,.7,.95):1}else{p=k<.6?k/.6:1-(k-.6)/.4*1;o=1}
+  dot('pb'+i,r,k<0||k>1?-1:p,6,o)});
+ const bp=along(RT.attplc,blockP);xm[0].setAttribute('transform',`translate(${bp[0]},${bp[1]})`);xm[0].setAttribute('opacity',pulse(t,22,24.2,.3));xm[1].setAttribute('opacity',0);xm[2].setAttribute('opacity',0);
+ // appliance dim before reveal, chips
+ opx('sm',t<28?.65:1);opx('smled',t>=110.8&&t<123.5?0:1);smc.setAttribute('opacity',pulse(t,29,37));smchips.forEach((e,i)=>e.setAttribute('opacity',pulse(t,30+i*.7,36.5,.4)));
+ // tripwire (S4)
+ const ap=(t-40)/3.4;const wk=t<41?.1:1;opx('wire',t<36?0:(t>=113.3&&t<124.6?0:(t<46&&ap<crossP?.1:t<46?1:(t<110?(t<86?(t>=46?1:.1):.12):.12))));
+ opx('wire',t<36?0:(t>=113.3&&t<124.6?0:(t<41?.12:(t<46?1:(t<56?.5:.12)))));
+ dot('att',RT.attsm,at(t,40,43.4)?ap:-1,7,1);
+ const tt=(ap-crossP)*3.4;const rg=at(t,40+crossP*3.4,40+crossP*3.4+1.6)?(t-40-crossP*3.4)/1.6:-1;const xp=along(RT.attsm,crossP);dot('ripple',[xp,xp],rg<0?-1:0,10+Math.max(0,rg)*90,1-Math.max(0,rg),W,'o f0');
+ if(DOTS.ripple)DOTS.ripple.setAttribute('class','o f0');
+ // packet follow (S6)
+ const pp=(t-57)/5.2;dot('pkt',RT.attsm,at(t,57,62.4)?pp:-1,10,1);
+ if(DOTS.pkt)DOTS.pkt.setAttribute('class','pk');
+ const pq=along(RT.attsm,clamp(pp));plab.setAttribute('x',pq[0]+18);plab.setAttribute('y',pq[1]-16);plab.setAttribute('opacity',at(t,57,62.4)?1:0);plab.textContent=pp<.12?'workstation':pp<.45?'cable':pp<.6?'switch':pp<.9?'cable':'network interface';
+ // inside packet
+ dot('pin',PIN,at(t,62.9,64.6)?(t-62.9)/1.7:-1,9,1,IN);dot('pin2',PRED,at(t,66,67.9)?(t-66)/1.9:-1,9,1,IN);dot('pin3',[[395,305],[395,305]],at(t,64.6,66)?0:-1,9,1,IN);
+ opx('inspect',pulse(t,63.6,68.5));
+ // decoy view
+ const pb=win(t,71,73);const sc=lerp(1.5,1,pb),tr=`translate(${275*(1-sc)},${320*(1-sc)}) scale(${sc})`;cab1.setAttribute('transform',tr);fr.setAttribute('transform',tr);
+ opx('decframe',pulse(t,72,86));opx('dialog',pulse(t,69.2,75.8));opx('decprots',pulse(t,75,78.6));opx('evid',pulse(t,78.8,86.4));
+ for(let i=0;i<3;i++){const e=$('st'+i);if(e)e.setAttribute('opacity',win(t,79+i*1.3,79.5+i*1.3))}
+ // split
+ for(let i=0;i<4;i++)[0,.5].forEach((ph,j)=>dot('sl'+i+j,[[190,130+i*100],[450,130+i*100]],(t*.35+ph+i*.2)%1,5,1,SP));
+ for(let i=0;i<5;i++)opx('ch'+i,t>=95.3+i*1.3?1:.35);
+ // evidence flows
+ dot('evr',RT.evroom,at(t,102.6,110.4)?((t-102.6)*.12)%1:at(t,86,89)?(t-85.8)/3.2:at(t,127,142)?((t-127)*.1)%1:-1,6,1);dot('evs',RT.evsiem,at(t,103,110.4)?((t-103)*.1)%1:-1,6,1);
+ opx('tags',pulse(t,103,110.5));
+ // state card
+ const lbs=[],sel=t<120.5?[['DAEMON',t>=111?'OFFLINE':''],['DECOYS',t>=112.4?'DISARMED':''],['EBPF HOOK',t>=113.4?'REMOVED BY KERNEL':''],['PLANT TRAFFIC',t>=114.4?'UNCHANGED':''],['LEASE, IF FROZEN',t>=115.4?'ENDS IN ABOUT 9 S':'']]:[['DAEMON',t>=121?'● STARTED':''],['HOOK',t>=121.6?'● ATTACHED':''],['DECOYS',t>=122.2?'● LISTENING':''],['LEASE',t>=122.8?'● RENEWED':''],['HEALTH CHECKS',t>=123.2?'● PASS':'']];
+ rowsSet(sel);REG.stbig.textContent=t<123.8?'':(t<124.8?'READY':'ARMED');
+ const ls=t<120.5?clamp((t-111)/9):0;REG.leasebar.setAttribute('width',ls*400);REG.leasetx.textContent=t<120.5&&t>=111?'lease_map  '+(ls*9).toFixed(1)+' s / 9 s':'';
+ hmiTx.setAttribute('opacity',pulse(t,114,120.5));
+ if(t>=122&&t<126.5){opx('smled',.4+.6*Math.abs(Math.sin(t*5)))}
+ // focus
+ let f=[];
+ if(XR&&XSEL)f=[XSEL];else{
+ if(at(t,28,36))f=['sm'];else if(at(t,42,46))f=['wire'];
+ else if(at(t,46,56)){f=[[47.5,'i_nic'],[49.5,'i_ebpf'],[51.5,'i_red'],[53.5,'i_decoy']].filter(x=>t>=x[0]).slice(-1).map(x=>x[1])}
+ else if(at(t,57,62.4))f=['pkt'];else if(at(t,62.9,66))f=['pin','pin3'];else if(at(t,66,68.5))f=['pin2'];
+ else if(at(t,72,75))f=['decframe'];else if(at(t,75,78.8))f=['decprots'];else if(at(t,79,82.5))f=['st'+Math.min(2,Math.floor((t-79)/1.3))];else if(at(t,82.5,86.5))f=['evid'];
+ else if(at(t,87,94.5))f=['acr'];else if(at(t,95.3,102.5))f=['ch'+Math.min(4,Math.floor((t-95.3)/1.3))];
+ else if(at(t,102.6,110.5))f=['sm'];else if(at(t,123.8,126.5))f=['stbig'];else if(at(t,126.5,128))f=['sm'];
+ else if(at(t,128,142.6)){f=['pc'+Math.min(7,Math.floor((t-128)/1.7))]}else if(t>=143.5)f=['endlive'];
+ }
+ setFocus(f);
+}
+window.setTime=setTime;
+// x-ray ui
+const xr=$('xray');XL.forEach(x=>{const b=document.createElement('button');b.textContent=x[0];b.onclick=()=>{XSEL=x[1];$('explain').textContent=x[2];[...xr.children].forEach(c=>c.classList.toggle('on',c==b));setTime(T)};xr.appendChild(b)});
+$('xb').onclick=()=>{XR=!XR;$('xb').classList.toggle('on',XR);xr.classList.toggle('show',XR);if(XR){playing=false;$('play').textContent='play';$('explain').textContent='pick a layer'}else{XSEL=null;$('explain').textContent=''}setTime(T)};
+$('play').onclick=()=>{playing=!playing;$('play').textContent=playing?'pause':'play'};$('restart').onclick=()=>{T=0;playing=true;$('play').textContent='pause'};
+let last=0;function loop(ts){if(!window.__manual){if(playing){T+=(ts-last)/1000;if(T>TOTAL+2)T=0}last=ts;setTime(T)}requestAnimationFrame(loop)}
+(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>{setTime(0);requestAnimationFrame(ts=>{last=ts;loop(ts)})});
+</script>
+
+</body>
+</html>
