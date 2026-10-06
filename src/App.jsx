@@ -154,7 +154,7 @@ export default function App() {
                 <source src="/how-it-works/silentmesh-film.mp4" type="video/mp4" />
               </video>
             </div>
-            <p className="scene-note">150 second film with illustrative addresses. <a className="inline" href="/how-it-works/">Open the interactive version with technical x-ray</a>.</p>
+            <p className="scene-note">150 second film with illustrative addresses. <a className="inline" href="/how-it-works/">Open the interactive version with technical x-ray</a>. For banks and payment operators, <a className="inline" href="/bfsi/">watch the bank film</a>.</p>
           </div>
         </section>
 
@@ -368,6 +368,7 @@ export default function App() {
             </a>
             <nav className="foot-nav">
               <a href="/how-it-works/">Film</a>
+              <a href="/bfsi/">Banks</a>
               <a href="/pilot/">Pilot</a>
               <a href="/security/">Security</a>
               <a href="/blog/">Blog</a>
