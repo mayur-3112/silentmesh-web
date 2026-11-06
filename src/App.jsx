@@ -115,9 +115,30 @@ export default function App() {
       </header>
 
       <main>
+        {/* Lure launch hero: temporary, remove after the launch weeks */}
+        <section className="lure-hero" aria-labelledby="lure-h">
+          <div className="wrap lure-grid">
+            <div>
+              <span className="lure-kicker">New · free · open source · 8 November</span>
+              <h1 id="lure-h" className="lure-title">SilentMesh <span>Lure</span></h1>
+              <p className="lure-tag">Planted credentials that give the attacker away.</p>
+              <p className="lure-lede">Fake passwords, saved Remote Desktop files and vendor VPN profiles, planted where intruders look. The moment anyone tries one, you get an alert naming the file and where you planted it. Free for everyone. Nothing is sent to us.</p>
+              <div className="hero-ctas">
+                <a className="btn btn-primary" href="/lure/">See how Lure works</a>
+                <span className="btn btn-outline" aria-disabled="true" style={{pointerEvents:"none",opacity:.8}}>On GitHub · 8 November</span>
+              </div>
+              <ul className="lure-facts">
+                <li><b>Alerts on use</b><span>not on open, so scans and backups never page you</span></li>
+                <li><b>Runs locally</b><span>your webhook, syslog or dashboard</span></li>
+                <li><b>Apache-2.0</b><span>Python standard library only</span></li>
+              </ul>
+            </div>
+            <div className="lure-art" aria-hidden="true"><img src="/lure/lure-mark-512.png" alt="" width="460" height="460" /></div>
+          </div>
+        </section>
+
         <section className="hero">
           <div className="wrap">
-            <div><a href="/lure/" style={{display:"inline-flex",alignItems:"center",gap:10,marginBottom:22,padding:"7px 14px",border:"1px solid rgba(95,224,127,.35)",borderRadius:999,textDecoration:"none",fontSize:13,color:"var(--text-secondary, rgba(242,244,241,.7))"}}><span style={{color:"#5FE07F",fontWeight:600,letterSpacing:".12em",fontSize:11}}>NEW · FREE</span> SilentMesh Lure: planted credentials that give the attacker away →</a></div>
             <span className="kicker accent">kernel-level deception for converged IT/OT networks</span>
             <h1>They think they found your PLC.<br /><span className="h1-quiet">You know they are here.</span></h1>
             <p className="lede">
