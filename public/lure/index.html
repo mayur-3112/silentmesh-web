@@ -126,7 +126,7 @@ footer{border-top:var(--hair) solid var(--border-hair); padding:36px 0 56px;}
 </style>
 <style>
 .watermark{position:fixed; top:50%; right:-180px; transform:translateY(-50%); opacity:.035; pointer-events:none; z-index:0;}
-header, article, footer{position:relative; z-index:1;}
+header, main, footer{position:relative; z-index:1;}
 header{position:sticky; top:0; z-index:10; background:rgba(13,15,14,.92); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);}
 .site-nav{display:flex; align-items:center; gap:26px;}
 .site-nav a{font:500 11px/1 var(--font-ui); letter-spacing:.2em; text-transform:uppercase; color:var(--text-secondary); text-decoration:none; transition:opacity 120ms linear;}
@@ -148,6 +148,61 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
 @media (max-width:700px){table,thead,tbody,tr,td,th{display:block;} thead{display:none;} td{border:none; padding:2px 0;} tr{padding:12px 0; border-bottom:var(--hair) solid var(--border-hair);} td:first-child{white-space:normal;}}
 </style>
 <style>@media (max-width:480px){.site-nav a[href="/security/"],.site-nav a[href="/blog/"]{display:none;}}</style>
+<style>
+.wrap-wide{max-width:1040px; margin:0 auto; padding:0 28px;}
+.hero{padding:72px 0 40px; display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
+.hero-mark{display:block; width:148px; height:148px; border-radius:32px; margin-bottom:28px; animation:glow 5s ease-in-out infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 0 rgba(95,224,127,0);}50%{box-shadow:0 0 42px rgba(95,224,127,.28);}}
+.tagline{margin-top:22px; font:400 1.5rem/1.35 var(--font-display); color:var(--text-primary); letter-spacing:.02em;}
+.ctas{display:flex; flex-wrap:wrap; gap:12px; margin-top:30px;}
+.btn{display:inline-block; font:500 12px/1 var(--font-ui); letter-spacing:.16em; text-transform:uppercase; text-decoration:none; padding:14px 18px; border-radius:3px; transition:opacity 120ms linear;}
+.btn:hover{opacity:.85;}
+.btn-primary{background:var(--sm-signal); color:var(--sm-black);}
+.btn-ghost{color:var(--sm-signal); border:1px solid rgba(95,224,127,.45);}
+.term{background:var(--sm-terminal); border:1px solid var(--border-accent); border-radius:10px; overflow:hidden; min-width:0;}
+.term-bar{display:flex; gap:6px; padding:11px 14px; border-bottom:1px solid var(--border-hair);}
+.term-bar i{width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.12);}
+.term-bar span{margin-left:8px; font:400 11px/1 var(--font-mono); color:var(--text-tertiary);}
+.term pre{margin:0; border:none; border-radius:0; background:none; padding:16px 18px; min-height:330px; white-space:pre-wrap; word-break:break-word; overflow:hidden;}
+.term pre code{white-space:pre-wrap; font-size:12px; color:var(--text-secondary);}
+.term .p{color:var(--sm-signal);} .term .c{color:var(--text-primary);} .term .alert{color:#FFD27A;}
+.cursor{display:inline-block; width:7px; height:1.05em; vertical-align:-2px; background:var(--sm-signal); animation:blink 1s steps(1) infinite;}
+@keyframes blink{50%{opacity:0;}}
+section{padding:24px 0;}
+.lead{max-width:640px;}
+.cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:28px;}
+.card{background:var(--sm-panel); border:1px solid var(--border-hair); border-radius:8px; padding:22px;}
+.card h3{margin:0; font:500 13px/1.4 var(--font-mono); color:var(--sm-signal); word-break:break-all;}
+.card p{margin-top:10px; font-size:.95rem;}
+.card .where{display:block; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-hair); font:400 11.5px/1.6 var(--font-mono); color:var(--text-tertiary);}
+.card .where b{color:var(--text-secondary); font-weight:500;}
+.steps{list-style:none; padding:0; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; counter-reset:s;}
+.steps li{margin:0; counter-increment:s; border-top:1px solid var(--border-accent); padding-top:16px;}
+.steps li::before{content:"0" counter(s); font:500 11px/1 var(--font-mono); color:var(--sm-signal); letter-spacing:.2em;}
+.steps h3{margin-top:10px;}
+.steps p{margin-top:8px; font-size:.95rem;}
+.diagram{margin-top:36px; background:var(--sm-black); border:1px solid var(--border-hair); border-radius:8px; padding:20px;}
+.diagram svg{display:block; width:100%; height:auto;}
+.diagram figcaption{margin-top:12px; font:400 12px/1.6 var(--font-mono); color:var(--text-tertiary);}
+.diagram figcaption b{color:var(--sm-signal); font-weight:500;}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:28px;}
+.feat{border:1px solid var(--border-hair); border-radius:8px; padding:22px; background:var(--sm-panel);}
+.feat h3{margin:0;} .feat p{margin-top:8px; font-size:.95rem;}
+.code{position:relative; margin-top:18px;}
+.code pre{margin:0; padding-right:84px;}
+.copy{position:absolute; top:10px; right:10px; font:500 10px/1 var(--font-mono); letter-spacing:.14em; text-transform:uppercase; color:var(--sm-signal); background:var(--sm-near-black); border:1px solid rgba(95,224,127,.45); border-radius:3px; padding:8px 10px; cursor:pointer;}
+.copy:hover{background:var(--sm-panel);}
+.sev{display:inline-block; font:500 10px/1 var(--font-mono); letter-spacing:.18em; text-transform:uppercase; padding:5px 8px; border-radius:3px; margin-right:8px;}
+.sev-high{background:#FFD27A; color:#08090A;} .sev-med{border:1px solid rgba(242,244,241,.4); color:var(--text-primary);}
+.bridge{margin:40px 0 0; padding:40px; background:var(--sm-black); border:1px solid var(--border-accent); border-radius:10px;}
+.bridge h2{margin-top:0;}
+.motto{margin-top:56px; text-align:center; font:400 clamp(1.8rem,4vw,2.6rem)/1.2 var(--font-display); letter-spacing:.04em; color:var(--text-primary);}
+@media (max-width:860px){.hero{grid-template-columns:1fr; gap:36px;} .cards,.steps,.grid2{grid-template-columns:1fr;}}
+@media (max-width:700px){.wrap-wide{padding:0 16px;} .hero{padding:44px 0 24px;} .hero-mark{width:112px;height:112px;border-radius:24px;} .bridge{padding:24px;} .term pre{min-height:360px;}}
+.dg-v{display:none !important;}
+@media (max-width:600px){.dg-h{display:none !important;} .dg-v{display:block !important; max-width:320px; margin:0 auto;}}
+@media (prefers-reduced-motion:reduce){.hero-mark,.cursor{animation:none;}}
+</style>
 </head>
 <body>
 
@@ -167,53 +222,141 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
   </div>
 </header>
 
-<article>
-<div class="wrap">
-  <img src="lure-mark.png" alt="SilentMesh Lure mark" width="112" height="112" style="display:block;border-radius:24px;margin-bottom:28px">
-  <span class="kicker">free &middot; open source &middot; apache-2.0</span>
-  <h1>SilentMesh Lure</h1>
-  <div class="byline">Lure by SilentMesh &middot; v0.1.0 beta &middot; 8 November 2026</div>
-  <p class="standfirst">Attackers who reach a plant often come in with a stolen VPN or jump-host login, then hunt for more saved passwords. <b>Lure plants convincing fake ones. If anyone tries to use one, you get an alert naming the file that was found and where you planted it.</b></p>
+<main>
+<div class="wrap-wide">
+  <div class="hero">
+    <div>
+      <img class="hero-mark" src="lure-mark.png" alt="SilentMesh Lure mark: a glowing lime crescent on a dark tile" width="148" height="148">
+      <span class="kicker">free &middot; open source &middot; apache-2.0</span>
+      <h1>SilentMesh Lure</h1>
+      <div class="byline">Lure by SilentMesh &middot; v0.1.0 beta</div>
+      <p class="tagline">Planted credentials that give the attacker away.</p>
+      <p>Free credential lures for converged IT/OT networks. Attackers who reach a plant often come in with a stolen VPN or jump-host login, then hunt for more saved passwords. Lure plants fake ones. If anyone tries to use one, you get an alert naming the file and where you planted it.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="https://github.com/SilentMesh-Systems/lure" rel="noopener">Get it on GitHub</a>
+        <a class="btn btn-ghost" href="#quick-start">Quick start</a>
+      </div>
+    </div>
+    <div class="term" role="img" aria-label="Terminal demo: lure generate writes 4 bait credentials, lure listen starts on rdp 3389, http 8080 and openvpn 1194, then a high severity alert shows the bait username eng_maint_95aead from jump-host.rdp was used.">
+      <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>listener host</span></div>
+      <pre aria-hidden="true"><code id="term"><span class="p">$</span> <span class="c">lure generate --listener 10.0.5.20 --out baits</span>
+wrote 4 bait credentials to baits/ (see manifest.json for where to plant each)
+<span class="p">$</span> <span class="c">lure listen --manifest baits/manifest.json</span>
+listening: rdp 3389, http 8080, openvpn 1194
+<span class="alert">{"severity": "high", "service": "rdp", "source": "10.0.7.31:51544",
+ "username": "eng_maint_95aead", "bait_file": "jump-host.rdp",
+ "planted_on": "engineering workstation desktop",
+ "why": "a bait credential was used: someone found and tried it"}</span></code></pre>
+    </div>
+  </div>
 
-  <div class="pull"><span class="label">get it</span><p><a href="https://github.com/SilentMesh-Systems/lure" style="color:var(--sm-signal);text-decoration:none">github.com/SilentMesh-Systems/lure</a></p></div>
+  <section aria-labelledby="plants">
+    <h2 id="plants">What it plants</h2>
+    <p class="lead">Each bait carries its own fake username, so an alert tells you exactly which file was found.</p>
+    <div class="cards">
+      <div class="card"><h3>passwords.xlsx</h3><p>A real spreadsheet of logins: jump host, SCADA web, historian, vendor VPN.</p><span class="where"><b>Plant on:</b> an engineering share or a workstation's Documents folder</span></div>
+      <div class="card"><h3>jump-host.rdp</h3><p>A saved Remote Desktop connection with a username filled in.</p><span class="where"><b>Plant on:</b> an engineering workstation desktop</span></div>
+      <div class="card"><h3>plant-vendor-vpn.ovpn</h3><p>A vendor remote-support VPN profile with its login in a comment.</p><span class="where"><b>Plant on:</b> a jump host or a vendor laptop share</span></div>
+    </div>
+    <p>A fourth file, <code>manifest.json</code>, maps usernames to baits (no passwords). Keep it only on the listener host: anyone who reads it knows which logins are fake.</p>
+  </section>
 
-  <h2>What it plants</h2>
-  <ul>
-    <li><b>passwords.xlsx</b>: a real spreadsheet of logins for a jump host, SCADA web, historian and vendor VPN.</li>
-    <li><b>jump-host.rdp</b>: a saved Remote Desktop connection with a username filled in.</li>
-    <li><b>vendor VPN profile</b>: a remote-support .ovpn with its login in a comment.</li>
-  </ul>
-  <p>Each bait has its own fake username, so an alert says exactly which file was found.</p>
+  <section aria-labelledby="how">
+    <h2 id="how">How it works</h2>
+    <ol class="steps">
+      <li><h3>Generate</h3><p>Point <code>lure generate</code> at a spare IT-side machine that nobody legitimately logs into.</p></li>
+      <li><h3>Plant</h3><p>Drop the bait files on engineering workstations, jump hosts and vendor shares. No agent, nothing on the control network.</p></li>
+      <li><h3>Listen</h3><p>Run <code>lure listen</code> on the listener host. A login attempt with a bait credential sends you an alert.</p></li>
+    </ol>
+    <figure class="diagram">
+      <svg class="dg-h" viewBox="0 0 960 200" role="img" aria-labelledby="dg-t">
+        <title id="dg-t">A workstation holds a bait file. An attacker tries the login against the listener host. The listener alerts your own webhook or syslog. Nothing goes to SilentMesh.</title>
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5FE07F"/></marker></defs>
+        <g font-family="IBM Plex Mono, monospace" font-size="15" text-anchor="middle">
+          <rect x="10" y="50" width="200" height="90" rx="8" fill="#101312" stroke="rgba(255,255,255,.18)"/>
+          <text x="110" y="88" fill="#F2F4F1">workstation</text><text x="110" y="114" fill="#5FE07F">jump-host.rdp</text>
+          <rect x="380" y="50" width="200" height="90" rx="8" fill="#101312" stroke="#5FE07F"/>
+          <text x="480" y="88" fill="#F2F4F1">listener host</text><text x="480" y="114" fill="rgba(242,244,241,.62)">rdp · http · openvpn</text>
+          <rect x="750" y="50" width="200" height="90" rx="8" fill="#101312" stroke="rgba(255,255,255,.18)"/>
+          <text x="850" y="88" fill="#F2F4F1">your webhook</text><text x="850" y="114" fill="rgba(242,244,241,.62)">or syslog</text>
+          <line x1="215" y1="95" x2="372" y2="95" stroke="#5FE07F" stroke-width="2" marker-end="url(#ar)"/>
+          <text x="295" y="80" fill="rgba(242,244,241,.62)" font-size="13">attacker tries</text><text x="295" y="122" fill="rgba(242,244,241,.62)" font-size="13">the login</text>
+          <line x1="585" y1="95" x2="742" y2="95" stroke="#5FE07F" stroke-width="2" marker-end="url(#ar)"/>
+          <text x="665" y="80" fill="rgba(242,244,241,.62)" font-size="13">high alert</text>
+          <text x="480" y="186" fill="#5FE07F" font-size="14">nothing goes to SilentMesh</text>
+        </g>
+      </svg>
+      <svg class="dg-v" viewBox="0 0 320 420" role="img" aria-labelledby="dg-v-t">
+        <title id="dg-v-t">A workstation holds a bait file. An attacker tries the login against the listener host. The listener alerts your own webhook or syslog. Nothing goes to SilentMesh.</title>
+        <g font-family="IBM Plex Mono, monospace" font-size="15" text-anchor="middle">
+          <rect x="40" y="10" width="240" height="76" rx="8" fill="#101312" stroke="rgba(255,255,255,.18)"/>
+          <text x="160" y="42" fill="#F2F4F1">workstation</text><text x="160" y="66" fill="#5FE07F">jump-host.rdp</text>
+          <line x1="160" y1="90" x2="160" y2="152" stroke="#5FE07F" stroke-width="2" marker-end="url(#ar)"/>
+          <text x="172" y="126" fill="rgba(242,244,241,.62)" font-size="13" text-anchor="start">attacker tries the login</text>
+          <rect x="40" y="158" width="240" height="76" rx="8" fill="#101312" stroke="#5FE07F"/>
+          <text x="160" y="190" fill="#F2F4F1">listener host</text><text x="160" y="214" fill="rgba(242,244,241,.62)">rdp · http · openvpn</text>
+          <line x1="160" y1="238" x2="160" y2="300" stroke="#5FE07F" stroke-width="2" marker-end="url(#ar)"/>
+          <text x="172" y="274" fill="rgba(242,244,241,.62)" font-size="13" text-anchor="start">high alert</text>
+          <rect x="40" y="306" width="240" height="76" rx="8" fill="#101312" stroke="rgba(255,255,255,.18)"/>
+          <text x="160" y="338" fill="#F2F4F1">your webhook</text><text x="160" y="362" fill="rgba(242,244,241,.62)">or syslog</text>
+          <text x="160" y="410" fill="#5FE07F" font-size="14">nothing goes to SilentMesh</text>
+        </g>
+      </svg>
+      <figcaption><b>Nothing goes to SilentMesh.</b> Every box runs on your own network and every alert goes to sinks you configure.</figcaption>
+    </figure>
+  </section>
 
-  <h2>Why it is different</h2>
-  <ul>
-    <li><b>Alerts on use, not on open.</b> Opening, copying, backing up or antivirus-scanning a bait file does nothing. Only a login attempt fires an alert.</li>
-    <li><b>Nothing is sent to us.</b> The listener runs on your machine and alerts only your own webhook, syslog or terminal.</li>
-    <li><b>Runs anywhere.</b> Python standard library only. Tested on Linux (x86-64 and ARM, including Raspberry Pi), Windows and macOS.</li>
-    <li><b>Quiet by design.</b> Repeat alerts are deduplicated and rate-limited, so one attacker cannot flood your pager.</li>
-  </ul>
+  <section aria-labelledby="diff">
+    <h2 id="diff">Why it is different</h2>
+    <div class="grid2">
+      <div class="feat"><h3>Alerts on use, not on open</h3><p>Opening, copying, backing up or antivirus-scanning a bait file does nothing. Only a login attempt with a bait credential fires an alert.</p></div>
+      <div class="feat"><h3>Nothing is sent to us</h3><p>The listener alerts only your own webhook, syslog or terminal. No SilentMesh service is involved.</p></div>
+      <div class="feat"><h3>Runs anywhere</h3><p>Linux (x86-64 and ARM, including Raspberry Pi), Windows and macOS. Python 3.9+ standard library only.</p></div>
+      <div class="feat"><h3>Quiet by design</h3><p>The same source, service and username alert once per 10 minutes, with at most 20 alerts per 10 minutes overall, so one attacker cannot flood your pager.</p></div>
+    </div>
+  </section>
 
-  <h2>Quick start</h2>
-<pre><code>git clone https://github.com/SilentMesh-Systems/lure && cd lure
-<span class="hl">python3 -m lure generate --listener 10.0.5.20 --out baits</span>
-# plant the files from baits/ on workstations and shares
-<span class="hl">python3 -m lure listen --manifest baits/manifest.json --webhook https://your-alerts.example/hook</span></code></pre>
-  <p>Pick a listener host nobody legitimately logs into. Keep <code>manifest.json</code> on that host only.</p>
+  <section aria-labelledby="quick-start">
+    <h2 id="quick-start">Quick start</h2>
+    <p>No install step: clone the repo and run it from the repo folder.</p>
+    <div class="code"><pre><code>git clone https://github.com/SilentMesh-Systems/lure
+cd lure
+python3 -m lure generate --listener 10.0.5.20 --out baits</code></pre><button class="copy" type="button" hidden>Copy</button></div>
+    <p>Plant the files from <code>baits/</code>, keep <code>manifest.json</code> on the listener host, then start the listener there:</p>
+    <div class="code"><pre><code>python3 -m lure listen --manifest baits/manifest.json \
+    --webhook https://your-alerts.example/hook --syslog 10.0.1.5:514</code></pre><button class="copy" type="button" hidden>Copy</button></div>
+    <p>Prefer a <code>lure</code> command on your path? Install it from the repo folder:</p>
+    <div class="code"><pre><code>pip install .</code></pre><button class="copy" type="button" hidden>Copy</button></div>
+    <p>To test, open <code>jump-host.rdp</code> from another machine and try to connect. You should get one high alert.</p>
+  </section>
 
-  <h2>What it does not do</h2>
-  <ul>
-    <li>It covers the <b>IT side</b>: workstations, jump hosts and shares. It does not watch the control network.</li>
-    <li>It catches people who find and use credentials, not attackers who never touch the baits.</li>
-    <li>It is a beta, supported on a best-effort basis.</li>
-  </ul>
-  <p>Only plant baits on systems you own or are authorised to protect.</p>
+  <section aria-labelledby="grading">
+    <h2 id="grading">How alerts are graded</h2>
+    <ul>
+      <li><span class="sev sev-high">high</span>A bait username was used. Someone found a planted file and tried it.</li>
+      <li><span class="sev sev-med">medium</span>Something connected to the listener host without a bait username. Nothing legitimate should connect at all, so it is still worth a look. A scanner you run yourself is the usual cause.</li>
+    </ul>
+    <div class="grid2">
+      <div class="feat"><h3>Data handling</h3><p>Lure runs entirely on your own machines. The listener records the connecting IP and port, the service, the time and the username offered, and sends that only to your sinks. Passwords are never read or stored. SilentMesh receives no data.</p></div>
+      <div class="feat"><h3>Use responsibly</h3><p>Only plant baits on systems you own or are authorised to protect. Whoever runs the listener controls the data it records (IP addresses and usernames can be personal data, for example under India's DPDP Act 2023) and handles it under their own law.</p></div>
+    </div>
+    <h3>Limits</h3>
+    <ul>
+      <li>It covers the <b>IT side</b>: workstations, jump hosts and shares. Do not plant baits on the control network, and do not point a bait at a real system.</li>
+      <li>It is a beta. It catches people who find and use credentials, not an attacker who never touches the baits.</li>
+      <li>The OpenVPN listener records the connection only; it does not read the username.</li>
+    </ul>
+  </section>
 
-  <hr>
-  <h2>Your plant network needs more</h2>
-  <p>Lure is the free, IT-side part of SilentMesh. The full product places decoy controllers on the plant network itself, over Modbus/TCP, S7comm, IEC 60870-5-104, DNP3, OPC UA and SMB, off the control path, and fails open. <a href="/pilot/" style="color:var(--sm-signal);text-decoration:none">Talk to us about a 30-day pilot</a>.</p>
-  <blockquote><p>Deceive, never disrupt.</p></blockquote>
+  <div class="bridge">
+    <h2>Lure covers the IT side. Your plant network needs more.</h2>
+    <p>Lure is the free, IT-side part of SilentMesh. The full product places decoy controllers on the plant network itself, over Modbus/TCP, S7comm, IEC 60870-5-104, DNP3, OPC UA and SMB. It sits off the control path and fails open.</p>
+    <div class="ctas"><a class="btn btn-primary" href="/pilot/">Talk to us about a pilot</a></div>
+  </div>
+  <p class="motto">Deceive, never disrupt.</p>
 </div>
-</article>
+</main>
+
 
 <footer>
   <div class="wrap foot-row">
@@ -222,5 +365,38 @@ td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 
   </div>
 </footer>
 
+<script>
+(function(){
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.hidden=false;
+    b.setAttribute('aria-label','Copy command');
+    b.addEventListener('click',function(){
+      var t=b.parentNode.querySelector('code').textContent;
+      function done(m){b.textContent=m; setTimeout(function(){b.textContent='Copy';},1600);}
+      function fb(){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}document.body.removeChild(a);done(ok?'Copied':'Select');}
+      if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(function(){done('Copied');},fb);}else{fb();}
+    });
+  });
+  var el=document.getElementById('term');
+  if(!el||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+  var alertTxt='{"severity": "high", "service": "rdp", "source": "10.0.7.31:51544",\n "username": "eng_maint_95aead", "bait_file": "jump-host.rdp",\n "planted_on": "engineering workstation desktop",\n "why": "a bait credential was used: someone found and tried it"}';
+  var seq=[['cmd','lure generate --listener 10.0.5.20 --out baits'],['out','wrote 4 bait credentials to baits/ (see manifest.json for where to plant each)'],['cmd','lure listen --manifest baits/manifest.json'],['out','listening: rdp 3389, http 8080, openvpn 1194'],['wait',2200],['alert',alertTxt],['wait',5000]];
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+  var html='',i=0;
+  function render(extra){el.innerHTML=html+(extra||'')+'<span class="cursor"></span>';}
+  function step(){
+    if(i>=seq.length){html='';i=0;}
+    var s=seq[i++];
+    if(s[0]==='wait'){render();return setTimeout(step,s[1]);}
+    if(s[0]==='cmd'){var n=0,pre='<span class="p">$</span> ';
+      (function type(){render(pre+'<span class="c">'+esc(s[1].slice(0,n))+'</span>');
+        if(n++<s[1].length)return setTimeout(type,38);
+        html+=pre+'<span class="c">'+esc(s[1])+'</span>\n';setTimeout(step,400);})();return;}
+    if(s[0]==='out'){html+=esc(s[1])+'\n';render();return setTimeout(step,700);}
+    if(s[0]==='alert'){html+='<span class="alert">'+esc(s[1])+'</span>\n';render();return setTimeout(step,200);}
+  }
+  html='';render();setTimeout(step,600);
+})();
+</script>
 </body>
 </html>
