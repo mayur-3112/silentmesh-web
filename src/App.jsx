@@ -372,7 +372,8 @@ export default function App() {
               <a href="/pilot/">Pilot</a>
               <a href="/security/">Security</a>
               <a href="/blog/">Blog</a>
-              <a href={LINKEDIN} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="https://www.linkedin.com/company/silentmesh-systems" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="https://github.com/SilentMesh-Systems" target="_blank" rel="noopener noreferrer">GitHub</a>
             </nav>
           </div>
           <div className="foot-bottom">
