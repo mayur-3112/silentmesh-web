@@ -55,3 +55,6 @@ acoustic FPV drone detection. The two share a name and nothing else.
 ## Citation
 
 Cite as: SilentMesh Systems, https://www.silentmesh.me/
+
+## SilentMesh Lure (free, open source)
+https://www.silentmesh.me/lure/ : credential lures (bait .xlsx, .rdp, .ovpn) that alert when a bait login is used, not when a file is opened. Apache-2.0, Python standard library, nothing sent to SilentMesh. Source: https://github.com/SilentMesh-Systems/lure

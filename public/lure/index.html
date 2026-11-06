@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SilentMesh Lure · free credential lures</title>
+<meta name="description" content="Lure by SilentMesh: free, open-source credential lures for converged IT/OT networks. Planted credentials that give the attacker away. Alerts on use, not on open. Nothing is sent to us.">
+<meta name="theme-color" content="#0D0F0E">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.silentmesh.me/lure/">
+<meta property="og:title" content="SilentMesh Lure">
+<meta property="og:image" content="https://www.silentmesh.me/lure/lure-mark.png">
+<meta property="og:description" content="Lure by SilentMesh: free, open-source credential lures for converged IT/OT networks. Planted credentials that give the attacker away. Alerts on use, not on open. Nothing is sent to us.">
+<meta property="og:site_name" content="SilentMesh Systems">
+<link rel="canonical" href="https://www.silentmesh.me/lure/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "SilentMesh Lure",
+  "url": "https://www.silentmesh.me/lure/",
+  "publisher": {
+    "@id": "https://www.silentmesh.me/#organization"
+  },
+  "description": "Lure by SilentMesh: free, open-source credential lures for converged IT/OT networks. Planted credentials that give the attacker away. Alerts on use, not on open. Nothing is sent to us."
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --sm-black:#08090A; --sm-near-black:#0D0F0E; --sm-panel:#101312; --sm-terminal:#050606;
+  --sm-signal:#5FE07F; --sm-white:#F2F4F1;
+  --text-primary:var(--sm-white);
+  --text-secondary:rgba(242,244,241,.62);
+  --text-tertiary:rgba(242,244,241,.40);
+  --text-faint:rgba(242,244,241,.32);
+  --border-hair:rgba(255,255,255,.07);
+  --border-accent:rgba(95,224,127,.13);
+  --font-display:"Instrument Serif", Georgia, serif;
+  --font-ui:"Instrument Sans", system-ui, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, monospace;
+  --hair:1px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0; padding:0;}
+body{background:var(--sm-near-black); color:var(--text-primary);
+  font-family:var(--font-ui); font-size:16px; line-height:1.72;
+  -webkit-font-smoothing:antialiased;}
+::selection{background:var(--sm-signal); color:var(--sm-black);}
+a{color:inherit;}
+:focus-visible{outline:1.5px solid var(--sm-signal); outline-offset:2px;}
+.wrap{max-width:720px; margin:0 auto; padding:0 28px;}
+
+header{border-bottom:var(--hair) solid var(--border-hair);}
+.header-inner{display:flex; align-items:center; justify-content:space-between;
+  padding:20px 28px; max-width:1100px; margin:0 auto;}
+.lockup{display:flex; align-items:center; gap:12px; text-decoration:none;}
+.wordmark{font:400 20px/1 var(--font-display); letter-spacing:.14em;
+  color:var(--text-primary); text-transform:uppercase;}
+.back{font:500 11px/1 var(--font-ui); letter-spacing:.2em; text-transform:uppercase;
+  color:var(--text-secondary); text-decoration:none; transition:opacity 120ms linear;}
+.back:hover{opacity:.82; color:var(--text-primary);}
+
+article{padding:72px 0 96px;}
+.kicker{font:500 10px/1 var(--font-mono); letter-spacing:.30em;
+  color:var(--sm-signal); text-transform:uppercase;}
+h1{font-family:var(--font-display); font-weight:400; letter-spacing:.05em;
+  font-size:clamp(2.2rem,5.4vw,3.4rem); line-height:1.1; margin:20px 0 0;
+  text-wrap:balance;}
+.byline{margin-top:18px; font:400 12px/1.6 var(--font-mono); color:var(--text-tertiary);
+  letter-spacing:.04em;}
+.standfirst{margin-top:32px; font-size:1.16rem; line-height:1.66;
+  color:var(--text-secondary); text-wrap:pretty;}
+.standfirst b{color:var(--text-primary); font-weight:500;}
+
+h2{font-family:var(--font-display); font-weight:400; letter-spacing:.05em;
+  font-size:1.85rem; line-height:1.24; margin:56px 0 0; text-wrap:balance;}
+h3{font-family:var(--font-ui); font-weight:600; font-size:1.02rem;
+  letter-spacing:.01em; margin:36px 0 0; color:var(--text-primary);}
+p{margin:18px 0 0; color:var(--text-secondary); text-wrap:pretty;}
+p b, li b{color:var(--text-primary); font-weight:500;}
+em{color:var(--text-primary); font-style:italic;}
+ul{margin:18px 0 0; padding-left:20px; color:var(--text-secondary);}
+li{margin-top:9px;}
+code{font:400 .86em/1.5 var(--font-mono); background:var(--sm-terminal);
+  border:var(--hair) solid var(--border-hair); border-radius:3px;
+  padding:1.5px 5px; color:var(--text-primary);}
+pre{margin:22px 0 0; background:var(--sm-terminal);
+  border:var(--hair) solid var(--border-hair); border-radius:8px;
+  padding:18px 20px; overflow-x:auto;}
+pre code{background:none; border:none; padding:0; font-size:12.5px; line-height:1.7;
+  color:var(--text-secondary); white-space:pre;}
+pre code .hl{color:var(--sm-signal);}
+blockquote{margin:30px 0 0; padding:2px 0 2px 22px;
+  border-left:2px solid var(--border-accent);}
+blockquote p{margin:0; font-family:var(--font-display); font-size:1.3rem;
+  line-height:1.42; color:var(--text-primary); letter-spacing:.02em;}
+hr{margin:56px 0 0; border:none; border-top:var(--hair) solid var(--border-hair);}
+
+.pull{margin:44px 0 0; padding:26px 28px; background:var(--sm-black);
+  border:var(--hair) solid var(--border-accent); border-radius:8px;}
+.pull p{margin:0; color:var(--text-primary);}
+.pull .label{font:500 10px/1 var(--font-mono); letter-spacing:.22em;
+  text-transform:uppercase; color:var(--sm-signal); display:block; margin-bottom:12px;}
+
+footer{border-top:var(--hair) solid var(--border-hair); padding:36px 0 56px;}
+.foot-row{display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:14px;}
+.foot-note{font:300 11px/1.6 var(--font-mono); color:var(--text-tertiary);
+  letter-spacing:.05em;}
+.foot-note a{color:var(--sm-signal); text-decoration:none;}
+.foot-note a:hover{opacity:.82;}
+
+@media (max-width:700px){
+  article{padding:48px 0 64px;}
+  body{font-size:15.5px;}
+}
+</style>
+<style>
+.watermark{position:fixed; top:50%; right:-180px; transform:translateY(-50%); opacity:.035; pointer-events:none; z-index:0;}
+header, article, footer{position:relative; z-index:1;}
+header{position:sticky; top:0; z-index:10; background:rgba(13,15,14,.92); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);}
+.site-nav{display:flex; align-items:center; gap:26px;}
+.site-nav a{font:500 11px/1 var(--font-ui); letter-spacing:.2em; text-transform:uppercase; color:var(--text-secondary); text-decoration:none; transition:opacity 120ms linear;}
+.site-nav a:hover{color:var(--text-primary);}
+.site-nav a.nav-cta{color:var(--sm-signal); border:1px solid rgba(95,224,127,.45); padding:9px 14px; border-radius:3px;}
+.posts{list-style:none; padding:0; margin:36px 0 0;}
+.posts li{margin:0; padding:26px 0; border-top:1px solid var(--border-hair);}
+.posts li:last-child{border-bottom:1px solid var(--border-hair);}
+.posts .d{font:400 11px/1.6 var(--font-mono); color:var(--text-tertiary); letter-spacing:.04em;}
+.posts a{display:block; margin-top:8px; font:400 1.7rem/1.2 var(--font-display); letter-spacing:.04em; color:var(--text-primary); text-decoration:none; transition:opacity 120ms linear;}
+.posts a:hover{opacity:.8;}
+.posts p{margin-top:10px;}
+@media (max-width:700px){.watermark{right:-260px;} .watermark svg{width:520px;height:520px;} .site-nav{gap:14px;} .site-nav a{font-size:10px; letter-spacing:.14em;} .header-inner{padding:16px !important;} .wordmark{font-size:16px !important;} .wrap{padding:0 16px !important;}}
+@media (max-width:400px){.site-nav a[href="/security/"]{display:none;}}
+table{width:100%; border-collapse:collapse; margin-top:22px; font-size:.92rem;}
+th{text-align:left; font:500 10px/1.4 var(--font-mono); letter-spacing:.2em; text-transform:uppercase; color:var(--text-tertiary); padding:10px 12px 10px 0; border-bottom:var(--hair) solid var(--border-hair);}
+td{vertical-align:top; padding:12px 12px 12px 0; border-bottom:var(--hair) solid var(--border-hair); color:var(--text-secondary);}
+td:first-child{color:var(--text-primary); white-space:nowrap; font:400 12px/1.7 var(--font-mono);}
+@media (max-width:700px){table,thead,tbody,tr,td,th{display:block;} thead{display:none;} td{border:none; padding:2px 0;} tr{padding:12px 0; border-bottom:var(--hair) solid var(--border-hair);} td:first-child{white-space:normal;}}
+</style>
+<style>@media (max-width:480px){.site-nav a[href="/security/"],.site-nav a[href="/blog/"]{display:none;}}</style>
+</head>
+<body>
+
+<div class="watermark" aria-hidden="true"><svg width="760" height="760" viewBox="0 0 80 80" fill="none" stroke="var(--sm-signal)" stroke-width="2" stroke-linecap="square"><path d="M40 6H74V74H6V6H63M63 17H17V63H63V28M52 28V52H28V17" opacity="0.55"/><path d="M40 6H74V74H6V6" opacity="0.9"/><rect x="36" y="36" width="8" height="8" fill="var(--sm-signal)" stroke="none"/></svg></div>
+<header>
+  <div class="header-inner">
+    <a class="lockup" href="/">
+      <svg width="26" height="26" viewBox="0 0 80 80" fill="none" stroke="var(--sm-signal)" stroke-width="2" stroke-linecap="square" role="img" aria-label="SilentMesh"><path d="M40 6H74V74H6V6H63M63 17H17V63H63V28M52 28V52H28V17" opacity="0.55"/><path d="M40 6H74V74H6V6" opacity="0.9"/><rect x="36" y="36" width="8" height="8" fill="var(--sm-signal)" stroke="none"/></svg>
+      <span class="wordmark">Silentmesh</span>
+    </a>
+    <nav class="site-nav">
+      <a href="/blog/">Blog</a>
+      <a href="/lure/">Lure</a>
+      <a href="/security/">Security</a>
+      <a class="nav-cta" href="/pilot/">Pilot</a>
+    </nav>
+  </div>
+</header>
+
+<article>
+<div class="wrap">
+  <img src="lure-mark.png" alt="SilentMesh Lure mark" width="112" height="112" style="display:block;border-radius:24px;margin-bottom:28px">
+  <span class="kicker">free &middot; open source &middot; apache-2.0</span>
+  <h1>SilentMesh Lure</h1>
+  <div class="byline">Lure by SilentMesh &middot; v0.1.0 beta &middot; 8 November 2026</div>
+  <p class="standfirst">Attackers who reach a plant often come in with a stolen VPN or jump-host login, then hunt for more saved passwords. <b>Lure plants convincing fake ones. If anyone tries to use one, you get an alert naming the file that was found and where you planted it.</b></p>
+
+  <div class="pull"><span class="label">get it</span><p><a href="https://github.com/SilentMesh-Systems/lure" style="color:var(--sm-signal);text-decoration:none">github.com/SilentMesh-Systems/lure</a></p></div>
+
+  <h2>What it plants</h2>
+  <ul>
+    <li><b>passwords.xlsx</b>: a real spreadsheet of logins for a jump host, SCADA web, historian and vendor VPN.</li>
+    <li><b>jump-host.rdp</b>: a saved Remote Desktop connection with a username filled in.</li>
+    <li><b>vendor VPN profile</b>: a remote-support .ovpn with its login in a comment.</li>
+  </ul>
+  <p>Each bait has its own fake username, so an alert says exactly which file was found.</p>
+
+  <h2>Why it is different</h2>
+  <ul>
+    <li><b>Alerts on use, not on open.</b> Opening, copying, backing up or antivirus-scanning a bait file does nothing. Only a login attempt fires an alert.</li>
+    <li><b>Nothing is sent to us.</b> The listener runs on your machine and alerts only your own webhook, syslog or terminal.</li>
+    <li><b>Runs anywhere.</b> Python standard library only. Tested on Linux (x86-64 and ARM, including Raspberry Pi), Windows and macOS.</li>
+    <li><b>Quiet by design.</b> Repeat alerts are deduplicated and rate-limited, so one attacker cannot flood your pager.</li>
+  </ul>
+
+  <h2>Quick start</h2>
+<pre><code>git clone https://github.com/SilentMesh-Systems/lure && cd lure
+<span class="hl">python3 -m lure generate --listener 10.0.5.20 --out baits</span>
+# plant the files from baits/ on workstations and shares
+<span class="hl">python3 -m lure listen --manifest baits/manifest.json --webhook https://your-alerts.example/hook</span></code></pre>
+  <p>Pick a listener host nobody legitimately logs into. Keep <code>manifest.json</code> on that host only.</p>
+
+  <h2>What it does not do</h2>
+  <ul>
+    <li>It covers the <b>IT side</b>: workstations, jump hosts and shares. It does not watch the control network.</li>
+    <li>It catches people who find and use credentials, not attackers who never touch the baits.</li>
+    <li>It is a beta, supported on a best-effort basis.</li>
+  </ul>
+  <p>Only plant baits on systems you own or are authorised to protect.</p>
+
+  <hr>
+  <h2>Your plant network needs more</h2>
+  <p>Lure is the free, IT-side part of SilentMesh. The full product places decoy controllers on the plant network itself, over Modbus/TCP, S7comm, IEC 60870-5-104, DNP3, OPC UA and SMB, off the control path, and fails open. <a href="/pilot/" style="color:var(--sm-signal);text-decoration:none">Talk to us about a 30-day pilot</a>.</p>
+  <blockquote><p>Deceive, never disrupt.</p></blockquote>
+</div>
+</article>
+
+<footer>
+  <div class="wrap foot-row">
+    <span class="foot-note">SilentMesh Systems · kernel-level deception for converged IT/OT networks</span>
+    <span class="foot-note"><a href="/">silentmesh.me</a> · <a href="https://www.linkedin.com/company/silentmesh-systems" rel="noopener">LinkedIn</a> · <a href="https://github.com/SilentMesh-Systems" rel="noopener">GitHub</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
