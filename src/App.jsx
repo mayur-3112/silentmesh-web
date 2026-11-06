@@ -106,6 +106,7 @@ export default function App() {
             <a href="#how">How it works</a>
             <a href="#evidence">Evidence</a>
             <a className="m" href="/how-it-works/">Film</a>
+            <a href="/lure/">Lure</a>
             <a className="m" href="/blog/">Blog</a>
             <a className="m" href="/security/">Security</a>
             <a className="m nav-cta" href="/pilot/">Pilot</a>
@@ -116,7 +117,8 @@ export default function App() {
       <main>
         <section className="hero">
           <div className="wrap">
-            <span className="kicker accent">kernel-level deception for industrial networks</span>
+            <div><a href="/lure/" style={{display:"inline-flex",alignItems:"center",gap:10,marginBottom:22,padding:"7px 14px",border:"1px solid rgba(95,224,127,.35)",borderRadius:999,textDecoration:"none",fontSize:13,color:"var(--text-secondary, rgba(242,244,241,.7))"}}><span style={{color:"#5FE07F",fontWeight:600,letterSpacing:".12em",fontSize:11}}>NEW · FREE</span> SilentMesh Lure: planted credentials that give the attacker away →</a></div>
+            <span className="kicker accent">kernel-level deception for converged IT/OT networks</span>
             <h1>They think they found your PLC.<br /><span className="h1-quiet">You know they are here.</span></h1>
             <p className="lede">
               Decoy controllers that nothing legitimate ever touches, so any
@@ -369,6 +371,7 @@ export default function App() {
             <nav className="foot-nav">
               <a href="/how-it-works/">Film</a>
               <a href="/bfsi/">Banks</a>
+              <a href="/lure/">Lure</a>
               <a href="/pilot/">Pilot</a>
               <a href="/security/">Security</a>
               <a href="/blog/">Blog</a>
