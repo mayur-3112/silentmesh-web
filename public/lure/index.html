@@ -203,6 +203,41 @@ section{padding:24px 0;}
 @media (max-width:600px){.dg-h{display:none !important;} .dg-v{display:block !important; max-width:320px; margin:0 auto;}}
 @media (prefers-reduced-motion:reduce){.hero-mark,.cursor{animation:none;}}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="lure-identity">
+/* Lure identity: its own look, separate from the SilentMesh site */
+:root{--l-void:#000;--l-lime:#7DFF5C;--l-hot:#E9FFD9;--l-glass:rgba(255,255,255,.035);--l-rim:rgba(125,255,92,.18);--l-text:#EEF6EA;--l-dim:rgba(238,246,234,.58);
+ --sm-signal:#7DFF5C;--sm-near-black:#000;--sm-black:#000;--sm-terminal:#030503;--text-primary:#EEF6EA;--text-secondary:rgba(238,246,234,.66);--text-tertiary:rgba(238,246,234,.45);
+ --border-hair:rgba(255,255,255,.07);--border-accent:rgba(125,255,92,.2);--font-display:"Space Grotesk",system-ui,sans-serif;--font-ui:"Space Grotesk",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;}
+body{background:#000 !important;font-family:var(--font-ui);
+ background-image:radial-gradient(1000px 520px at 82% -6%,rgba(125,255,92,.14),transparent 62%),radial-gradient(800px 480px at -10% 40%,rgba(125,255,92,.06),transparent 60%) !important;background-attachment:fixed !important;}
+.watermark{display:none !important;}
+header{background:rgba(0,0,0,.72) !important;border-bottom:1px solid var(--l-rim) !important;}
+.wordmark{font-family:var(--font-display) !important;letter-spacing:.18em !important;}
+h1,h2,h3{font-family:var(--font-display) !important;letter-spacing:-.01em !important;}
+h1{font-weight:500 !important;font-size:clamp(3rem,7.4vw,5.8rem) !important;line-height:.98 !important;}
+h2{font-weight:500 !important;font-size:clamp(1.7rem,3.4vw,2.5rem) !important;}
+h3{font-weight:500 !important;}
+.kicker{font-family:var(--font-mono) !important;color:var(--l-lime) !important;letter-spacing:.24em !important;}
+.tagline{font-family:var(--font-display) !important;font-weight:300 !important;color:var(--l-hot) !important;}
+.hero-mark{border-radius:28px !important;box-shadow:0 0 60px rgba(125,255,92,.28) !important;}
+.btn{border-radius:999px !important;font-family:var(--font-mono) !important;letter-spacing:.08em !important;}
+.btn-primary{background:var(--l-lime) !important;color:#041004 !important;border-color:var(--l-lime) !important;box-shadow:0 0 28px rgba(125,255,92,.35) !important;}
+.btn-ghost{border:1px solid var(--l-rim) !important;color:var(--l-text) !important;background:transparent !important;}
+.term .term-body pre,.term pre{background:transparent !important;border:0 !important;box-shadow:none !important;}
+.term,.code pre{background:rgba(3,6,3,.85) !important;border:1px solid var(--l-rim) !important;border-radius:18px !important;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(125,255,92,.06) inset !important;}
+.term-bar{border-bottom:1px solid var(--l-rim) !important;}
+.card,.feat,.alert,.bridge,.diagram,.pull{background:var(--l-glass) !important;border:1px solid var(--l-rim) !important;border-radius:22px !important;backdrop-filter:blur(6px);}
+.card:hover,.feat:hover{border-color:rgba(125,255,92,.45) !important;box-shadow:0 0 34px rgba(125,255,92,.12) !important;transition:all .2s;}
+.steps .n,.steps b{color:var(--l-lime) !important;}
+.sev-high{background:rgba(255,122,89,.16) !important;color:#FF8A6B !important;border-radius:999px !important;}
+.sev-med{background:rgba(242,193,78,.14) !important;color:#F2C14E !important;border-radius:999px !important;}
+.copy{border-radius:999px !important;border:1px solid var(--l-rim) !important;color:var(--l-lime) !important;background:transparent !important;font-family:var(--font-mono) !important;}
+.motto{font-family:var(--font-display) !important;font-weight:300 !important;color:var(--l-hot) !important;text-shadow:0 0 30px rgba(125,255,92,.35);}
+code{font-family:var(--font-mono) !important;}
+a{transition:color .15s;}
+footer{border-top:1px solid var(--l-rim) !important;}
+</style>
 </head>
 <body>
 
@@ -345,7 +380,7 @@ python3 -m lure generate --listener 10.0.5.20 --out baits</code></pre><button cl
     <ul>
       <li>It covers the <b>IT side</b>: workstations, jump hosts and shares. Do not plant baits on the control network, and do not point a bait at a real system.</li>
       <li>It is a beta. It catches people who find and use credentials, not an attacker who never touches the baits.</li>
-      <li>The OpenVPN listener records the connection only; it does not read the username.</li>
+      <li>The VPN login is encrypted, so VPN baits are told apart by their own listener port.</li>
     </ul>
   </section>
 
