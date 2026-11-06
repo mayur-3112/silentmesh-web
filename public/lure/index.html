@@ -233,7 +233,7 @@ section{padding:24px 0;}
       <p class="tagline">Planted credentials that give the attacker away.</p>
       <p>Free credential lures for everyone, on any network, built with plants in mind. Attackers often get in with a stolen VPN or jump-host login, then hunt for more saved passwords. Lure plants fake ones. If anyone tries to use one, you get an alert naming the file and where you planted it.</p>
       <div class="ctas">
-        <a class="btn btn-primary" href="https://github.com/SilentMesh-Systems/lure" rel="noopener">Get it on GitHub</a>
+        <a class="btn btn-primary" aria-disabled="true" style="pointer-events:none;opacity:.85">Available on GitHub · 8 November</a>
         <a class="btn btn-ghost" href="#quick-start">Quick start</a>
       </div>
     </div>
@@ -319,6 +319,7 @@ listening: rdp 3389, http 8080, openvpn 1194
   <section aria-labelledby="quick-start">
     <h2 id="quick-start">Quick start</h2>
     <p>No install step: clone the repo and run it from the repo folder.</p>
+    <p style="margin:0 0 10px;color:var(--sm-signal);font:500 12px var(--font-mono);letter-spacing:.08em">The repository opens on Sunday 8 November 2026.</p>
     <div class="code"><pre><code>git clone https://github.com/SilentMesh-Systems/lure
 cd lure
 python3 -m lure generate --listener 10.0.5.20 --out baits</code></pre><button class="copy" type="button" hidden>Copy</button></div>
