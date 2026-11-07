@@ -122,7 +122,7 @@ export default function App() {
               <span className="lure-kicker">New · free · open source · 8 November</span>
               <h1 id="lure-h" className="lure-title">SilentMesh <span>Lure</span></h1>
               <p className="lure-tag">Planted credentials that give the attacker away.</p>
-              <p className="lure-lede">Fake passwords, saved Remote Desktop files and vendor VPN profiles, planted where intruders look. The moment anyone tries one, you get an alert naming the file and where you planted it. Free for everyone. Nothing is sent to us.</p>
+              <p className="lure-lede">Fake passwords, saved Remote Desktop files and vendor VPN profiles, planted where intruders look. The moment anyone tries one, you get an alert naming the file and where you planted it. A quiet safety net for any network, from a home router to a data centre. Free, and nothing is sent to us.</p>
               <div className="hero-ctas">
                 <a className="btn btn-primary" href="/lure/">See how Lure works</a>
                 <span className="btn btn-outline" aria-disabled="true" style={{pointerEvents:"none",opacity:.8}}>On GitHub · 8 November</span>
