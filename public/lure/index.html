@@ -266,21 +266,21 @@ footer{border-top:1px solid var(--l-rim) !important;}
       <h1>SilentMesh Lure</h1>
       <div class="byline">Lure by SilentMesh &middot; v0.1.0 beta</div>
       <p class="tagline">Planted credentials that give the attacker away.</p>
-      <p>Free credential lures for everyone, on any network, built with plants in mind. Attackers often get in with a stolen VPN or jump-host login, then hunt for more saved passwords. Lure plants fake ones. If anyone tries to use one, you get an alert naming the file and where you planted it.</p>
+      <p>Free credential lures for everyone, on any network: offices, data centres, banks, hospitals and plants. Attackers often get in with a stolen VPN or jump-host login, then hunt for more saved passwords. Lure plants fake ones. If anyone tries to use one, you get an alert naming the file and where you planted it.</p>
       <div class="ctas">
         <a class="btn btn-primary" aria-disabled="true" style="pointer-events:none;opacity:.85">Available on GitHub · 8 November</a>
         <a class="btn btn-ghost" href="#quick-start">Quick start</a>
       </div>
     </div>
-    <div class="term" role="img" aria-label="Terminal demo: lure generate writes 4 bait credentials, lure listen starts on rdp 3389, http 8080 and openvpn 1194, then a high severity alert shows the bait username eng_maint_95aead from jump-host.rdp was used.">
+    <div class="term" role="img" aria-label="Terminal demo: lure generate writes 12 bait credentials in 6 files, lure listen starts on rdp 3389, http 8080 and openvpn 1194, then a high severity alert shows the bait username eng_maint_95aead from jump-host.rdp was used.">
       <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>listener host</span></div>
       <pre aria-hidden="true"><code id="term"><span class="p">$</span> <span class="c">lure generate --listener 10.0.5.20 --out baits</span>
-wrote 4 bait credentials to baits/ (see manifest.json for where to plant each)
+wrote 12 bait credentials in 6 files to baits/ (see manifest.json for where to plant each)
 <span class="p">$</span> <span class="c">lure listen --manifest baits/manifest.json</span>
 listening: rdp 3389, http 8080, openvpn 1194
 <span class="alert">{"severity": "high", "service": "rdp", "source": "10.0.7.31:51544",
- "username": "eng_maint_95aead", "bait_file": "jump-host.rdp",
- "planted_on": "engineering workstation desktop",
+ "username": "r.patil_adm", "bait_file": "DO NOT DELETE - JUMP-SRV-01.rdp",
+ "planted_on": "an admin workstation desktop",
  "why": "a bait credential was used: someone found and tried it"}</span></code></pre>
     </div>
   </div>
@@ -289,18 +289,22 @@ listening: rdp 3389, http 8080, openvpn 1194
     <h2 id="plants">What it plants</h2>
     <p class="lead">Each bait carries its own fake username, so an alert tells you exactly which file was found.</p>
     <div class="cards">
-      <div class="card"><h3>passwords.xlsx</h3><p>A real spreadsheet of logins: jump host, SCADA web, historian, vendor VPN.</p><span class="where"><b>Plant on:</b> an engineering share or a workstation's Documents folder</span></div>
-      <div class="card"><h3>jump-host.rdp</h3><p>A saved Remote Desktop connection with a username filled in.</p><span class="where"><b>Plant on:</b> an engineering workstation desktop</span></div>
-      <div class="card"><h3>plant-vendor-vpn.ovpn</h3><p>A vendor remote-support VPN profile with its login in a comment.</p><span class="where"><b>Plant on:</b> a jump host or a vendor laptop share</span></div>
+      <div class="card"><h3>passwords_FINAL_v2.xlsx</h3><p>A real workbook from IT Support, months old: NAS, vCenter and intranet logins, a Notes column, a "temporary" shared admin (TODO: rotate after the audit) and an "Old - do not use" sheet.</p><span class="where"><b>Plant on:</b> a file share or a Documents folder</span></div>
+      <div class="card"><h3>DO NOT DELETE - JUMP-SRV-01.rdp</h3><p>A saved Remote Desktop connection to the admin jump server, username filled in.</p><span class="where"><b>Plant on:</b> an admin workstation desktop</span></div>
+      <div class="card"><h3>Infosys support VPN (old).ovpn</h3><p>A vendor remote-support VPN profile with its login in a comment, and a hint about the RDP file.</p><span class="where"><b>Plant on:</b> a jump host or a vendor laptop share</span></div>
+      <div class="card"><h3>passwords.csv</h3><p>A browser password export, the kind left in Downloads.</p><span class="where"><b>Plant on:</b> a user's Downloads folder</span></div>
+      <div class="card"><h3>.git-credentials</h3><p>A git credential store. Real git sends this login.</p><span class="where"><b>Plant on:</b> a developer or admin home directory</span></div>
+      <div class="card"><h3>Re- Infosys remote access.eml</h3><p>An email that leaks a temporary login and points at the VPN profile and the spreadsheet.</p><span class="where"><b>Plant on:</b> a mailbox export or Documents folder</span></div>
     </div>
-    <p>A fourth file, <code>manifest.json</code>, maps usernames to baits (no passwords). Keep it only on the listener host: anyone who reads it knows which logins are fake.</p>
+    <p>The files point at each other, so each one found makes the next more believable. Usernames look like real accounts, files are backdated months, and the vocabulary fits the place: <code>--profile it</code> (default), <code>office</code>, <code>bank</code>, <code>hospital</code> or <code>plant</code>.</p>
+    <p>A seventh file, <code>manifest.json</code>, maps usernames to baits (no passwords). Keep it only on the listener host: anyone who reads it knows which logins are fake.</p>
   </section>
 
   <section aria-labelledby="how">
     <h2 id="how">How it works</h2>
     <ol class="steps">
       <li><h3>Generate</h3><p>Point <code>lure generate</code> at a spare IT-side machine that nobody legitimately logs into.</p></li>
-      <li><h3>Plant</h3><p>Drop the bait files on engineering workstations, jump hosts and vendor shares. No agent, nothing on the control network.</p></li>
+      <li><h3>Plant</h3><p>Drop the bait files on admin desktops, file shares, home directories and jump hosts. No agent, nothing to install on them.</p></li>
       <li><h3>Listen</h3><p>Run <code>lure listen</code> on the listener host. A login attempt with a bait credential sends you an alert.</p></li>
     </ol>
     <figure class="diagram">
@@ -309,7 +313,7 @@ listening: rdp 3389, http 8080, openvpn 1194
         <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#5FE07F"/></marker></defs>
         <g font-family="IBM Plex Mono, monospace" font-size="15" text-anchor="middle">
           <rect x="10" y="50" width="200" height="90" rx="8" fill="#101312" stroke="rgba(255,255,255,.18)"/>
-          <text x="110" y="88" fill="#F2F4F1">workstation</text><text x="110" y="114" fill="#5FE07F">jump-host.rdp</text>
+          <text x="110" y="88" fill="#F2F4F1">workstation</text><text x="110" y="114" fill="#5FE07F">bait .rdp</text>
           <rect x="380" y="50" width="200" height="90" rx="8" fill="#101312" stroke="#5FE07F"/>
           <text x="480" y="88" fill="#F2F4F1">listener host</text><text x="480" y="114" fill="rgba(242,244,241,.62)">rdp · http · openvpn</text>
           <rect x="750" y="50" width="200" height="90" rx="8" fill="#101312" stroke="rgba(255,255,255,.18)"/>
@@ -325,7 +329,7 @@ listening: rdp 3389, http 8080, openvpn 1194
         <title id="dg-v-t">A workstation holds a bait file. An attacker tries the login against the listener host. The listener alerts your own webhook or syslog. Nothing goes to SilentMesh.</title>
         <g font-family="IBM Plex Mono, monospace" font-size="15" text-anchor="middle">
           <rect x="40" y="10" width="240" height="76" rx="8" fill="#101312" stroke="rgba(255,255,255,.18)"/>
-          <text x="160" y="42" fill="#F2F4F1">workstation</text><text x="160" y="66" fill="#5FE07F">jump-host.rdp</text>
+          <text x="160" y="42" fill="#F2F4F1">workstation</text><text x="160" y="66" fill="#5FE07F">bait .rdp</text>
           <line x1="160" y1="90" x2="160" y2="152" stroke="#5FE07F" stroke-width="2" marker-end="url(#ar)"/>
           <text x="172" y="126" fill="rgba(242,244,241,.62)" font-size="13" text-anchor="start">attacker tries the login</text>
           <rect x="40" y="158" width="240" height="76" rx="8" fill="#101312" stroke="#5FE07F"/>
@@ -363,7 +367,7 @@ python3 -m lure generate --listener 10.0.5.20 --out baits</code></pre><button cl
     --webhook https://your-alerts.example/hook --syslog 10.0.1.5:514</code></pre><button class="copy" type="button" hidden>Copy</button></div>
     <p>Prefer a <code>lure</code> command on your path? Install it from the repo folder:</p>
     <div class="code"><pre><code>pip install .</code></pre><button class="copy" type="button" hidden>Copy</button></div>
-    <p>To test, open <code>jump-host.rdp</code> from another machine and try to connect. You should get one high alert.</p>
+    <p>To test, open the <code>.rdp</code> bait from another machine and try to connect. You should get one high alert.</p>
   </section>
 
   <section aria-labelledby="grading">
@@ -385,8 +389,8 @@ python3 -m lure generate --listener 10.0.5.20 --out baits</code></pre><button cl
   </section>
 
   <div class="bridge">
-    <h2>Lure covers the IT side. Your plant network needs more.</h2>
-    <p>Lure is the free, IT-side part of SilentMesh. The full product places decoy controllers on the plant network itself, over Modbus/TCP, S7comm, IEC 60870-5-104, DNP3, OPC UA and SMB. It sits off the control path and fails open.</p>
+    <h2>Running an industrial site? Go further.</h2>
+    <p>Lure is free for everyone. The full product places decoy controllers on the plant network itself, over Modbus/TCP, S7comm, IEC 60870-5-104, DNP3, OPC UA and SMB. It sits off the control path and fails open.</p>
     <div class="ctas"><a class="btn btn-primary" href="/pilot/">Talk to us about a pilot</a></div>
   </div>
   <p class="motto">Deceive, never disrupt.</p>
@@ -415,8 +419,8 @@ python3 -m lure generate --listener 10.0.5.20 --out baits</code></pre><button cl
   });
   var el=document.getElementById('term');
   if(!el||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
-  var alertTxt='{"severity": "high", "service": "rdp", "source": "10.0.7.31:51544",\n "username": "eng_maint_95aead", "bait_file": "jump-host.rdp",\n "planted_on": "engineering workstation desktop",\n "why": "a bait credential was used: someone found and tried it"}';
-  var seq=[['cmd','lure generate --listener 10.0.5.20 --out baits'],['out','wrote 4 bait credentials to baits/ (see manifest.json for where to plant each)'],['cmd','lure listen --manifest baits/manifest.json'],['out','listening: rdp 3389, http 8080, openvpn 1194'],['wait',2200],['alert',alertTxt],['wait',5000]];
+  var alertTxt='{"severity": "high", "service": "rdp", "source": "10.0.7.31:51544",\n "username": "r.patil_adm", "bait_file": "DO NOT DELETE - JUMP-SRV-01.rdp",\n "planted_on": "an admin workstation desktop",\n "why": "a bait credential was used: someone found and tried it"}';
+  var seq=[['cmd','lure generate --listener 10.0.5.20 --out baits'],['out','wrote 12 bait credentials in 6 files to baits/ (see manifest.json for where to plant each)'],['cmd','lure listen --manifest baits/manifest.json'],['out','listening: rdp 3389, http 8080, openvpn 1194'],['wait',2200],['alert',alertTxt],['wait',5000]];
   function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
   var html='',i=0;
   function render(extra){el.innerHTML=html+(extra||'')+'<span class="cursor"></span>';}
