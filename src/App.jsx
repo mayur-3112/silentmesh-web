@@ -125,7 +125,7 @@ export default function App() {
               <p className="lure-lede">Fake passwords, saved Remote Desktop files and vendor VPN profiles, planted where intruders look. The moment anyone tries one, you get an alert naming the file and where you planted it. A quiet safety net for any network, from a home router to a data centre. Free, and nothing is sent to us.</p>
               <div className="hero-ctas">
                 <a className="btn btn-primary" href="/lure/">See how Lure works</a>
-                <span className="btn btn-outline" aria-disabled="true" style={{pointerEvents:"none",opacity:.8}}>On GitHub · 8 November</span>
+                <a className="btn btn-outline" href="https://github.com/SilentMesh-Systems/Lure" target="_blank" rel="noopener noreferrer">On GitHub</a>
               </div>
               <ul className="lure-facts">
                 <li><b>Alerts on use</b><span>not on open, so scans and backups never page you</span></li>
