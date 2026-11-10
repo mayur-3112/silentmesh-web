@@ -357,18 +357,15 @@ listening: rdp 3389, http 8080, openvpn 1194
 
   <section aria-labelledby="quick-start">
     <h2 id="quick-start">Quick start</h2>
-    <p><b>See it work in under a minute</b>, on your own machine. The demo plants baits on localhost, opens the dashboard and plays an attacker:</p>
-    <div class="code"><pre><code>git clone https://github.com/SilentMesh-Systems/Lure && cd Lure && python3 -m lure demo</code></pre><button class="copy" type="button" hidden>Copy</button></div>
-    <p>Then deploy for real. No install step: run it from the repo folder.</p>
-    <div class="code"><pre><code>git clone https://github.com/SilentMesh-Systems/lure
-cd lure
-python3 -m lure generate --listener 10.0.5.20 --out baits</code></pre><button class="copy" type="button" hidden>Copy</button></div>
-    <p>Plant the files from <code>baits/</code>, keep <code>manifest.json</code> on the listener host, then start the listener there:</p>
-    <div class="code"><pre><code>python3 -m lure listen --manifest baits/manifest.json \
-    --webhook https://your-alerts.example/hook --syslog 10.0.1.5:514</code></pre><button class="copy" type="button" hidden>Copy</button></div>
-    <p>Prefer a <code>lure</code> command on your path? Install it from the repo folder:</p>
-    <div class="code"><pre><code>pip install .</code></pre><button class="copy" type="button" hidden>Copy</button></div>
-    <p>To test, open the <code>.rdp</code> bait from another machine and try to connect. You should get one high alert.</p>
+    <p><b>Install</b> (Python 3.9 or later, Linux, Windows or Raspberry Pi). On Kali, Debian and Ubuntu get pipx first with <code>sudo apt install pipx</code>:</p>
+    <div class="code"><pre><code>pipx install --pip-args=--pre silentmesh-lure</code></pre><button class="copy" type="button" hidden>Copy</button></div>
+    <p><b>See it work in under a minute.</b> The demo plants baits on localhost, opens the dashboard and plays an attacker:</p>
+    <div class="code"><pre><code>lure demo</code></pre><button class="copy" type="button" hidden>Copy</button></div>
+    <p><b>Then deploy for real.</b> <code>init</code> writes baits pointing at this machine and tells you the next step; start the listener, then prove it from another terminal:</p>
+    <div class="code"><pre><code>lure init
+lure listen --manifest baits/manifest.json --ui
+lure test --manifest baits/manifest.json</code></pre><button class="copy" type="button" hidden>Copy</button></div>
+    <p>Plant the files from <code>baits/</code> where an intruder would look and keep <code>manifest.json</code> on the listener host. Alerts to Slack, Teams or syslog: add <code>--webhook URL</code> or <code>--syslog HOST:514</code> to <code>lure listen</code>. No install? <code>uvx silentmesh-lure demo</code> runs it once.</p>
   </section>
 
   <section aria-labelledby="grading">
